@@ -1,1 +1,27 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"mi-agenda-app-778bb","appId":"1:1025497295259:android:f0812cb3c7732e8a96193e","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"mi-agenda-app-778bb","configurations":{"android":"1:1025497295259:android:f0812cb3c7732e8a96193e"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "mi-agenda-app-778bb",
+          "appId": "1:1025497295259:android:f0812cb3c7732e8a96193e",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "mi-agenda-app-778bb",
+          "configurations": {
+            "android": "1:1025497295259:android:f0812cb3c7732e8a96193e"
+          }
+        }
+      }
+    }
+  },
+  "firestore": {
+    "database": "(default)",
+    "location": "nam5",
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  }
+}

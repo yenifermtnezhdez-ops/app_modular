@@ -54,10 +54,11 @@ class UserService {
     required String displayName,
     required String displayImage,
   }) async {
-    await _db.collection('users').doc(uid).update({
+    await _db.collection('users').doc(uid).set({
+      'uid': uid,
       'displayName': displayName.trim(),
       'displayImage': displayImage.trim(),
-    });
+    }, SetOptions(merge: true));
   }
 
   Future<List<String>> getFavoriteStationIds(String uid) async {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../../../app_theme.dart';
 import '../helpers/providers/app_provider.dart';
 import '../helpers/providers/audio_provider.dart';
@@ -35,6 +36,7 @@ class PlayerScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AudioProvider>(
       builder: (context, audio, child) {
+        final colors = Theme.of(context).colorScheme;
         final activeStation = audio.currentStation ?? station;
         final isPlaying = audio.isPlaying;
         final isLoading = audio.isLoading;
@@ -73,7 +75,7 @@ class PlayerScreen extends StatelessWidget {
             ? const Color(0xFFB83D4B)
             : isPlaying
             ? const Color(0xFF278253)
-            : AppTheme.primary;
+            : colors.primary;
 
         final socialLinks = <Map<String, dynamic>>[
           if (activeStation.xUrl.trim().isNotEmpty)
@@ -100,27 +102,28 @@ class PlayerScreen extends StatelessWidget {
                     width: 34,
                     height: 4,
                     decoration: BoxDecoration(
-                      color: AppTheme.border,
+                      color: colors.outline,
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
                   const Spacer(),
-                  const Text(
+                  Text(
                     'REPRODUCTOR',
                     style: TextStyle(
-                      color: AppTheme.textSecondary,
+                      color: colors.onSurfaceVariant,
                       fontSize: 10,
                       letterSpacing: 1.8,
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const Spacer(),
+                  const ThemeToggleButton(),
                   IconButton(
                     tooltip: 'Cerrar reproductor',
                     onPressed: () => Navigator.of(context).pop(),
                     style: IconButton.styleFrom(
-                      backgroundColor: AppTheme.surfaceElevated,
-                      foregroundColor: AppTheme.textPrimary,
+                      backgroundColor: colors.surfaceContainerHighest,
+                      foregroundColor: colors.onSurface,
                     ),
                     icon: const Icon(Icons.keyboard_arrow_down_rounded),
                   ),
@@ -143,10 +146,10 @@ class PlayerScreen extends StatelessWidget {
                         Container(
                           padding: const EdgeInsets.all(7),
                           decoration: BoxDecoration(
-                            color: AppTheme.surface,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(30),
-                            border: const Border.fromBorderSide(
-                              BorderSide(color: AppTheme.border),
+                            border: Border.all(
+                              color: colors.outline.withValues(alpha: 0.45),
                             ),
                             boxShadow: AppTheme.softShadow,
                           ),
@@ -158,10 +161,10 @@ class PlayerScreen extends StatelessWidget {
                                 activeStation.imageUrl,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, _, _) => Container(
-                                  color: AppTheme.surfaceElevated,
-                                  child: const Icon(
+                                  color: colors.surfaceContainerHighest,
+                                  child: Icon(
                                     Icons.album_rounded,
-                                    color: AppTheme.primary,
+                                    color: colors.primary,
                                     size: 100,
                                   ),
                                 ),
@@ -223,8 +226,8 @@ class PlayerScreen extends StatelessWidget {
                         Text(
                           activeStation.name,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
+                          style: TextStyle(
+                            color: colors.onSurface,
                             fontSize: 25,
                             height: 1.2,
                             fontWeight: FontWeight.w700,
@@ -236,8 +239,8 @@ class PlayerScreen extends StatelessWidget {
                         Text(
                           activeStation.slogan,
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppTheme.textSecondary,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
                             fontSize: 13,
                             height: 1.4,
                           ),
@@ -248,8 +251,8 @@ class PlayerScreen extends StatelessWidget {
                         Text(
                           '${activeStation.frequency}  •  ${activeStation.category}',
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppTheme.primary,
+                          style: TextStyle(
+                            color: colors.primary,
                             fontSize: 10,
                             letterSpacing: 0.4,
                             fontWeight: FontWeight.w700,
@@ -264,10 +267,10 @@ class PlayerScreen extends StatelessWidget {
                             vertical: 13,
                           ),
                           decoration: BoxDecoration(
-                            color: AppTheme.surface,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(18),
-                            border: const Border.fromBorderSide(
-                              BorderSide(color: AppTheme.border),
+                            border: Border.all(
+                              color: colors.outline.withValues(alpha: 0.45),
                             ),
                           ),
                           child: Row(
@@ -311,7 +314,7 @@ class PlayerScreen extends StatelessWidget {
                                   horizontal: 2,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primary.withValues(
+                                  color: colors.primary.withValues(
                                     alpha: isPlaying ? 0.85 : 0.28,
                                   ),
                                   borderRadius: BorderRadius.circular(5),
@@ -327,6 +330,7 @@ class PlayerScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             _roundControl(
+                              context: context,
                               icon: Icons.skip_previous_rounded,
                               tooltip: 'Estación anterior',
                               onPressed: canChangeStation && !isLoading
@@ -353,13 +357,13 @@ class PlayerScreen extends StatelessWidget {
                                         }
                                       },
                                 style: FilledButton.styleFrom(
-                                  backgroundColor: AppTheme.primary,
-                                  foregroundColor: Colors.white,
-                                  disabledBackgroundColor: AppTheme.primary
+                                  backgroundColor: colors.primary,
+                                  foregroundColor: colors.onPrimary,
+                                  disabledBackgroundColor: colors.primary
                                       .withValues(alpha: 0.35),
                                   shape: const CircleBorder(),
                                   elevation: 7,
-                                  shadowColor: AppTheme.primary.withValues(
+                                  shadowColor: colors.primary.withValues(
                                     alpha: 0.25,
                                   ),
                                   padding: EdgeInsets.zero,
@@ -376,6 +380,7 @@ class PlayerScreen extends StatelessWidget {
                             const SizedBox(width: 25),
 
                             _roundControl(
+                              context: context,
                               icon: Icons.skip_next_rounded,
                               tooltip: 'Siguiente estación',
                               onPressed: canChangeStation && !isLoading
@@ -411,20 +416,20 @@ class PlayerScreen extends StatelessWidget {
                           width: double.infinity,
                           padding: const EdgeInsets.all(17),
                           decoration: BoxDecoration(
-                            color: AppTheme.surface,
+                            color: colors.surface,
                             borderRadius: BorderRadius.circular(22),
-                            border: const Border.fromBorderSide(
-                              BorderSide(color: AppTheme.border),
+                            border: Border.all(
+                              color: colors.outline.withValues(alpha: 0.45),
                             ),
                             boxShadow: AppTheme.softShadow,
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Text(
+                              Text(
                                 'Sobre esta estación',
                                 style: TextStyle(
-                                  color: AppTheme.textPrimary,
+                                  color: colors.onSurface,
                                   fontSize: 14,
                                   fontWeight: FontWeight.w700,
                                 ),
@@ -432,8 +437,8 @@ class PlayerScreen extends StatelessWidget {
                               const SizedBox(height: 8),
                               Text(
                                 activeStation.description,
-                                style: const TextStyle(
-                                  color: AppTheme.textSecondary,
+                                style: TextStyle(
+                                  color: colors.onSurfaceVariant,
                                   fontSize: 12,
                                   height: 1.5,
                                 ),
@@ -443,9 +448,9 @@ class PlayerScreen extends StatelessWidget {
                                 spacing: 8,
                                 runSpacing: 8,
                                 children: [
-                                  _infoChip(activeStation.acronym),
-                                  _infoChip(activeStation.category),
-                                  _infoChip('Radio en línea'),
+                                  _infoChip(context, activeStation.acronym),
+                                  _infoChip(context, activeStation.category),
+                                  _infoChip(context, 'Radio en línea'),
                                 ],
                               ),
                             ],
@@ -462,9 +467,11 @@ class PlayerScreen extends StatelessWidget {
                               icon: const Icon(Icons.language_rounded),
                               label: const Text('Visitar página web'),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: AppTheme.primary,
-                                side: const BorderSide(color: AppTheme.border),
-                                backgroundColor: AppTheme.surface,
+                                foregroundColor: colors.primary,
+                                side: BorderSide(
+                                  color: colors.outline.withValues(alpha: 0.45),
+                                ),
+                                backgroundColor: colors.surface,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
                                 ),
@@ -478,10 +485,10 @@ class PlayerScreen extends StatelessWidget {
 
                         if (socialLinks.isNotEmpty) ...[
                           const SizedBox(height: 18),
-                          const Text(
+                          Text(
                             'Encuéntranos en redes',
                             style: TextStyle(
-                              color: AppTheme.textPrimary,
+                              color: colors.onSurface,
                               fontWeight: FontWeight.w700,
                               fontSize: 13,
                             ),
@@ -497,8 +504,9 @@ class PlayerScreen extends StatelessWidget {
                                 icon: Icon(social['icon'] as IconData),
                                 label: Text(social['name'] as String),
                                 style: TextButton.styleFrom(
-                                  foregroundColor: AppTheme.primary,
-                                  backgroundColor: AppTheme.surfaceElevated,
+                                  foregroundColor: colors.primary,
+                                  backgroundColor:
+                                      colors.surfaceContainerHighest,
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(14),
                                   ),
@@ -520,35 +528,40 @@ class PlayerScreen extends StatelessWidget {
   }
 
   Widget _roundControl({
+    required BuildContext context,
     required IconData icon,
     required String tooltip,
     required VoidCallback? onPressed,
   }) {
+    final colors = Theme.of(context).colorScheme;
+
     return IconButton(
       tooltip: tooltip,
       onPressed: onPressed,
       icon: Icon(icon),
-      color: AppTheme.textPrimary,
+      color: colors.onSurface,
       iconSize: 24,
       style: IconButton.styleFrom(
-        backgroundColor: AppTheme.surface,
-        side: const BorderSide(color: AppTheme.border),
+        backgroundColor: colors.surface,
+        side: BorderSide(color: colors.outline.withValues(alpha: 0.45)),
         fixedSize: const Size(48, 48),
       ),
     );
   }
 
-  Widget _infoChip(String label) {
+  Widget _infoChip(BuildContext context, String label) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: AppTheme.surfaceElevated,
+        color: colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         label,
-        style: const TextStyle(
-          color: AppTheme.textSecondary,
+        style: TextStyle(
+          color: colors.onSurfaceVariant,
           fontSize: 10,
           fontWeight: FontWeight.w600,
         ),

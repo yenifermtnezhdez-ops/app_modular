@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../models/category_model.dart';
 import '../providers/notification_provider.dart';
 
@@ -450,7 +451,10 @@ class SettingsScreen extends StatelessWidget {
     final provider = context.watch<NotificationProvider>();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Notificaciones')),
+      appBar: AppBar(
+        title: const Text('Notificaciones'),
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
+      ),
       body: provider.isLoading
           ? Center(child: CircularProgressIndicator(color: colors.primary))
           : RefreshIndicator(

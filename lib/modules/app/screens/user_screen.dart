@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../models/user_model.dart';
 import '../providers/auth_provider.dart' as app_auth;
 import '../services/user_service.dart';
@@ -60,20 +61,33 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Future<void> _editName() async {
+    if (_isSaving || _profile == null) return;
+
     final controller = TextEditingController(text: _profile?.displayName ?? '');
+    final formKey = GlobalKey<FormState>();
 
     final newName = await showDialog<String>(
       context: context,
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Editar nombre'),
-          content: TextField(
-            controller: controller,
-            autofocus: true,
-            textCapitalization: TextCapitalization.words,
-            decoration: const InputDecoration(
-              labelText: 'Nombre',
-              hintText: 'Escribe tu nombre',
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: controller,
+              autofocus: true,
+              textCapitalization: TextCapitalization.words,
+              decoration: const InputDecoration(
+                labelText: 'Nombre',
+                hintText: 'Escribe tu nombre',
+              ),
+              validator: (value) {
+                final name = value?.trim() ?? '';
+                if (name.length < 2) {
+                  return 'Escribe un nombre de al menos 2 caracteres.';
+                }
+                return null;
+              },
             ),
           ),
           actions: [
@@ -83,7 +97,9 @@ class _UserScreenState extends State<UserScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(dialogContext, controller.text.trim());
+                if (formKey.currentState!.validate()) {
+                  Navigator.pop(dialogContext, controller.text.trim());
+                }
               },
               child: const Text('Guardar'),
             ),
@@ -118,22 +134,27 @@ class _UserScreenState extends State<UserScreen> {
       );
 
       if (!mounted) return;
-      final updatedProfile = await _userService.getProfile(user.uid);
-
-      if (!mounted) return;
 
       setState(() {
-        _profile = updatedProfile;
+        _profile = UserModel(
+          uid: user.uid,
+          email: _profile?.email ?? user.email ?? '',
+          displayName: newName,
+          displayImage: _profile?.displayImage ?? '',
+          favoriteStations: _profile?.favoriteStations ?? const [],
+        );
+        _errorMessage = null;
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Perfil actualizado correctamente.')),
       );
     } catch (error) {
+      debugPrint('Error al actualizar el perfil: $error');
       if (!mounted) return;
 
       setState(() {
-        _errorMessage = 'No se pudo actualizar el perfil. Intenta de nuevo.';
+        _errorMessage = 'No se pudo actualizar el perfil. Revisa tu conexión e inténtalo de nuevo.';
       });
     } finally {
       if (mounted) {
@@ -178,16 +199,20 @@ class _UserScreenState extends State<UserScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     if (_isLoading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return Scaffold(
+        appBar: AppBar(actions: const [ThemeToggleButton()]),
+        body: const Center(child: CircularProgressIndicator()),
+      );
     }
 
     if (_profile == null) {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Mi perfil'),
-          backgroundColor: Colors.deepPurple,
-          foregroundColor: Colors.white,
+          actions: const [ThemeToggleButton(), SizedBox(width: 8)],
         ),
         body: Center(
           child: Column(
@@ -218,8 +243,7 @@ class _UserScreenState extends State<UserScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mi perfil'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -227,11 +251,7 @@ class _UserScreenState extends State<UserScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.account_circle,
-                size: 90,
-                color: Colors.deepPurple,
-              ),
+              const Icon(Icons.account_circle, size: 90),
               const SizedBox(height: 16),
               Text(
                 _profile!.displayName.isEmpty
@@ -288,8 +308,8 @@ class _UserScreenState extends State<UserScreen> {
                   icon: const Icon(Icons.home),
                   label: const Text('Entrar a Mi App Lab'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.deepPurple,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                 ),

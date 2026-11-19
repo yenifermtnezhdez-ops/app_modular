@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../app_theme.dart';
 import '../helpers/providers/audio_provider.dart';
 import '../models/station_model.dart';
 
@@ -15,6 +14,7 @@ class MiniPlayer extends StatelessWidget {
     return Consumer<AudioProvider>(
       builder: (context, audio, child) {
         final StationModel? station = audio.currentStation;
+        final colors = Theme.of(context).colorScheme;
 
         if (station == null) {
           return const SizedBox.shrink();
@@ -32,14 +32,14 @@ class MiniPlayer extends StatelessWidget {
             ? const Color(0xFFB83D4B)
             : audio.isPlaying
             ? const Color(0xFF278253)
-            : AppTheme.textSecondary;
+            : colors.onSurfaceVariant;
 
         return SafeArea(
           top: false,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             child: Material(
-              color: AppTheme.surface,
+              color: colors.surface,
               elevation: 0,
               surfaceTintColor: Colors.transparent,
               borderRadius: BorderRadius.circular(24),
@@ -48,7 +48,7 @@ class MiniPlayer extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(
-                    color: const Color(0xFFEAE7EF),
+                    color: colors.outline.withValues(alpha: 0.45),
                     width: 0.8,
                   ),
                   boxShadow: [
@@ -59,7 +59,7 @@ class MiniPlayer extends StatelessWidget {
                       offset: const Offset(0, 7),
                     ),
                     BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.06),
+                      color: colors.primary.withValues(alpha: 0.06),
                       blurRadius: 12,
                       offset: const Offset(0, 2),
                     ),
@@ -91,10 +91,10 @@ class MiniPlayer extends StatelessWidget {
                                   return Container(
                                     width: 55,
                                     height: 55,
-                                    color: AppTheme.surfaceElevated,
-                                    child: const Icon(
+                                    color: colors.surfaceContainerHighest,
+                                    child: Icon(
                                       Icons.radio_rounded,
-                                      color: AppTheme.primary,
+                                      color: colors.primary,
                                       size: 26,
                                     ),
                                   );
@@ -114,8 +114,8 @@ class MiniPlayer extends StatelessWidget {
                                     station.name,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: AppTheme.textPrimary,
+                                    style: TextStyle(
+                                      color: colors.onSurface,
                                       fontWeight: FontWeight.w700,
                                       fontSize: 13,
                                     ),
@@ -154,7 +154,7 @@ class MiniPlayer extends StatelessWidget {
 
                             // Botón de reproducir / pausar
                             Material(
-                              color: AppTheme.primary,
+                              color: colors.primary,
                               shape: const CircleBorder(),
                               child: IconButton(
                                 tooltip: audio.isPlaying
@@ -173,7 +173,7 @@ class MiniPlayer extends StatelessWidget {
                                   audio.isPlaying
                                       ? Icons.pause_rounded
                                       : Icons.play_arrow_rounded,
-                                  color: Colors.white,
+                                  color: colors.onPrimary,
                                   size: 25,
                                 ),
                                 constraints: const BoxConstraints.tightFor(
@@ -187,9 +187,9 @@ class MiniPlayer extends StatelessWidget {
                             const SizedBox(width: 4),
 
                             // Indicador para abrir el reproductor
-                            const Icon(
+                            Icon(
                               Icons.keyboard_arrow_up_rounded,
-                              color: AppTheme.textSecondary,
+                              color: colors.onSurfaceVariant,
                               size: 23,
                             ),
                           ],

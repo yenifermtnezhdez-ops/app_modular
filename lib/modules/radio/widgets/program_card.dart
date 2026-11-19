@@ -11,13 +11,14 @@ class ProgramCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
-      width: 220,
-      margin: const EdgeInsets.only(right: 14, bottom: 5),
+      margin: const EdgeInsets.only(bottom: 5),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
-        border: const Border.fromBorderSide(BorderSide(color: AppTheme.border)),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.45)),
         boxShadow: AppTheme.softShadow,
       ),
       clipBehavior: Clip.antiAlias,
@@ -36,11 +37,11 @@ class ProgramCard extends StatelessWidget {
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: AppTheme.surfaceElevated,
-                      child: const Center(
+                      color: colors.surfaceContainerHighest,
+                      child: Center(
                         child: Icon(
                           Icons.music_note_rounded,
-                          color: AppTheme.primary,
+                          color: colors.primary,
                           size: 44,
                         ),
                       ),
@@ -58,8 +59,8 @@ class ProgramCard extends StatelessWidget {
                         program.name,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppTheme.textPrimary,
+                        style: TextStyle(
+                          color: colors.onSurface,
                           fontWeight: FontWeight.w700,
                           fontSize: 13,
                         ),
@@ -69,8 +70,8 @@ class ProgramCard extends StatelessWidget {
                         program.schedule,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppTheme.primary,
+                        style: TextStyle(
+                          color: colors.primary,
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                         ),
@@ -80,20 +81,20 @@ class ProgramCard extends StatelessWidget {
                         program.description,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: AppTheme.textSecondary,
+                        style: TextStyle(
+                          color: colors.onSurfaceVariant,
                           fontSize: 10,
                           height: 1.2,
                         ),
                       ),
                       const Spacer(),
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
                           Text(
                             'Ver detalles',
                             style: TextStyle(
-                              color: AppTheme.primary,
+                              color: colors.primary,
                               fontSize: 10,
                               fontWeight: FontWeight.w700,
                             ),
@@ -101,7 +102,7 @@ class ProgramCard extends StatelessWidget {
                           SizedBox(width: 5),
                           Icon(
                             Icons.arrow_forward_rounded,
-                            color: AppTheme.primary,
+                            color: colors.primary,
                             size: 13,
                           ),
                         ],

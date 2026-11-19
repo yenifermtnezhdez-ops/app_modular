@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../models/news_model.dart';
 import '../providers/auth_provider.dart';
 import '../providers/bookmark_provider.dart';
@@ -93,6 +94,7 @@ class _NewsDetailContent extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Detalle de noticia'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             onPressed: bookmarkProvider.isLoading
                 ? null

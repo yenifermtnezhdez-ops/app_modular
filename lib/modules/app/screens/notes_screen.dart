@@ -1,17 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../models/note_model.dart';
 import '../services/note_service.dart';
 
 class NotesScreen extends StatefulWidget {
-  const NotesScreen({super.key});
+  final NoteService? noteService;
+
+  const NotesScreen({super.key, this.noteService});
 
   @override
   State<NotesScreen> createState() => _NotesScreenState();
 }
 
 class _NotesScreenState extends State<NotesScreen> {
-  final NoteService _noteService = NoteService();
+  late final NoteService _noteService;
+  late final Stream<List<NoteModel>> _notesStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _noteService = widget.noteService ?? NoteService();
+    _notesStream = _noteService.watchNotes();
+  }
 
   Future<void> _openNoteDialog({NoteModel? note}) async {
     final result = await showDialog<bool>(
@@ -86,11 +97,10 @@ class _NotesScreenState extends State<NotesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Mis notas'),
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
       ),
       body: StreamBuilder<List<NoteModel>>(
-        stream: _noteService.watchNotes(),
+        stream: _notesStream,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return Center(
@@ -108,7 +118,7 @@ class _NotesScreenState extends State<NotesScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          final notes = snapshot.data ?? [];
+          final notes = List<NoteModel>.of(snapshot.data ?? const []);
 
           notes.sort((a, b) {
             if (a.pinned != b.pinned) {
@@ -119,16 +129,16 @@ class _NotesScreenState extends State<NotesScreen> {
           });
 
           if (notes.isEmpty) {
-            return const Center(
+            return Center(
               child: Padding(
-                padding: EdgeInsets.all(24),
+                padding: const EdgeInsets.all(24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
                       Icons.note_alt_outlined,
                       size: 72,
-                      color: Colors.deepPurple,
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     SizedBox(height: 12),
                     Text(
@@ -157,7 +167,7 @@ class _NotesScreenState extends State<NotesScreen> {
                 child: ListTile(
                   leading: Icon(
                     note.pinned ? Icons.push_pin : Icons.note_outlined,
-                    color: Colors.deepPurple,
+                    color: Theme.of(context).colorScheme.primary,
                   ),
                   title: Text(
                     note.title,
@@ -174,12 +184,23 @@ class _NotesScreenState extends State<NotesScreen> {
                   onTap: () {
                     _openNoteDialog(note: note);
                   },
-                  trailing: IconButton(
-                    tooltip: 'Eliminar nota',
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () {
-                      _deleteNote(note);
-                    },
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        tooltip: 'Editar nota',
+                        icon: const Icon(Icons.edit_outlined),
+                        onPressed: () => _openNoteDialog(note: note),
+                      ),
+                      IconButton(
+                        tooltip: 'Eliminar nota',
+                        icon: const Icon(
+                          Icons.delete_outline,
+                          color: Colors.red,
+                        ),
+                        onPressed: () => _deleteNote(note),
+                      ),
+                    ],
                   ),
                 ),
               );
@@ -191,8 +212,6 @@ class _NotesScreenState extends State<NotesScreen> {
         onPressed: () {
           _openNoteDialog();
         },
-        backgroundColor: Colors.deepPurple,
-        foregroundColor: Colors.white,
         child: const Icon(Icons.add),
       ),
     );
@@ -257,19 +276,11 @@ class _NoteEditorDialogState extends State<_NoteEditorDialog> {
       final note = widget.note;
 
       if (note == null) {
-        final id = await widget.noteService.createNote(
+        await widget.noteService.createNote(
           title: title,
           content: content,
+          pinned: _pinned,
         );
-
-        if (_pinned) {
-          await widget.noteService.updateNote(
-            noteId: id,
-            title: title,
-            content: content,
-            pinned: true,
-          );
-        }
       } else {
         await widget.noteService.updateNote(
           noteId: note.id,

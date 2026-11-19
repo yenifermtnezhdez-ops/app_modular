@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../models/news_model.dart';
 import '../providers/bookmark_provider.dart';
 import '../services/news_service.dart';
@@ -431,6 +432,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       appBar: AppBar(
         title: const Text('Mis favoritos'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             onPressed: !bookmarkProvider.isLoaded ? null : _refreshBookmarks,
             tooltip: 'Actualizar favoritos',

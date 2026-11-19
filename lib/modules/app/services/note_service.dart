@@ -24,13 +24,14 @@ class NoteService {
   Future<String> createNote({
     required String title,
     required String content,
+    bool pinned = false,
   }) async {
     final uid = _requireUid();
 
     final doc = await _notesCollection(uid).add({
       'title': title.trim(),
       'content': content.trim(),
-      'pinned': false,
+      'pinned': pinned,
       'createdAt': FieldValue.serverTimestamp(),
     });
 

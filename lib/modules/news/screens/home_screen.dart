@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/section_app_bar.dart';
 import '../models/news_model.dart';
 import '../models/category_model.dart';
 
@@ -8,7 +9,6 @@ import '../services/news_service.dart';
 
 import '../components/news_card.dart';
 
-import '../providers/app_provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/news_provider.dart';
 
@@ -1194,48 +1194,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-
     final connectionProvider = context.watch<NewsProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        titleSpacing: 18,
-        title: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: colors.primaryContainer,
-                borderRadius: BorderRadius.circular(13),
-              ),
-              child: Icon(
-                Icons.newspaper_rounded,
-                color: colors.primary,
-                size: 23,
-              ),
-            ),
-            const SizedBox(width: 10),
-            const Text('Noticias App'),
-          ],
-        ),
+      appBar: SectionAppBar(
+        title: 'Noticias',
+        subtitle: 'Actualidad en un solo lugar',
+        icon: Icons.newspaper_rounded,
         actions: [
-          Consumer<AppProvider>(
-            builder: (context, appProvider, child) {
-              return IconButton(
-                onPressed: appProvider.toggleTheme,
-                icon: Icon(
-                  appProvider.isDarkMode
-                      ? Icons.light_mode_rounded
-                      : Icons.dark_mode_rounded,
-                ),
-                tooltip: appProvider.isDarkMode
-                    ? 'Activar modo claro'
-                    : 'Activar modo oscuro',
-              );
-            },
-          ),
           PopupMenuButton<String>(
             tooltip: 'Más opciones',
             icon: const Icon(Icons.more_vert_rounded),

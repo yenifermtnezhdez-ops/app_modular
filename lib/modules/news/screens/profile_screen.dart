@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../providers/auth_provider.dart';
 import '../services/user_service.dart';
 import 'settings_screen.dart';
@@ -513,6 +514,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       appBar: AppBar(
         title: const Text('Mi perfil'),
         actions: [
+          const ThemeToggleButton(),
           IconButton(
             tooltip: 'Preferencias de notificaciones',
             icon: const Icon(Icons.notifications_outlined),

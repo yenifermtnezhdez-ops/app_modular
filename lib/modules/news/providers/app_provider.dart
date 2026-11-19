@@ -6,22 +6,30 @@ class AppProvider extends ChangeNotifier {
 
   ThemeMode _themeMode = ThemeMode.light;
   bool _isLoaded = false;
+  int _themeRevision = 0;
 
   ThemeMode get themeMode => _themeMode;
 
   bool get isDarkMode => _themeMode == ThemeMode.dark;
 
   bool get isLoaded => _isLoaded;
+
   Future<void> loadTheme() async {
+    final revision = _themeRevision;
+
     try {
       final prefs = await SharedPreferences.getInstance();
-
       final savedTheme = prefs.getString(_themeKey);
 
-      _themeMode = savedTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
+      if (revision == _themeRevision) {
+        _themeMode = savedTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
+      }
     } catch (e) {
       debugPrint('Error al cargar el tema: $e');
-      _themeMode = ThemeMode.light;
+
+      if (revision == _themeRevision) {
+        _themeMode = ThemeMode.light;
+      }
     } finally {
       _isLoaded = true;
       notifyListeners();
@@ -35,6 +43,7 @@ class AppProvider extends ChangeNotifier {
   Future<void> setThemeMode(ThemeMode mode) async {
     if (_themeMode == mode) return;
 
+    _themeRevision++;
     _themeMode = mode;
     notifyListeners();
 

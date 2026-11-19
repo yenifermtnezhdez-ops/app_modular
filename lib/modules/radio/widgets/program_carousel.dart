@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
 
-import '../../../app_theme.dart';
 import '../models/program_model.dart';
 import 'program_card.dart';
 
@@ -12,10 +10,12 @@ class ProgramCarousel extends StatelessWidget {
   const ProgramCarousel({super.key, required this.programs, this.onProgramTap});
 
   void _showProgramDetails(BuildContext context, ProgramModel program) {
+    final colors = Theme.of(context).colorScheme;
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: AppTheme.surface,
+      backgroundColor: colors.surface,
       elevation: 12,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
@@ -32,7 +32,7 @@ class ProgramCarousel extends StatelessWidget {
                   width: 45,
                   height: 5,
                   decoration: BoxDecoration(
-                    color: AppTheme.border,
+                    color: colors.outline,
                     borderRadius: BorderRadius.circular(10),
                   ),
                 ),
@@ -49,11 +49,11 @@ class ProgramCarousel extends StatelessWidget {
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 210,
-                      color: AppTheme.background,
-                      child: const Center(
+                      color: colors.surfaceContainerHighest,
+                      child: Center(
                         child: Icon(
                           Icons.music_note,
-                          color: AppTheme.primary,
+                          color: colors.primary,
                           size: 70,
                         ),
                       ),
@@ -66,8 +66,8 @@ class ProgramCarousel extends StatelessWidget {
 
               Text(
                 program.name,
-                style: const TextStyle(
-                  color: AppTheme.textPrimary,
+                style: TextStyle(
+                  color: colors.onSurface,
                   fontSize: 23,
                   fontWeight: FontWeight.bold,
                 ),
@@ -77,8 +77,8 @@ class ProgramCarousel extends StatelessWidget {
 
               Text(
                 program.description,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
+                style: TextStyle(
+                  color: colors.onSurfaceVariant,
                   fontSize: 15,
                   height: 1.5,
                 ),
@@ -86,15 +86,25 @@ class ProgramCarousel extends StatelessWidget {
 
               const SizedBox(height: 22),
 
-              _detailRow(Icons.schedule, 'Horario', program.schedule),
+              _detailRow(context, Icons.schedule, 'Horario', program.schedule),
 
               const SizedBox(height: 14),
 
-              _detailRow(Icons.person, 'Estación / Conductor', program.host),
+              _detailRow(
+                context,
+                Icons.person,
+                'Estación / Conductor',
+                program.host,
+              ),
 
               const SizedBox(height: 14),
 
-              _detailRow(Icons.radio, 'Identificador', program.stationId),
+              _detailRow(
+                context,
+                Icons.radio,
+                'Identificador',
+                program.stationId,
+              ),
 
               const SizedBox(height: 25),
 
@@ -105,8 +115,8 @@ class ProgramCarousel extends StatelessWidget {
                     Navigator.pop(context);
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primary,
-                    foregroundColor: Colors.white,
+                    backgroundColor: colors.primary,
+                    foregroundColor: colors.onPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
@@ -124,11 +134,18 @@ class ProgramCarousel extends StatelessWidget {
     );
   }
 
-  Widget _detailRow(IconData icon, String title, String value) {
+  Widget _detailRow(
+    BuildContext context,
+    IconData icon,
+    String title,
+    String value,
+  ) {
+    final colors = Theme.of(context).colorScheme;
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, color: AppTheme.primary, size: 22),
+        Icon(icon, color: colors.primary, size: 22),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -136,16 +153,13 @@ class ProgramCarousel extends StatelessWidget {
             children: [
               Text(
                 title,
-                style: const TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
               ),
               const SizedBox(height: 3),
               Text(
                 value,
-                style: const TextStyle(
-                  color: AppTheme.textPrimary,
+                style: TextStyle(
+                  color: colors.onSurface,
                   fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -159,39 +173,46 @@ class ProgramCarousel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     if (programs.isEmpty) {
-      return const SizedBox(
+      return SizedBox(
         height: 100,
         child: Center(
           child: Text(
             'No hay programas disponibles',
-            style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
+            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 14),
           ),
         ),
       );
     }
 
-    return CarouselSlider.builder(
-      itemCount: programs.length,
-      itemBuilder: (context, index, realIndex) {
-        final program = programs[index];
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SizedBox(
+          height: 235,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: programs.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final program = programs[index];
 
-        return ProgramCard(
-          program: program,
-          onTap: () {
-            onProgramTap?.call(program);
-            _showProgramDetails(context, program);
-          },
+              return SizedBox(
+                width: constraints.maxWidth,
+                child: ProgramCard(
+                  program: program,
+                  onTap: () {
+                    onProgramTap?.call(program);
+                    _showProgramDetails(context, program);
+                  },
+                ),
+              );
+            },
+          ),
         );
       },
-      options: CarouselOptions(
-        height: 235,
-        viewportFraction: 0.72,
-        enlargeCenterPage: false,
-        enableInfiniteScroll: programs.length > 1,
-        autoPlay: false,
-        scrollDirection: Axis.horizontal,
-      ),
     );
   }
 }

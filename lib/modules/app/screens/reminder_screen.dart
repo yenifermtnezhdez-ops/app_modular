@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../models/event_model.dart';
 import '../models/note_model.dart';
 import '../models/reminder_model.dart';
@@ -410,7 +411,10 @@ class _ReminderScreenState extends State<ReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mis recordatorios')),
+      appBar: AppBar(
+        title: const Text('Mis recordatorios'),
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
+      ),
       body: FutureBuilder<List<NoteModel>>(
         future: _notesFuture,
         builder: (context, notesSnapshot) {

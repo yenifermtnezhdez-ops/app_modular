@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/theme_toggle_button.dart';
 import '../models/event_model.dart';
 import '../services/event_service.dart';
 
@@ -101,7 +102,10 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Mis eventos')),
+      appBar: AppBar(
+        title: const Text('Mis eventos'),
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
+      ),
       body: StreamBuilder<List<EventModel>>(
         stream: _eventsStream,
         builder: (context, snapshot) {

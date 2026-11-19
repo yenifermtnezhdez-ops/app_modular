@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/section_app_bar.dart';
 import '../../../app_theme.dart';
 import '../helpers/providers/app_provider.dart';
 import '../helpers/providers/audio_provider.dart';
@@ -67,9 +68,11 @@ class _HomeScreenState extends State<HomeScreen> {
           expand: false,
           builder: (context, scrollController) {
             return Container(
-              decoration: const BoxDecoration(
-                color: AppTheme.background,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              decoration: BoxDecoration(
+                color: Theme.of(context).scaffoldBackgroundColor,
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(28),
+                ),
               ),
               clipBehavior: Clip.antiAlias,
               child: PlayerScreen(
@@ -85,48 +88,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppTheme.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBody: true,
 
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        titleSpacing: 22,
-        title: const Text(
-          'Discover',
-          style: TextStyle(
-            color: AppTheme.textPrimary,
-            fontSize: 23,
-            fontWeight: FontWeight.w700,
-            letterSpacing: -0.6,
-          ),
-        ),
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 20),
-            child: Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: AppTheme.surface,
-                shape: BoxShape.circle,
-                border: Border.all(color: AppTheme.border),
-              ),
-              child: const Icon(
-                Icons.radio_rounded,
-                color: AppTheme.primary,
-                size: 20,
-              ),
-            ),
-          ),
-        ],
+      appBar: const SectionAppBar(
+        title: 'Radio',
+        subtitle: 'Estaciones para cada momento',
+        icon: Icons.radio_rounded,
       ),
 
       body: Consumer<AppProvider>(
         builder: (context, appProvider, child) {
           if (appProvider.isLoading) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppTheme.primary),
+            return Center(
+              child: CircularProgressIndicator(color: colors.primary),
             );
           }
 
@@ -168,22 +147,140 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          'Encuentra tu siguiente sonido favorito',
-                          style: TextStyle(
-                            color: AppTheme.textSecondary,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: isDark
+                                  ? const [Color(0xFF34244F), Color(0xFF211A30)]
+                                  : [colors.primary, colors.secondary],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(26),
+                            boxShadow: [
+                              BoxShadow(
+                                color: colors.primary.withValues(
+                                  alpha: isDark ? 0.18 : 0.2,
+                                ),
+                                blurRadius: 22,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                right: -34,
+                                top: -55,
+                                child: Container(
+                                  width: 145,
+                                  height: 145,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.08),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 10,
+                                            vertical: 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.16,
+                                            ),
+                                            borderRadius: BorderRadius.circular(
+                                              20,
+                                            ),
+                                          ),
+                                          child: const Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.graphic_eq_rounded,
+                                                color: Colors.white,
+                                                size: 14,
+                                              ),
+                                              SizedBox(width: 6),
+                                              Text(
+                                                'RADIO EN VIVO',
+                                                style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.w800,
+                                                  letterSpacing: 1,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        const SizedBox(height: 15),
+                                        const Text(
+                                          'Tu música,\ntu momento.',
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 23,
+                                            height: 1.12,
+                                            fontWeight: FontWeight.w800,
+                                            letterSpacing: -0.5,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 7),
+                                        Text(
+                                          'Descubre sonidos que van contigo',
+                                          style: TextStyle(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.82,
+                                            ),
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    width: 60,
+                                    height: 60,
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.14,
+                                      ),
+                                      shape: BoxShape.circle,
+                                      border: Border.all(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                      ),
+                                    ),
+                                    child: const Icon(
+                                      Icons.album_rounded,
+                                      color: Colors.white,
+                                      size: 31,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
 
-                        const SizedBox(height: 17),
+                        const SizedBox(height: 20),
 
                         TextField(
                           controller: _searchController,
                           onChanged: (_) => setState(() {}),
-                          style: const TextStyle(
-                            color: AppTheme.textPrimary,
+                          style: TextStyle(
+                            color: colors.onSurface,
                             fontSize: 13,
                           ),
                           decoration: InputDecoration(
@@ -200,7 +297,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     icon: const Icon(Icons.close_rounded),
                                   ),
                             filled: true,
-                            fillColor: AppTheme.surface,
+                            fillColor: colors.surface,
                             contentPadding: const EdgeInsets.symmetric(
                               vertical: 14,
                             ),
@@ -210,15 +307,15 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
-                              borderSide: const BorderSide(
-                                color: AppTheme.border,
+                              borderSide: BorderSide(
+                                color: colors.outline.withValues(alpha: 0.45),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(18),
-                              borderSide: const BorderSide(
-                                color: AppTheme.primary,
-                                width: 1.2,
+                              borderSide: BorderSide(
+                                color: colors.primary,
+                                width: 1.3,
                               ),
                             ),
                           ),
@@ -226,93 +323,73 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         const SizedBox(height: 14),
 
-                        SizedBox(
-                          height: 37,
-                          child: ListView.separated(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: _categories.length,
-                            separatorBuilder: (_, _) =>
-                                const SizedBox(width: 8),
-                            itemBuilder: (context, index) {
-                              final category = _categories[index];
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: _categories.map((category) {
+                            final isSelected = category == _selectedCategory;
 
-                              final isSelected = category == _selectedCategory;
-
-                              return ChoiceChip(
-                                label: Text(category),
-                                selected: isSelected,
-                                onSelected: (_) {
-                                  setState(() {
-                                    _selectedCategory = category;
-                                  });
-                                },
-                                selectedColor: AppTheme.primary,
-                                backgroundColor: AppTheme.surface,
-                                labelStyle: TextStyle(
-                                  color: isSelected
-                                      ? Colors.white
-                                      : AppTheme.textSecondary,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                                side: BorderSide(
-                                  color: isSelected
-                                      ? AppTheme.primary
-                                      : AppTheme.border,
-                                ),
-                                showCheckmark: false,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                              );
-                            },
-                          ),
+                            return ChoiceChip(
+                              label: Text(category),
+                              selected: isSelected,
+                              onSelected: (_) {
+                                setState(() {
+                                  _selectedCategory = category;
+                                });
+                              },
+                              selectedColor: colors.primary,
+                              backgroundColor: colors.surface,
+                              labelStyle: TextStyle(
+                                color: isSelected
+                                    ? colors.onPrimary
+                                    : colors.onSurfaceVariant,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              side: BorderSide(
+                                color: isSelected
+                                    ? colors.primary
+                                    : colors.outline.withValues(alpha: 0.5),
+                              ),
+                              showCheckmark: false,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(22),
+                              ),
+                            );
+                          }).toList(),
                         ),
 
                         const SizedBox(height: 25),
 
-                        _sectionTitle('En tendencia'),
+                        _sectionHeading('En tendencia'),
 
                         const SizedBox(height: 12),
 
                         if (filteredStations.isEmpty)
                           _emptyStations()
                         else
-                          SizedBox(
-                            height: 142,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: filteredStations.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(width: 12),
-                              itemBuilder: (context, index) {
-                                final station = filteredStations[index];
-
-                                return _TrendingStationCard(
-                                  station: station,
-                                  isActive:
-                                      audio.currentStation?.id == station.id,
-                                  isPlaying:
-                                      audio.currentStation?.id == station.id &&
-                                      audio.isPlaying,
-                                  isFavorite: favorites.isFavorite(station.id),
-                                  isFavoriteUpdating: favorites.isUpdating(
-                                    station.id,
-                                  ),
-                                  onFavoriteTap: () {
-                                    favorites.toggleFavorite(station.id);
-                                  },
-                                  onTap: () {
-                                    _selectStation(station);
-                                  },
-                                );
+                          _stationCarousel(
+                            filteredStations,
+                            (station) => _TrendingStationCard(
+                              station: station,
+                              isActive: audio.currentStation?.id == station.id,
+                              isPlaying:
+                                  audio.currentStation?.id == station.id &&
+                                  audio.isPlaying,
+                              isFavorite: favorites.isFavorite(station.id),
+                              isFavoriteUpdating: favorites.isUpdating(
+                                station.id,
+                              ),
+                              onFavoriteTap: () {
+                                favorites.toggleFavorite(station.id);
                               },
+                              onTap: () => _selectStation(station),
                             ),
                           ),
 
                         const SizedBox(height: 25),
 
-                        _sectionTitle('Estaciones populares'),
+                        _sectionHeading('Estaciones populares'),
 
                         const SizedBox(height: 13),
 
@@ -323,6 +400,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             height: 112,
                             child: ListView.separated(
                               scrollDirection: Axis.horizontal,
+                              padding: const EdgeInsets.only(right: 8),
                               itemCount: filteredStations.length,
                               separatorBuilder: (_, _) =>
                                   const SizedBox(width: 17),
@@ -348,12 +426,22 @@ class _HomeScreenState extends State<HomeScreen> {
                           children: [
                             _sectionTitle('Mis favoritas'),
                             if (favoriteStations.isNotEmpty)
-                              Text(
-                                '${favoriteStations.length} estaciones',
-                                style: const TextStyle(
-                                  color: AppTheme.textSecondary,
-                                  fontSize: 10,
-                                ),
+                              Row(
+                                children: [
+                                  Text(
+                                    '${favoriteStations.length} estaciones',
+                                    style: TextStyle(
+                                      color: colors.onSurfaceVariant,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Icon(
+                                    Icons.swipe_rounded,
+                                    color: colors.primary,
+                                    size: 15,
+                                  ),
+                                ],
                               ),
                           ],
                         ),
@@ -382,35 +470,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             'Pulsa el corazón de una estación para guardarla.',
                           )
                         else
-                          SizedBox(
-                            height: 142,
-                            child: ListView.separated(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: favoriteStations.length,
-                              separatorBuilder: (_, _) =>
-                                  const SizedBox(width: 12),
-                              itemBuilder: (context, index) {
-                                final station = favoriteStations[index];
-
-                                return _TrendingStationCard(
-                                  station: station,
-                                  isActive:
-                                      audio.currentStation?.id == station.id,
-                                  isPlaying:
-                                      audio.currentStation?.id == station.id &&
-                                      audio.isPlaying,
-                                  isFavorite: true,
-                                  isFavoriteUpdating: favorites.isUpdating(
-                                    station.id,
-                                  ),
-                                  onFavoriteTap: () {
-                                    favorites.toggleFavorite(station.id);
-                                  },
-                                  onTap: () {
-                                    _selectStation(station);
-                                  },
-                                );
+                          _stationCarousel(
+                            favoriteStations,
+                            (station) => _TrendingStationCard(
+                              station: station,
+                              isActive: audio.currentStation?.id == station.id,
+                              isPlaying:
+                                  audio.currentStation?.id == station.id &&
+                                  audio.isPlaying,
+                              isFavorite: true,
+                              isFavoriteUpdating: favorites.isUpdating(
+                                station.id,
+                              ),
+                              onFavoriteTap: () {
+                                favorites.toggleFavorite(station.id);
                               },
+                              onTap: () => _selectStation(station),
                             ),
                           ),
 
@@ -429,7 +504,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                         const SizedBox(height: 25),
 
-                        _sectionTitle('Programas destacados'),
+                        _sectionHeading('Programas destacados'),
 
                         const SizedBox(height: 5),
 
@@ -437,8 +512,8 @@ class _HomeScreenState extends State<HomeScreen> {
                           selectedStation == null
                               ? 'Historias, música y sesiones para acompañarte'
                               : 'Selección de ${selectedStation.name}',
-                          style: const TextStyle(
-                            color: AppTheme.textSecondary,
+                          style: TextStyle(
+                            color: colors.onSurfaceVariant,
                             fontSize: 11,
                             height: 1.4,
                           ),
@@ -475,50 +550,100 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
-        color: AppTheme.textPrimary,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.onSurface,
         fontSize: 17,
-        fontWeight: FontWeight.w700,
-        letterSpacing: -0.3,
+        fontWeight: FontWeight.w800,
+        letterSpacing: -0.4,
+      ),
+    );
+  }
+
+  Widget _sectionHeading(String title) {
+    final colors = Theme.of(context).colorScheme;
+
+    return Row(
+      children: [
+        Expanded(child: _sectionTitle(title)),
+        Icon(Icons.swipe_rounded, color: colors.primary, size: 15),
+        const SizedBox(width: 5),
+        Text(
+          'DESLIZA',
+          style: TextStyle(
+            color: colors.onSurfaceVariant,
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.6,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _stationCarousel(
+    List<StationModel> stations,
+    Widget Function(StationModel station) itemBuilder,
+  ) {
+    return SizedBox(
+      height: 184,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return ListView.separated(
+            scrollDirection: Axis.horizontal,
+            physics: const BouncingScrollPhysics(),
+            itemCount: stations.length,
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              return SizedBox(
+                width: constraints.maxWidth,
+                child: itemBuilder(stations[index]),
+              );
+            },
+          );
+        },
       ),
     );
   }
 
   Widget _emptyStations() {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(22),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.border),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(22),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.45)),
       ),
-      child: const Text(
+      child: Text(
         'No encontramos estaciones. Prueba con otro nombre o categoría.',
         textAlign: TextAlign.center,
-        style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+        style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
       ),
     );
   }
 
   Widget _favoriteMessage(IconData icon, String message) {
+    final colors = Theme.of(context).colorScheme;
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.border),
+        color: colors.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.45)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppTheme.primary, size: 25),
+          Icon(icon, color: colors.primary, size: 25),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               message,
-              style: const TextStyle(
-                color: AppTheme.textSecondary,
+              style: TextStyle(
+                color: colors.onSurfaceVariant,
                 fontSize: 11,
                 height: 1.5,
               ),
@@ -551,160 +676,164 @@ class _TrendingStationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 258,
-      child: Material(
-        color: AppTheme.surface,
-        borderRadius: BorderRadius.circular(19),
-        clipBehavior: Clip.antiAlias,
-        elevation: 3,
-        shadowColor: const Color(0x1834244F),
-        child: InkWell(
-          onTap: onTap,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.network(
-                station.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) {
-                  return Container(
-                    color: AppTheme.surfaceElevated,
-                    child: const Icon(
-                      Icons.radio_rounded,
-                      color: AppTheme.primary,
-                      size: 42,
-                    ),
-                  );
-                },
-              ),
+    final colors = Theme.of(context).colorScheme;
 
-              const DecoratedBox(
+    return Material(
+      color: colors.surface,
+      borderRadius: BorderRadius.circular(24),
+      clipBehavior: Clip.antiAlias,
+      elevation: 3,
+      shadowColor: const Color(0x1834244F),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(24),
+        onTap: onTap,
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.network(
+              station.imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) {
+                return Container(
+                  color: colors.surfaceContainerHighest,
+                  child: Icon(
+                    Icons.radio_rounded,
+                    color: colors.primary,
+                    size: 42,
+                  ),
+                );
+              },
+            ),
+
+            const DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Colors.transparent, Color(0xE6000000)],
+                ),
+              ),
+            ),
+
+            Positioned(
+              left: 16,
+              top: 14,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 11,
+                  vertical: 7,
+                ),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Color(0xD9000000)],
+                  color: Colors.white.withValues(alpha: 0.94),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  isActive
+                      ? (isPlaying ? '● EN VIVO' : 'EN PAUSA')
+                      : 'DESTACADA',
+                  style: const TextStyle(
+                    color: Color(0xFF30283B),
+                    fontSize: 9,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.7,
                   ),
                 ),
               ),
+            ),
 
-              Positioned(
-                left: 13,
-                top: 12,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 9,
-                    vertical: 5,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.92),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    isActive
-                        ? (isPlaying ? '● EN VIVO' : 'EN PAUSA')
-                        : 'DESTACADA',
-                    style: const TextStyle(
-                      color: Color(0xFF30283B),
-                      fontSize: 8,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              ),
-
-              Positioned(
-                top: 10,
-                right: 10,
-                child: Material(
-                  color: Colors.black.withValues(alpha: 0.48),
-                  shape: const CircleBorder(),
-                  child: InkWell(
-                    onTap: isFavoriteUpdating ? null : onFavoriteTap,
-                    customBorder: const CircleBorder(),
-                    child: SizedBox(
-                      width: 36,
-                      height: 36,
-                      child: Center(
-                        child: isFavoriteUpdating
-                            ? const SizedBox(
-                                width: 16,
-                                height: 16,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Colors.white,
-                                ),
-                              )
-                            : Icon(
-                                isFavorite
-                                    ? Icons.favorite_rounded
-                                    : Icons.favorite_border_rounded,
-                                color: isFavorite
-                                    ? Colors.pinkAccent
-                                    : Colors.white,
-                                size: 20,
+            Positioned(
+              top: 12,
+              right: 12,
+              child: Material(
+                color: Colors.black.withValues(alpha: 0.48),
+                shape: const CircleBorder(),
+                child: InkWell(
+                  onTap: isFavoriteUpdating ? null : onFavoriteTap,
+                  customBorder: const CircleBorder(),
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: Center(
+                      child: isFavoriteUpdating
+                          ? const SizedBox(
+                              width: 16,
+                              height: 16,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
                               ),
-                      ),
+                            )
+                          : Icon(
+                              isFavorite
+                                  ? Icons.favorite_rounded
+                                  : Icons.favorite_border_rounded,
+                              color: isFavorite
+                                  ? Colors.pinkAccent
+                                  : Colors.white,
+                              size: 21,
+                            ),
                     ),
                   ),
                 ),
               ),
+            ),
 
-              Positioned(
-                left: 13,
-                right: 52,
-                bottom: 12,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      station.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                      ),
+            Positioned(
+              left: 16,
+              right: 68,
+              bottom: 17,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    station.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w800,
                     ),
-                    const SizedBox(height: 3),
-                    Text(
-                      station.slogan,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        color: Colors.white70,
-                        fontSize: 9,
-                      ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    station.slogan,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white70, fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+
+            Positioned(
+              right: 15,
+              bottom: 15,
+              child: Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: colors.primary,
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.2),
+                      blurRadius: 10,
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
-              ),
-
-              Positioned(
-                right: 11,
-                bottom: 12,
-                child: Container(
-                  width: 34,
-                  height: 34,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    isActive && isPlaying
-                        ? Icons.equalizer_rounded
-                        : Icons.play_arrow_rounded,
-                    color: AppTheme.primary,
-                    size: 21,
-                  ),
+                child: Icon(
+                  isActive && isPlaying
+                      ? Icons.equalizer_rounded
+                      : Icons.play_arrow_rounded,
+                  color: colors.onPrimary,
+                  size: 24,
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -724,6 +853,8 @@ class _PopularStationAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+
     return SizedBox(
       width: 72,
       child: InkWell(
@@ -741,7 +872,9 @@ class _PopularStationAvatar extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isActive ? AppTheme.primary : AppTheme.border,
+                      color: isActive
+                          ? colors.primary
+                          : colors.outline.withValues(alpha: 0.55),
                       width: isActive ? 2 : 1,
                     ),
                     boxShadow: AppTheme.softShadow,
@@ -752,7 +885,7 @@ class _PopularStationAvatar extends StatelessWidget {
                       fit: BoxFit.cover,
                       errorBuilder: (_, _, _) {
                         return Container(
-                          color: AppTheme.surfaceElevated,
+                          color: colors.surfaceContainerHighest,
                           child: const Icon(
                             Icons.radio_rounded,
                             color: AppTheme.primary,
@@ -787,8 +920,8 @@ class _PopularStationAvatar extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                color: AppTheme.textPrimary,
+              style: TextStyle(
+                color: colors.onSurface,
                 fontSize: 9,
                 fontWeight: FontWeight.w600,
               ),
