@@ -21,7 +21,6 @@ class UserService {
             ? profile.displayName
             : (user.displayName ?? ''),
         displayImage: profile.displayImage,
-        favoriteStations: profile.favoriteStations,
       );
 
       await docRef.set(updatedProfile.toMap(), SetOptions(merge: true));
@@ -41,14 +40,6 @@ class UserService {
     return profile;
   }
 
-  Future<UserModel?> getProfile(String uid) async {
-    final snapshot = await _db.collection('users').doc(uid).get();
-
-    if (!snapshot.exists) return null;
-
-    return UserModel.fromMap(snapshot.data()!);
-  }
-
   Future<void> updateProfile({
     required String uid,
     required String displayName,
@@ -58,37 +49,6 @@ class UserService {
       'uid': uid,
       'displayName': displayName.trim(),
       'displayImage': displayImage.trim(),
-    }, SetOptions(merge: true));
-  }
-
-  Future<List<String>> getFavoriteStationIds(String uid) async {
-    final snapshot = await _db.collection('users').doc(uid).get();
-
-    if (!snapshot.exists) return [];
-
-    final data = snapshot.data()!;
-    final favorites = data['favoriteStations'];
-
-    if (favorites is! List) return [];
-
-    return favorites.map((item) => item.toString()).toList();
-  }
-
-  Future<void> addFavoriteStation({
-    required String uid,
-    required String stationId,
-  }) async {
-    await _db.collection('users').doc(uid).set({
-      'favoriteStations': FieldValue.arrayUnion([stationId]),
-    }, SetOptions(merge: true));
-  }
-
-  Future<void> removeFavoriteStation({
-    required String uid,
-    required String stationId,
-  }) async {
-    await _db.collection('users').doc(uid).set({
-      'favoriteStations': FieldValue.arrayRemove([stationId]),
     }, SetOptions(merge: true));
   }
 }

@@ -22,7 +22,6 @@ class AudioProvider extends ChangeNotifier {
   Future<void> _operationQueue = Future<void>.value();
 
   StreamSubscription<PlayerState>? _playerStateSubscription;
-  StreamSubscription<PlaybackEvent>? _playbackEventSubscription;
 
   AudioProvider({required radio.RadioAudioHandler audioHandler})
     : _audioService = audioHandler {
@@ -48,20 +47,6 @@ class AudioProvider extends ChangeNotifier {
         notifyListeners();
       },
     );
-
-    _playbackEventSubscription = _audioService.player.playbackEventStream
-        .listen(
-          (_) {},
-          onError: (Object error) {
-            if (_disposed) return;
-
-            _errorMessage = 'No se pudo reproducir el audio: $error';
-            _isLoading = false;
-            _isPlaying = false;
-
-            notifyListeners();
-          },
-        );
   }
 
   StationModel? get currentStation => _currentStation;
@@ -174,8 +159,16 @@ class AudioProvider extends ChangeNotifier {
   void dispose() {
     _disposed = true;
 
-    _playerStateSubscription?.cancel();
-    _playbackEventSubscription?.cancel();
+    unawaited(_playerStateSubscription?.cancel());
+    unawaited(
+      _audioService.disposePlayer().catchError((
+        Object error,
+        StackTrace stackTrace,
+      ) {
+        debugPrint('No se pudo liberar el reproductor de audio: $error');
+        debugPrintStack(stackTrace: stackTrace);
+      }),
+    );
 
     super.dispose();
   }

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../../app/animated_page_route.dart';
 import '../../../app_theme.dart';
 import '../constants/radio_constants.dart';
 import 'home_screen.dart';
@@ -19,25 +21,32 @@ class OnboardingScreen extends StatelessWidget {
               const Spacer(),
 
               Container(
-                height: 180,
-                width: 180,
-                decoration: BoxDecoration(
-                  color: AppTheme.surface,
-                  shape: BoxShape.circle,
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.25),
-                      blurRadius: 35,
-                      spreadRadius: 5,
+                    height: 180,
+                    width: 180,
+                    decoration: BoxDecoration(
+                      color: AppTheme.surface,
+                      shape: BoxShape.circle,
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.25),
+                          blurRadius: 35,
+                          spreadRadius: 5,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.radio_rounded,
-                  size: 100,
-                  color: AppTheme.primary,
-                ),
-              ),
+                    child: const Icon(
+                      Icons.radio_rounded,
+                      size: 100,
+                      color: AppTheme.primary,
+                    ),
+                  )
+                  .animate()
+                  .fadeIn(duration: 420.ms)
+                  .scale(
+                    begin: const Offset(0.86, 0.86),
+                    duration: 520.ms,
+                    curve: Curves.easeOutBack,
+                  ),
 
               const SizedBox(height: 30),
 
@@ -79,52 +88,66 @@ class OnboardingScreen extends StatelessWidget {
 
               const SizedBox(height: 28),
               _buildFeature(
-                Icons.library_music_rounded,
-                'Cuatro estaciones',
-                'Explora diferentes géneros musicales.',
-              ),
+                    Icons.library_music_rounded,
+                    'Cuatro estaciones',
+                    'Explora diferentes géneros musicales.',
+                  )
+                  .animate(delay: 100.ms)
+                  .fadeIn(duration: 320.ms)
+                  .slideX(begin: -0.05, duration: 320.ms),
 
               const SizedBox(height: 16),
 
               _buildFeature(
-                Icons.play_circle_fill_rounded,
-                'Reproducción de audio',
-                'Escucha, pausa y cambia de estación.',
-              ),
+                    Icons.play_circle_fill_rounded,
+                    'Reproducción de audio',
+                    'Escucha, pausa y cambia de estación.',
+                  )
+                  .animate(delay: 180.ms)
+                  .fadeIn(duration: 320.ms)
+                  .slideX(begin: -0.05, duration: 320.ms),
 
               const SizedBox(height: 16),
 
               _buildFeature(
-                Icons.notifications_active_rounded,
-                'Controles multimedia',
-                'Controla la reproducción desde Android.',
-              ),
+                    Icons.notifications_active_rounded,
+                    'Controles multimedia',
+                    'Controla la reproducción desde Android.',
+                  )
+                  .animate(delay: 260.ms)
+                  .fadeIn(duration: 320.ms)
+                  .slideX(begin: -0.05, duration: 320.ms),
 
               const Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: 55,
-                child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: const Text(
-                    'Comenzar a escuchar',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                ),
+                child:
+                    ElevatedButton(
+                          onPressed: () {
+                            Navigator.pushReplacement(
+                              context,
+                              animatedPageRoute(const HomeScreen()),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.primary,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                          ),
+                          child: const Text(
+                            'Comenzar a escuchar',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        )
+                        .animate(delay: 320.ms)
+                        .fadeIn(duration: 360.ms)
+                        .slideY(begin: 0.08, duration: 360.ms),
               ),
 
               const SizedBox(height: 12),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
+import '../../../app/animated_page_route.dart';
 import '../../../app/section_app_bar.dart';
 import 'detail_screen.dart';
 import 'notes_screen.dart';
@@ -42,7 +44,7 @@ class _HomeScreenState extends State<HomeScreen> {
         destination = DetailScreen(section: section);
     }
 
-    Navigator.push(context, MaterialPageRoute(builder: (_) => destination));
+    Navigator.push(context, animatedPageRoute(destination));
   }
 
   void _greet() {
@@ -117,180 +119,199 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 25),
 
                   Container(
-                    padding: const EdgeInsets.all(22),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: isDark
-                            ? const [Color(0xFF493273), Color(0xFF29213B)]
-                            : const [Color(0xFF8964D8), Color(0xFF6844B7)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(28),
-                      boxShadow: [
-                        BoxShadow(
-                          color: _purple.withValues(
-                            alpha: isDark ? 0.12 : 0.25,
+                        padding: const EdgeInsets.all(22),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: isDark
+                                ? const [Color(0xFF493273), Color(0xFF29213B)]
+                                : const [Color(0xFF8964D8), Color(0xFF6844B7)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
                           ),
-                          blurRadius: 24,
-                          offset: const Offset(0, 12),
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          right: -32,
-                          top: -45,
-                          child: Container(
-                            width: 145,
-                            height: 145,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.07),
+                          borderRadius: BorderRadius.circular(28),
+                          boxShadow: [
+                            BoxShadow(
+                              color: _purple.withValues(
+                                alpha: isDark ? 0.12 : 0.25,
+                              ),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
                             ),
-                          ),
+                          ],
                         ),
-                        Positioned(
-                          right: 28,
-                          bottom: -65,
-                          child: Container(
-                            width: 115,
-                            height: 115,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.white.withValues(alpha: 0.06),
-                            ),
-                          ),
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Stack(
                           children: [
-                            Row(
+                            Positioned(
+                              right: -32,
+                              top: -45,
+                              child: Container(
+                                width: 145,
+                                height: 145,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withValues(alpha: 0.07),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              right: 28,
+                              bottom: -65,
+                              child: Container(
+                                width: 115,
+                                height: 115,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white.withValues(alpha: 0.06),
+                                ),
+                              ),
+                            ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 11,
-                                    vertical: 7,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.15),
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                  child: const Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(
-                                        Icons.waving_hand_rounded,
-                                        color: Colors.white,
-                                        size: 14,
+                                Row(
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 11,
+                                        vertical: 7,
                                       ),
-                                      SizedBox(width: 6),
-                                      Text(
-                                        'BIENVENIDO',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 10,
-                                          fontWeight: FontWeight.w800,
-                                          letterSpacing: 1.2,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.15,
+                                        ),
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      child: const Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            Icons.waving_hand_rounded,
+                                            color: Colors.white,
+                                            size: 14,
+                                          ),
+                                          SizedBox(width: 6),
+                                          Text(
+                                            'BIENVENIDO',
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w800,
+                                              letterSpacing: 1.2,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 19),
+                                const Text(
+                                  '¡Hola! ¿Cómo\nte llamas?',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 25,
+                                    fontWeight: FontWeight.w900,
+                                    height: 1.15,
+                                  ),
+                                ),
+                                const SizedBox(height: 9),
+                                Text(
+                                  'Personaliza tu experiencia.',
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.78),
+                                    fontSize: 13,
+                                  ),
+                                ),
+                                const SizedBox(height: 20),
+                                TextField(
+                                  controller: _nameController,
+                                  textInputAction: TextInputAction.done,
+                                  onSubmitted: (_) => _greet(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  decoration: InputDecoration(
+                                    hintText: 'Escribe tu nombre',
+                                    hintStyle: TextStyle(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.65,
+                                      ),
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.person_outline_rounded,
+                                      color: Colors.white,
+                                    ),
+                                    filled: true,
+                                    fillColor: Colors.white.withValues(
+                                      alpha: 0.13,
+                                    ),
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      vertical: 16,
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                      borderSide: BorderSide(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
                                         ),
                                       ),
-                                    ],
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                      borderSide: BorderSide(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.2,
+                                        ),
+                                      ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                      borderSide: const BorderSide(
+                                        color: Colors.white,
+                                        width: 1.4,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 13),
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 48,
+                                  child: ElevatedButton.icon(
+                                    onPressed: _greet,
+                                    icon: const Icon(
+                                      Icons.arrow_forward_rounded,
+                                      size: 19,
+                                    ),
+                                    label: const Text(
+                                      'Comenzar',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w800,
+                                      ),
+                                    ),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: _purple,
+                                      elevation: 0,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(15),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
-                            const SizedBox(height: 19),
-                            const Text(
-                              '¡Hola! ¿Cómo\nte llamas?',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 25,
-                                fontWeight: FontWeight.w900,
-                                height: 1.15,
-                              ),
-                            ),
-                            const SizedBox(height: 9),
-                            Text(
-                              'Personaliza tu experiencia.',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.78),
-                                fontSize: 13,
-                              ),
-                            ),
-                            const SizedBox(height: 20),
-                            TextField(
-                              controller: _nameController,
-                              textInputAction: TextInputAction.done,
-                              onSubmitted: (_) => _greet(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.w600,
-                              ),
-                              decoration: InputDecoration(
-                                hintText: 'Escribe tu nombre',
-                                hintStyle: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.65),
-                                ),
-                                prefixIcon: const Icon(
-                                  Icons.person_outline_rounded,
-                                  color: Colors.white,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white.withValues(alpha: 0.13),
-                                contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: BorderSide(
-                                    color: Colors.white.withValues(alpha: 0.2),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                  borderSide: const BorderSide(
-                                    color: Colors.white,
-                                    width: 1.4,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 13),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 48,
-                              child: ElevatedButton.icon(
-                                onPressed: _greet,
-                                icon: const Icon(
-                                  Icons.arrow_forward_rounded,
-                                  size: 19,
-                                ),
-                                label: const Text(
-                                  'Comenzar',
-                                  style: TextStyle(fontWeight: FontWeight.w800),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: _purple,
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(15),
-                                  ),
-                                ),
-                              ),
-                            ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
+                      )
+                      .animate()
+                      .fadeIn(duration: 400.ms)
+                      .slideY(
+                        begin: 0.06,
+                        duration: 400.ms,
+                        curve: Curves.easeOutCubic,
+                      ),
 
                   const SizedBox(height: 34),
 
@@ -332,25 +353,41 @@ class _HomeScreenState extends State<HomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: _ModuleCard(
-                          title: 'Notas',
-                          subtitle: 'Tus ideas y apuntes',
-                          icon: Icons.sticky_note_2_rounded,
-                          accent: const Color(0xFF8964D8),
-                          background: _lavender,
-                          onTap: () => _openSection('Notas'),
-                        ),
+                        child:
+                            _ModuleCard(
+                                  title: 'Notas',
+                                  subtitle: 'Tus ideas y apuntes',
+                                  icon: Icons.sticky_note_2_rounded,
+                                  accent: const Color(0xFF8964D8),
+                                  background: _lavender,
+                                  onTap: () => _openSection('Notas'),
+                                )
+                                .animate(delay: 100.ms)
+                                .fadeIn(duration: 340.ms)
+                                .slideY(
+                                  begin: 0.08,
+                                  duration: 340.ms,
+                                  curve: Curves.easeOutCubic,
+                                ),
                       ),
                       const SizedBox(width: 13),
                       Expanded(
-                        child: _ModuleCard(
-                          title: 'Eventos',
-                          subtitle: 'Fechas importantes',
-                          icon: Icons.calendar_month_rounded,
-                          accent: const Color(0xFF598FAD),
-                          background: const Color(0xFFDCEEF5),
-                          onTap: () => _openSection('Eventos'),
-                        ),
+                        child:
+                            _ModuleCard(
+                                  title: 'Eventos',
+                                  subtitle: 'Fechas importantes',
+                                  icon: Icons.calendar_month_rounded,
+                                  accent: const Color(0xFF598FAD),
+                                  background: const Color(0xFFDCEEF5),
+                                  onTap: () => _openSection('Eventos'),
+                                )
+                                .animate(delay: 180.ms)
+                                .fadeIn(duration: 340.ms)
+                                .slideY(
+                                  begin: 0.08,
+                                  duration: 340.ms,
+                                  curve: Curves.easeOutCubic,
+                                ),
                       ),
                     ],
                   ),
@@ -358,13 +395,20 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(height: 13),
 
                   _ReminderCard(
-                    onTap: () => _openSection('Recordatorios'),
-                    isDark: isDark,
-                    primary: colors.primary,
-                    surface: colors.surface,
-                    textColor: colors.onSurface,
-                    secondaryText: colors.onSurfaceVariant,
-                  ),
+                        onTap: () => _openSection('Recordatorios'),
+                        isDark: isDark,
+                        primary: colors.primary,
+                        surface: colors.surface,
+                        textColor: colors.onSurface,
+                        secondaryText: colors.onSurfaceVariant,
+                      )
+                      .animate(delay: 240.ms)
+                      .fadeIn(duration: 340.ms)
+                      .slideY(
+                        begin: 0.08,
+                        duration: 340.ms,
+                        curve: Curves.easeOutCubic,
+                      ),
 
                   const SizedBox(height: 28),
 

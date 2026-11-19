@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/animated_page_route.dart';
+import '../../../app/loading_state.dart';
 import '../../../app/theme_toggle_button.dart';
 import '../models/user_model.dart';
 import '../providers/auth_provider.dart' as app_auth;
@@ -141,7 +143,6 @@ class _UserScreenState extends State<UserScreen> {
           email: _profile?.email ?? user.email ?? '',
           displayName: newName,
           displayImage: _profile?.displayImage ?? '',
-          favoriteStations: _profile?.favoriteStations ?? const [],
         );
         _errorMessage = null;
       });
@@ -191,10 +192,7 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   void _openHome() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const HomeScreen()),
-    );
+    Navigator.push(context, animatedPageRoute(const HomeScreen()));
   }
 
   @override
@@ -204,7 +202,10 @@ class _UserScreenState extends State<UserScreen> {
     if (_isLoading) {
       return Scaffold(
         appBar: AppBar(actions: const [ThemeToggleButton()]),
-        body: const Center(child: CircularProgressIndicator()),
+        body: const AppLoadingState(
+          message: 'Cargando tu perfil...',
+          icon: Icons.person_outline_rounded,
+        ),
       );
     }
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/animated_page_route.dart';
+import '../../../app/loading_state.dart';
 import '../../../app/section_app_bar.dart';
 import '../models/news_model.dart';
 import '../models/category_model.dart';
@@ -626,17 +628,11 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _openProfile() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const ProfileScreen()),
-    );
+    Navigator.push(context, animatedPageRoute(const ProfileScreen()));
   }
 
   void _openBookmarks() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (_) => const BookmarksScreen()),
-    );
+    Navigator.push(context, animatedPageRoute(const BookmarksScreen()));
   }
 
   Widget _buildPageIntro() {
@@ -912,24 +908,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildLoading() {
-    final colors = Theme.of(context).colorScheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(color: colors.primary),
-          const SizedBox(height: 16),
-          Text(
-            'Cargando noticias...',
-            style: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontSize: 13,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
+    return const AppLoadingState(
+      message: 'Cargando noticias...',
+      icon: Icons.newspaper_rounded,
     );
   }
 

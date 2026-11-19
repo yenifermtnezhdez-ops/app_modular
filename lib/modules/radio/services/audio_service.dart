@@ -17,6 +17,7 @@ class RadioAudioHandler extends audio.BaseAudioHandler
 
   bool _resumeAfterInterruption = false;
   bool _pauseInterruptionActive = false;
+  bool _isPlayerDisposed = false;
 
   double? _volumeBeforeDuck;
 
@@ -41,6 +42,7 @@ class RadioAudioHandler extends audio.BaseAudioHandler
       final session = await AudioSession.instance;
 
       await session.configure(const AudioSessionConfiguration.music());
+      if (_isPlayerDisposed) return;
 
       _interruptionSubscription = session.interruptionEventStream.listen(
         (event) {
@@ -257,6 +259,9 @@ class RadioAudioHandler extends audio.BaseAudioHandler
 
   // Liberar recursos cuando se cierre el servicio.
   Future<void> disposePlayer() async {
+    if (_isPlayerDisposed) return;
+    _isPlayerDisposed = true;
+
     await _interruptionSubscription?.cancel();
     await _playbackSubscription?.cancel();
     await _player.dispose();

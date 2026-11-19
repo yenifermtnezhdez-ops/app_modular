@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/loading_state.dart';
 import '../../../app/theme_toggle_button.dart';
 import '../models/event_model.dart';
 import '../models/note_model.dart';
@@ -425,7 +426,10 @@ class _ReminderScreenState extends State<ReminderScreen> {
           }
 
           if (!notesSnapshot.hasData) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingState(
+              message: 'Cargando notas relacionadas...',
+              icon: Icons.note_alt_outlined,
+            );
           }
 
           final notes = notesSnapshot.data!;
@@ -442,7 +446,10 @@ class _ReminderScreenState extends State<ReminderScreen> {
               }
 
               if (!eventsSnapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
+                return const AppLoadingState(
+                  message: 'Cargando eventos relacionados...',
+                  icon: Icons.event_note_rounded,
+                );
               }
 
               final events = eventsSnapshot.data!;
@@ -463,7 +470,10 @@ class _ReminderScreenState extends State<ReminderScreen> {
                   }
 
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const AppLoadingState(
+                      message: 'Cargando tus recordatorios...',
+                      icon: Icons.notifications_active_outlined,
+                    );
                   }
 
                   final reminders = snapshot.data ?? [];

@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/animated_page_route.dart';
 import '../providers/auth_provider.dart' as app_auth;
 import 'register_screen.dart';
 
@@ -163,9 +164,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       : () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => const RegisterScreen(),
-                            ),
+                            animatedPageRoute(const RegisterScreen()),
                           );
                         },
                   child: const Text('¿No tienes cuenta? Regístrate'),

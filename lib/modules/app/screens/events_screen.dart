@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/loading_state.dart';
 import '../../../app/theme_toggle_button.dart';
 import '../models/event_model.dart';
 import '../services/event_service.dart';
@@ -123,7 +124,10 @@ class _EventsScreenState extends State<EventsScreen> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingState(
+              message: 'Cargando tus eventos...',
+              icon: Icons.event_note_rounded,
+            );
           }
 
           final events = snapshot.data ?? [];

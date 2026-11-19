@@ -20,9 +20,9 @@ import 'modules/news/providers/auth_provider.dart' as news_auth;
 import 'modules/news/providers/news_provider.dart';
 import 'modules/news/providers/bookmark_provider.dart';
 import 'modules/news/providers/notification_provider.dart';
-import 'modules/app/services/firebase_radio_favorites_repository.dart'
-    as app_favorites;
 import 'modules/radio/helpers/providers/radio_favorites_provider.dart';
+import 'modules/radio/services/firebase_radio_favorites_repository.dart'
+    as radio_favorites;
 import 'modules/radio/services/radio_favorites_repository.dart';
 
 Future<void> main() async {
@@ -94,7 +94,7 @@ class AppModular extends StatelessWidget {
         ),
 
         Provider<RadioFavoritesRepository>(
-          create: (_) => app_favorites.FirebaseRadioFavoritesRepository(),
+          create: (_) => radio_favorites.FirebaseRadioFavoritesRepository(),
         ),
 
         ChangeNotifierProxyProvider<

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/loading_state.dart';
 import '../../../app/theme_toggle_button.dart';
 import '../models/news_model.dart';
 import '../providers/bookmark_provider.dart';
@@ -187,20 +188,9 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
   }
 
   Widget _buildLoading() {
-    final colors = Theme.of(context).colorScheme;
-
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(color: colors.primary),
-          const SizedBox(height: 16),
-          Text(
-            'Cargando noticias guardadas...',
-            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
-          ),
-        ],
-      ),
+    return const AppLoadingState(
+      message: 'Cargando noticias guardadas...',
+      icon: Icons.bookmarks_outlined,
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../app/loading_state.dart';
 import '../../../app/theme_toggle_button.dart';
 import '../models/note_model.dart';
 import '../services/note_service.dart';
@@ -115,7 +116,10 @@ class _NotesScreenState extends State<NotesScreen> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const AppLoadingState(
+              message: 'Cargando tus notas...',
+              icon: Icons.note_alt_outlined,
+            );
           }
 
           final notes = List<NoteModel>.of(snapshot.data ?? const []);

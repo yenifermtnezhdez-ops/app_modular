@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
 import '../app_theme.dart';
+import 'animated_page_route.dart';
 import 'theme_toggle_button.dart';
 import '../modules/app/providers/auth_provider.dart' as app_auth;
 import '../modules/app/screens/home_screen.dart' as app_module;
@@ -13,7 +15,7 @@ class ModuleHubScreen extends StatelessWidget {
   const ModuleHubScreen({super.key});
 
   void _openModule(BuildContext context, Widget screen) {
-    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
+    Navigator.push(context, animatedPageRoute(screen));
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -52,7 +54,7 @@ class ModuleHubScreen extends StatelessWidget {
                   colors: [AppTheme.primary, AppTheme.secondary],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
-                ), 
+                ),
                 borderRadius: BorderRadius.circular(13),
               ),
               child: const Icon(
@@ -87,7 +89,7 @@ class ModuleHubScreen extends StatelessWidget {
             ),
             onPressed: authProvider.isLoading ? null : () => _signOut(context),
             icon: const Icon(Icons.logout),
-          ),  
+          ),
           const SizedBox(width: 8),
         ],
       ),
@@ -96,129 +98,138 @@ class ModuleHubScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
           children: [
             ClipRRect(
-              borderRadius: BorderRadius.circular(30),
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF6844B7), Color(0xFF9A75E5)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: AppTheme.softShadow,
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      right: -42,
-                      top: -55,
-                      child: Container(
-                        width: 180,
-                        height: 180,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.08),
-                        ),
+                  borderRadius: BorderRadius.circular(30),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFF6844B7), Color(0xFF9A75E5)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                      boxShadow: AppTheme.softShadow,
                     ),
-                    Positioned(
-                      right: 68,
-                      bottom: -92,
-                      child: Container(
-                        width: 155,
-                        height: 155,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white.withValues(alpha: 0.06),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 12,
-                              vertical: 7,
-                            ),
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          right: -42,
+                          top: -55,
+                          child: Container(
+                            width: 180,
+                            height: 180,
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.16),
-                              borderRadius: BorderRadius.circular(30),
-                              border: Border.all(
-                                color: Colors.white.withValues(alpha: 0.16),
-                              ),
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.08),
                             ),
-                            child: const Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.auto_awesome_rounded,
-                                  color: Colors.white,
-                                  size: 14,
+                          ),
+                        ),
+                        Positioned(
+                          right: 68,
+                          bottom: -92,
+                          child: Container(
+                            width: 155,
+                            height: 155,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.06),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(24),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 7,
                                 ),
-                                SizedBox(width: 7),
-                                Text(
-                                  'TU ESPACIO DIGITAL',
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.w800,
-                                    letterSpacing: 1.1,
+                                decoration: BoxDecoration(
+                                  color: Colors.white.withValues(alpha: 0.16),
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.16),
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(height: 23),
-                          Text(
-                            '¡Hola, $firstName!',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 28,
-                              height: 1.15,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                          const SizedBox(height: 9),
-                          Text(
-                            'Todo lo que necesitas para organizarte, '
-                            'escuchar y mantenerte al día.',
-                            style: TextStyle(
-                              color: Colors.white.withValues(alpha: 0.84),
-                              fontSize: 13,
-                              height: 1.55,
-                            ),
-                          ),
-                          const SizedBox(height: 22),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.touch_app_rounded,
-                                color: Colors.white,
-                                size: 17,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Elige un espacio para comenzar',
-                                style: TextStyle(
-                                  color: Colors.white.withValues(alpha: 0.95),
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w700,
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(
+                                      Icons.auto_awesome_rounded,
+                                      color: Colors.white,
+                                      size: 14,
+                                    ),
+                                    SizedBox(width: 7),
+                                    Text(
+                                      'TU ESPACIO DIGITAL',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: 1.1,
+                                      ),
+                                    ),
+                                  ],
                                 ),
+                              ),
+                              const SizedBox(height: 23),
+                              Text(
+                                '¡Hola, $firstName!',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 28,
+                                  height: 1.15,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: -0.5,
+                                ),
+                              ),
+                              const SizedBox(height: 9),
+                              Text(
+                                'Todo lo que necesitas para organizarte, '
+                                'escuchar y mantenerte al día.',
+                                style: TextStyle(
+                                  color: Colors.white.withValues(alpha: 0.84),
+                                  fontSize: 13,
+                                  height: 1.55,
+                                ),
+                              ),
+                              const SizedBox(height: 22),
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.touch_app_rounded,
+                                    color: Colors.white,
+                                    size: 17,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Elige un espacio para comenzar',
+                                    style: TextStyle(
+                                      color: Colors.white.withValues(
+                                        alpha: 0.95,
+                                      ),
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                )
+                .animate()
+                .fadeIn(duration: 420.ms)
+                .slideY(
+                  begin: 0.06,
+                  duration: 420.ms,
+                  curve: Curves.easeOutCubic,
                 ),
-              ),
-            ),
             const SizedBox(height: 30),
             Row(
               crossAxisAlignment: CrossAxisAlignment.end,
@@ -262,37 +273,60 @@ class ModuleHubScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
             _ModuleCard(
-              title: 'Mi App Lab',
-              description: 'Organiza tus notas, eventos y recordatorios.',
-              eyebrow: 'PRODUCTIVIDAD',
-              icon: Icons.dashboard_customize_rounded,
-              accent: const Color(0xFF8056D9),
-              onTap: () {
-                _openModule(context, const app_module.HomeScreen());
-              },
-            ),
+                  title: 'Mi App Lab',
+                  description: 'Organiza tus notas, eventos y recordatorios.',
+                  eyebrow: 'PRODUCTIVIDAD',
+                  icon: Icons.dashboard_customize_rounded,
+                  accent: const Color(0xFF8056D9),
+                  onTap: () {
+                    _openModule(context, const app_module.HomeScreen());
+                  },
+                )
+                .animate(delay: 100.ms)
+                .fadeIn(duration: 360.ms)
+                .slideY(
+                  begin: 0.08,
+                  duration: 360.ms,
+                  curve: Curves.easeOutCubic,
+                ),
             const SizedBox(height: 13),
             _ModuleCard(
-              title: 'Radio',
-              description: 'Descubre estaciones y disfruta tu música favorita.',
-              eyebrow: 'MÚSICA Y AUDIO',
-              icon: Icons.graphic_eq_rounded,
-              accent: const Color(0xFF168A83),
-              onTap: () {
-                _openModule(context, radio_module.HomeScreen());
-              },
-            ),
+                  title: 'Radio',
+                  description:
+                      'Descubre estaciones y disfruta tu música favorita.',
+                  eyebrow: 'MÚSICA Y AUDIO',
+                  icon: Icons.graphic_eq_rounded,
+                  accent: const Color(0xFF168A83),
+                  onTap: () {
+                    _openModule(context, radio_module.HomeScreen());
+                  },
+                )
+                .animate(delay: 180.ms)
+                .fadeIn(duration: 360.ms)
+                .slideY(
+                  begin: 0.08,
+                  duration: 360.ms,
+                  curve: Curves.easeOutCubic,
+                ),
             const SizedBox(height: 13),
             _ModuleCard(
-              title: 'Noticias',
-              description: 'Explora la actualidad y guarda lo que te interesa.',
-              eyebrow: 'ACTUALIDAD',
-              icon: Icons.newspaper_rounded,
-              accent: const Color(0xFFD27A36),
-              onTap: () {
-                _openModule(context, news_module.HomeScreen());
-              },
-            ),
+                  title: 'Noticias',
+                  description:
+                      'Explora la actualidad y guarda lo que te interesa.',
+                  eyebrow: 'ACTUALIDAD',
+                  icon: Icons.newspaper_rounded,
+                  accent: const Color(0xFFD27A36),
+                  onTap: () {
+                    _openModule(context, news_module.HomeScreen());
+                  },
+                )
+                .animate(delay: 260.ms)
+                .fadeIn(duration: 360.ms)
+                .slideY(
+                  begin: 0.08,
+                  duration: 360.ms,
+                  curve: Curves.easeOutCubic,
+                ),
             const SizedBox(height: 25),
             Center(
               child: Text(

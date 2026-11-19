@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/animated_page_route.dart';
+import '../../../app/loading_state.dart';
 import '../../../app/theme_toggle_button.dart';
 import '../providers/auth_provider.dart';
 import '../services/user_service.dart';
@@ -521,7 +523,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+                animatedPageRoute(const SettingsScreen()),
               );
             },
           ),
@@ -529,7 +531,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
       body: _isLoadingProfile
-          ? Center(child: CircularProgressIndicator(color: colors.primary))
+          ? const AppLoadingState(
+              message: 'Cargando tu perfil...',
+              icon: Icons.person_outline_rounded,
+            )
           : _userId == null
           ? Center(
               child: Text(

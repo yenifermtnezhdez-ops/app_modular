@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../modules/app/providers/auth_provider.dart' as app_auth;
 import '../modules/app/screens/login_screen.dart';
+import 'loading_state.dart';
 import 'module_hub_screen.dart';
 
 class AuthGate extends StatelessWidget {
@@ -13,7 +14,12 @@ class AuthGate extends StatelessWidget {
     final authProvider = context.watch<app_auth.AuthProvider>();
 
     if (authProvider.isLoading && authProvider.currentUser == null) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+      return const Scaffold(
+        body: AppLoadingState(
+          message: 'Verificando tu sesión...',
+          icon: Icons.lock_outline_rounded,
+        ),
+      );
     }
 
     if (authProvider.errorMessage != null && authProvider.currentUser == null) {

@@ -20,8 +20,10 @@ class RadioFavoritesProvider extends ChangeNotifier {
   String? _errorMessage;
   String? _loadedUserId;
   String? _activeUserId;
+  String? _loadingUserId;
 
   int _loadRevision = 0;
+  Future<void>? _loadFuture;
 
   Set<String> get favoriteStationIds => Set.unmodifiable(_favoriteStationIds);
 
@@ -42,6 +44,8 @@ class RadioFavoritesProvider extends ChangeNotifier {
 
     _activeUserId = userId;
     _loadedUserId = null;
+    _loadingUserId = null;
+    _loadFuture = null;
 
     _loadRevision++;
 
@@ -58,9 +62,19 @@ class RadioFavoritesProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> loadFavorites() async {
+  Future<void> loadFavorites() {
     final uid = _activeUserId;
-    if (uid == null || currentUserId() != uid) return;
+    if (uid == null || currentUserId() != uid) {
+      return Future<void>.value();
+    }
+
+    if (_loadedUserId == uid && _errorMessage == null) {
+      return Future<void>.value();
+    }
+
+    if (_loadingUserId == uid && _loadFuture != null) {
+      return _loadFuture!;
+    }
 
     final revision = ++_loadRevision;
 
@@ -70,6 +84,19 @@ class RadioFavoritesProvider extends ChangeNotifier {
 
     notifyListeners();
 
+    _loadingUserId = uid;
+    final loadFuture = _fetchFavorites(uid, revision);
+    _loadFuture = loadFuture;
+
+    return loadFuture.whenComplete(() {
+      if (_loadingUserId == uid && revision == _loadRevision) {
+        _loadingUserId = null;
+        _loadFuture = null;
+      }
+    });
+  }
+
+  Future<void> _fetchFavorites(String uid, int revision) async {
     try {
       final ids = await repository.getFavoriteStationIds(uid);
 

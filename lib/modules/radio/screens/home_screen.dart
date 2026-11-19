@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:provider/provider.dart';
 
+import '../../../app/loading_state.dart';
 import '../../../app/section_app_bar.dart';
 import '../../../app_theme.dart';
 import '../helpers/providers/app_provider.dart';
@@ -38,7 +40,6 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
 
-      context.read<AppProvider>().loadData();
       context.read<RadioFavoritesProvider>().loadFavorites();
     });
   }
@@ -104,8 +105,9 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Consumer<AppProvider>(
         builder: (context, appProvider, child) {
           if (appProvider.isLoading) {
-            return Center(
-              child: CircularProgressIndicator(color: colors.primary),
+            return const AppLoadingState(
+              message: 'Preparando tus estaciones...',
+              icon: Icons.radio_rounded,
             );
           }
 
@@ -148,131 +150,144 @@ class _HomeScreenState extends State<HomeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Container(
-                          padding: const EdgeInsets.all(20),
-                          decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: isDark
-                                  ? const [Color(0xFF34244F), Color(0xFF211A30)]
-                                  : [colors.primary, colors.secondary],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(26),
-                            boxShadow: [
-                              BoxShadow(
-                                color: colors.primary.withValues(
-                                  alpha: isDark ? 0.18 : 0.2,
+                              padding: const EdgeInsets.all(20),
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: isDark
+                                      ? const [
+                                          Color(0xFF34244F),
+                                          Color(0xFF211A30),
+                                        ]
+                                      : [colors.primary, colors.secondary],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
                                 ),
-                                blurRadius: 22,
-                                offset: const Offset(0, 10),
-                              ),
-                            ],
-                          ),
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                right: -34,
-                                top: -55,
-                                child: Container(
-                                  width: 145,
-                                  height: 145,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white.withValues(alpha: 0.08),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 10,
-                                            vertical: 6,
-                                          ),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white.withValues(
-                                              alpha: 0.16,
-                                            ),
-                                            borderRadius: BorderRadius.circular(
-                                              20,
-                                            ),
-                                          ),
-                                          child: const Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(
-                                                Icons.graphic_eq_rounded,
-                                                color: Colors.white,
-                                                size: 14,
-                                              ),
-                                              SizedBox(width: 6),
-                                              Text(
-                                                'RADIO EN VIVO',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 9,
-                                                  fontWeight: FontWeight.w800,
-                                                  letterSpacing: 1,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        const SizedBox(height: 15),
-                                        const Text(
-                                          'Tu música,\ntu momento.',
-                                          style: TextStyle(
-                                            color: Colors.white,
-                                            fontSize: 23,
-                                            height: 1.12,
-                                            fontWeight: FontWeight.w800,
-                                            letterSpacing: -0.5,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 7),
-                                        Text(
-                                          'Descubre sonidos que van contigo',
-                                          style: TextStyle(
-                                            color: Colors.white.withValues(
-                                              alpha: 0.82,
-                                            ),
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                      ],
+                                borderRadius: BorderRadius.circular(26),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: colors.primary.withValues(
+                                      alpha: isDark ? 0.18 : 0.2,
                                     ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Container(
-                                    width: 60,
-                                    height: 60,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(
-                                        alpha: 0.14,
-                                      ),
-                                      shape: BoxShape.circle,
-                                      border: Border.all(
-                                        color: Colors.white.withValues(
-                                          alpha: 0.2,
-                                        ),
-                                      ),
-                                    ),
-                                    child: const Icon(
-                                      Icons.album_rounded,
-                                      color: Colors.white,
-                                      size: 31,
-                                    ),
+                                    blurRadius: 22,
+                                    offset: const Offset(0, 10),
                                   ),
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
+                              child: Stack(
+                                children: [
+                                  Positioned(
+                                    right: -34,
+                                    top: -55,
+                                    child: Container(
+                                      width: 145,
+                                      height: 145,
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(
+                                          alpha: 0.08,
+                                        ),
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                    horizontal: 10,
+                                                    vertical: 6,
+                                                  ),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.16,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: const Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    Icons.graphic_eq_rounded,
+                                                    color: Colors.white,
+                                                    size: 14,
+                                                  ),
+                                                  SizedBox(width: 6),
+                                                  Text(
+                                                    'RADIO EN VIVO',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 9,
+                                                      fontWeight:
+                                                          FontWeight.w800,
+                                                      letterSpacing: 1,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                            const SizedBox(height: 15),
+                                            const Text(
+                                              'Tu música,\ntu momento.',
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 23,
+                                                height: 1.12,
+                                                fontWeight: FontWeight.w800,
+                                                letterSpacing: -0.5,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 7),
+                                            Text(
+                                              'Descubre sonidos que van contigo',
+                                              style: TextStyle(
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.82,
+                                                ),
+                                                fontSize: 11,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Container(
+                                        width: 60,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withValues(
+                                            alpha: 0.14,
+                                          ),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color: Colors.white.withValues(
+                                              alpha: 0.2,
+                                            ),
+                                          ),
+                                        ),
+                                        child: const Icon(
+                                          Icons.album_rounded,
+                                          color: Colors.white,
+                                          size: 31,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            )
+                            .animate()
+                            .fadeIn(duration: 420.ms)
+                            .slideY(
+                              begin: 0.06,
+                              duration: 420.ms,
+                              curve: Curves.easeOutCubic,
+                            ),
 
                         const SizedBox(height: 20),
 
@@ -449,11 +464,29 @@ class _HomeScreenState extends State<HomeScreen> {
                         const SizedBox(height: 12),
 
                         if (favorites.isLoading)
-                          const Center(
+                          Center(
                             child: Padding(
-                              padding: EdgeInsets.all(18),
-                              child: CircularProgressIndicator(
-                                color: AppTheme.primary,
+                              padding: const EdgeInsets.all(18),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      color: colors.primary,
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Cargando favoritas...',
+                                    style: TextStyle(
+                                      color: colors.onSurfaceVariant,
+                                      fontSize: 11,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           )
@@ -462,6 +495,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           _favoriteMessage(
                             Icons.cloud_off_rounded,
                             favorites.errorMessage!,
+                            onRetry: favorites.loadFavorites,
                           )
                         else if (favoriteStations.isEmpty)
                           _favoriteMessage(
@@ -596,7 +630,14 @@ class _HomeScreenState extends State<HomeScreen> {
             itemBuilder: (context, index) {
               return SizedBox(
                 width: constraints.maxWidth,
-                child: itemBuilder(stations[index]),
+                child: itemBuilder(stations[index])
+                    .animate(delay: Duration(milliseconds: 65 * index))
+                    .fadeIn(duration: 340.ms)
+                    .slideX(
+                      begin: 0.04,
+                      duration: 340.ms,
+                      curve: Curves.easeOutCubic,
+                    ),
               );
             },
           );
@@ -624,7 +665,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _favoriteMessage(IconData icon, String message) {
+  Widget _favoriteMessage(
+    IconData icon,
+    String message, {
+    VoidCallback? onRetry,
+  }) {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
@@ -649,6 +694,12 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
+          if (onRetry != null)
+            IconButton(
+              tooltip: 'Reintentar carga de favoritas',
+              onPressed: onRetry,
+              icon: const Icon(Icons.refresh_rounded),
+            ),
         ],
       ),
     );
