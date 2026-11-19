@@ -1,75 +1,97 @@
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookmarkService {
+  final FirebaseFirestore _db;
+
+  BookmarkService({FirebaseFirestore? firestore})
+    : _db = firestore ?? FirebaseFirestore.instance;
+
   static const String _legacyBookmarksKey = 'saved_news_ids';
 
-  String _keyForUser(String userId) => 'saved_news_ids_$userId';
+  static const String _migrationField = 'favoriteNewsMigrationV1';
 
+  static const String _favoritesField = 'favoriteNewsIds';
 
-  Future<List<int>> getBookmarkedIds({
-    required String userId,
-  }) async {
+  String _keyForUser(String userId) {
+    return 'saved_news_ids_$userId';
+  }
+
+  DocumentReference<Map<String, dynamic>> _userDocument(String userId) {
+    return _db.collection('users').doc(userId);
+  }
+
+  void _validateUserId(String userId) {
     if (userId.trim().isEmpty) {
-      throw ArgumentError(
-        'El identificador del usuario es obligatorio.',
-      );
+      throw ArgumentError('El identificador del usuario es obligatorio.');
     }
+  }
+
+  Set<int> _parseIds(dynamic value) {
+    if (value is! List) {
+      return {};
+    }
+
+    return value
+        .map((item) => int.tryParse(item.toString()))
+        .whereType<int>()
+        .toSet();
+  }
+
+  Future<List<int>> getBookmarkedIds({required String userId}) async {
+    _validateUserId(userId);
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
 
     final userKey = _keyForUser(userId);
-    final savedForUser = prefs.getStringList(userKey) ?? [];
-    final legacyBookmarks = prefs.getStringList(_legacyBookmarksKey);
 
-    if (legacyBookmarks != null) {
-
-      final mergedBookmarks = <String>{
-        ...savedForUser,
-        ...legacyBookmarks,
-      }.toList();
-
-      final migrationSuccess = await prefs.setStringList(
-        userKey,
-        mergedBookmarks,
-      );
-
-      if (!migrationSuccess) {
-        throw Exception(
-          'No fue posible migrar los favoritos anteriores.',
-        );
-      }
-
-      final removalSuccess = await prefs.remove(_legacyBookmarksKey);
-
-      if (!removalSuccess) {
-        debugPrint(
-          'BOOKMARKS: No se pudo eliminar la clave antigua.',
-        );
-      } else {
-        debugPrint(
-          'BOOKMARKS: Favoritos antiguos migrados al usuario $userId',
-        );
-      }
-    }
-
-    final savedIds = prefs.getStringList(userKey) ?? [];
-
-    final ids = savedIds
+    final localIds = (prefs.getStringList(userKey) ?? [])
         .map((id) => int.tryParse(id))
         .whereType<int>()
-        .toSet()
-        .toList();
+        .toSet();
 
-    debugPrint(
-      'BOOKMARKS: Favoritos del usuario $userId: $ids',
+    final legacyIds = (prefs.getStringList(_legacyBookmarksKey) ?? [])
+        .map((id) => int.tryParse(id))
+        .whereType<int>()
+        .toSet();
+
+    final userRef = _userDocument(userId);
+    await _db.runTransaction((transaction) async {
+      final snapshot = await transaction.get(userRef);
+
+      final data = snapshot.data() ?? {};
+
+      if (data[_migrationField] == true) {
+        return;
+      }
+
+      final idsToMigrate = <int>{...localIds, ...legacyIds};
+
+      transaction.set(userRef, {
+        _favoritesField: FieldValue.arrayUnion(idsToMigrate.toList()),
+        _migrationField: true,
+      }, SetOptions(merge: true));
+    });
+
+    final snapshot = await userRef.get();
+
+    final remoteIds = _parseIds(snapshot.data()?[_favoritesField]);
+
+    final savedLocally = await prefs.setStringList(
+      userKey,
+      remoteIds.map((id) => id.toString()).toList(),
     );
 
-    return ids;
-  }
+    if (savedLocally && legacyIds.isNotEmpty) {
+      await prefs.remove(_legacyBookmarksKey);
+    }
 
+    debugPrint('BOOKMARKS: Favoritos sincronizados para $userId: $remoteIds');
+
+    return remoteIds.toList();
+  }
 
   Future<bool> isBookmarked({
     required String userId,
@@ -84,69 +106,67 @@ class BookmarkService {
     required String userId,
     required int newsId,
   }) async {
-    if (userId.trim().isEmpty) {
-      throw ArgumentError(
-        'El identificador del usuario es obligatorio.',
-      );
-    }
+    _validateUserId(userId);
 
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
+    await _userDocument(userId).set({
+      _favoritesField: FieldValue.arrayUnion([newsId]),
+      _migrationField: true,
+    }, SetOptions(merge: true));
 
-    final key = _keyForUser(userId);
-    final savedIds = prefs.getStringList(key) ?? [];
-    final id = newsId.toString();
+    await _updateLocalCache(userId: userId, newsId: newsId, add: true);
 
-    if (!savedIds.contains(id)) {
-      savedIds.add(id);
-
-      final success = await prefs.setStringList(
-        key,
-        savedIds,
-      );
-
-      if (!success) {
-        throw Exception(
-          'No fue posible guardar el favorito.',
-        );
-      }
-    }
-
-    debugPrint(
-      'BOOKMARKS: Favorito $newsId guardado para $userId',
-    );
+    debugPrint('BOOKMARKS: Noticia $newsId guardada para $userId');
   }
+
   Future<void> removeBookmark({
     required String userId,
     required int newsId,
   }) async {
-    if (userId.trim().isEmpty) {
-      throw ArgumentError(
-        'El identificador del usuario es obligatorio.',
+    _validateUserId(userId);
+
+    await _userDocument(userId).set({
+      _favoritesField: FieldValue.arrayRemove([newsId]),
+      _migrationField: true,
+    }, SetOptions(merge: true));
+
+    await _updateLocalCache(userId: userId, newsId: newsId, add: false);
+
+    debugPrint('BOOKMARKS: Noticia $newsId eliminada para $userId');
+  }
+
+  Future<void> _updateLocalCache({
+    required String userId,
+    required int newsId,
+    required bool add,
+  }) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+
+      await prefs.reload();
+
+      final key = _keyForUser(userId);
+
+      final ids = (prefs.getStringList(key) ?? [])
+          .map((id) => int.tryParse(id))
+          .whereType<int>()
+          .toSet();
+
+      if (add) {
+        ids.add(newsId);
+      } else {
+        ids.remove(newsId);
+      }
+
+      final success = await prefs.setStringList(
+        key,
+        ids.map((id) => id.toString()).toList(),
       );
+
+      if (!success) {
+        debugPrint('BOOKMARKS: No se pudo actualizar la caché local.');
+      }
+    } catch (error) {
+      debugPrint('BOOKMARKS: Error actualizando caché local: $error');
     }
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.reload();
-
-    final key = _keyForUser(userId);
-    final savedIds = prefs.getStringList(key) ?? [];
-
-    savedIds.remove(newsId.toString());
-
-    final success = await prefs.setStringList(
-      key,
-      savedIds,
-    );
-
-    if (!success) {
-      throw Exception(
-        'No fue posible eliminar el favorito.',
-      );
-    }
-
-    debugPrint(
-      'BOOKMARKS: Favorito $newsId eliminado para $userId',
-    );
   }
 }

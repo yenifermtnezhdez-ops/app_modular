@@ -80,7 +80,7 @@ class AppModular extends StatelessWidget {
           create: (_) => NewsProvider()..initialize(),
         ),
 
-        ChangeNotifierProxyProvider<news_auth.AuthProvider, BookmarkProvider>(
+        ChangeNotifierProxyProvider<app_auth.AuthProvider, BookmarkProvider>(
           create: (_) => BookmarkProvider(),
           update: (_, authProvider, bookmarkProvider) {
             final provider = bookmarkProvider ?? BookmarkProvider();
@@ -97,12 +97,20 @@ class AppModular extends StatelessWidget {
           create: (_) => app_favorites.FirebaseRadioFavoritesRepository(),
         ),
 
-        ChangeNotifierProvider<RadioFavoritesProvider>(
+        ChangeNotifierProxyProvider<
+          app_auth.AuthProvider,
+          RadioFavoritesProvider
+        >(
           create: (context) => RadioFavoritesProvider(
             repository: context.read<RadioFavoritesRepository>(),
             currentUserId: () =>
                 context.read<app_auth.AuthProvider>().currentUser?.uid,
           ),
+          update: (_, authProvider, radioFavoritesProvider) {
+            final provider = radioFavoritesProvider!;
+            provider.setUserId(authProvider.userId);
+            return provider;
+          },
         ),
       ],
       child: const AppModularView(),
