@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../app_theme.dart';
+import '../modules/app/providers/auth_provider.dart' as app_auth;
 import '../modules/app/screens/home_screen.dart' as app_module;
 import '../modules/app/screens/user_screen.dart';
 import '../modules/radio/screens/home_screen.dart' as radio_module;
@@ -16,8 +17,8 @@ class ModuleHubScreen extends StatelessWidget {
 
   Future<void> _signOut(BuildContext context) async {
     try {
-      await FirebaseAuth.instance.signOut();
-    } catch (e) {
+      await context.read<app_auth.AuthProvider>().signOut();
+    } catch (error) {
       if (!context.mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -28,7 +29,8 @@ class ModuleHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
+    final authProvider = context.watch<app_auth.AuthProvider>();
+    final user = authProvider.currentUser;
 
     final displayName = user?.displayName?.trim().isNotEmpty == true
         ? user!.displayName!
@@ -50,7 +52,7 @@ class ModuleHubScreen extends StatelessWidget {
           ),
           IconButton(
             tooltip: 'Cerrar sesión',
-            onPressed: () => _signOut(context),
+            onPressed: authProvider.isLoading ? null : () => _signOut(context),
             icon: const Icon(Icons.logout),
           ),
           const SizedBox(width: 8),
@@ -101,9 +103,7 @@ class ModuleHubScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 28),
-
             const Text(
               'Mis módulos',
               style: TextStyle(
@@ -112,9 +112,7 @@ class ModuleHubScreen extends StatelessWidget {
                 color: AppTheme.textPrimary,
               ),
             ),
-
             const SizedBox(height: 16),
-
             _ModuleCard(
               title: 'Mi App Lab',
               description: 'Organiza tus notas, eventos y recordatorios.',
@@ -123,9 +121,7 @@ class ModuleHubScreen extends StatelessWidget {
                 _openModule(context, const app_module.HomeScreen());
               },
             ),
-
             const SizedBox(height: 14),
-
             _ModuleCard(
               title: 'Radio',
               description:
@@ -136,9 +132,7 @@ class ModuleHubScreen extends StatelessWidget {
                 _openModule(context, radio_module.HomeScreen());
               },
             ),
-
             const SizedBox(height: 14),
-
             _ModuleCard(
               title: 'Noticias',
               description:
@@ -149,9 +143,7 @@ class ModuleHubScreen extends StatelessWidget {
                 _openModule(context, news_module.HomeScreen());
               },
             ),
-
             const SizedBox(height: 24),
-
             const Center(
               child: Text(
                 'App Modular · Fase 4',

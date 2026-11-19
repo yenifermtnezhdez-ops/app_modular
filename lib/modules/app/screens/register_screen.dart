@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart' as app_auth;
 
@@ -15,7 +16,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
-  final app_auth.AuthProvider _authProvider = app_auth.AuthProvider();
 
   bool _loading = false;
   bool _hidePassword = true;
@@ -51,12 +51,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     setState(() => _loading = true);
 
     try {
-      await _authProvider.register(
+      await context.read<app_auth.AuthProvider>().register(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
 
       if (!mounted) return;
+
       Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
@@ -110,9 +111,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   ),
                   validator: (value) {
                     final email = value?.trim() ?? '';
+
                     if (email.isEmpty || !email.contains('@')) {
                       return 'Escribe un correo válido.';
                     }
+
                     return null;
                   },
                 ),
@@ -129,7 +132,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         _hidePassword ? Icons.visibility : Icons.visibility_off,
                       ),
                       onPressed: () {
-                        setState(() => _hidePassword = !_hidePassword);
+                        setState(() {
+                          _hidePassword = !_hidePassword;
+                        });
                       },
                     ),
                   ),
@@ -137,6 +142,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (value == null || value.length < 6) {
                       return 'Usa al menos 6 caracteres.';
                     }
+
                     return null;
                   },
                 ),
@@ -153,6 +159,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     if (value != _passwordController.text) {
                       return 'Las contraseñas no coinciden.';
                     }
+
                     return null;
                   },
                 ),
@@ -160,11 +167,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 ElevatedButton(
                   onPressed: _loading ? null : _register,
                   child: _loading
-                      ? const CircularProgressIndicator()
+                      ? const SizedBox(
+                          height: 22,
+                          width: 22,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : const Text('Crear cuenta'),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: _loading ? null : () => Navigator.pop(context),
                   child: const Text('Ya tengo una cuenta. Iniciar sesión'),
                 ),
               ],

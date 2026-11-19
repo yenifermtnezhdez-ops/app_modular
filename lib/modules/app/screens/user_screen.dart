@@ -1,7 +1,8 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/user_model.dart';
+import '../providers/auth_provider.dart' as app_auth;
 import '../services/user_service.dart';
 import 'home_screen.dart';
 
@@ -28,7 +29,8 @@ class _UserScreenState extends State<UserScreen> {
 
   Future<void> _loadProfile() async {
     try {
-      final user = FirebaseAuth.instance.currentUser;
+      final authProvider = context.read<app_auth.AuthProvider>();
+      final user = authProvider.currentUser;
 
       if (user == null) {
         throw Exception('No hay un usuario autenticado.');
@@ -42,7 +44,7 @@ class _UserScreenState extends State<UserScreen> {
         _profile = profile;
         _errorMessage = null;
       });
-    } catch (_) {
+    } catch (error) {
       if (!mounted) return;
 
       setState(() {
@@ -68,6 +70,7 @@ class _UserScreenState extends State<UserScreen> {
           content: TextField(
             controller: controller,
             autofocus: true,
+            textCapitalization: TextCapitalization.words,
             decoration: const InputDecoration(
               labelText: 'Nombre',
               hintText: 'Escribe tu nombre',
@@ -91,9 +94,11 @@ class _UserScreenState extends State<UserScreen> {
 
     controller.dispose();
 
-    if (newName == null || newName.isEmpty) return;
+    if (!mounted || newName == null || newName.isEmpty) return;
 
-    final user = FirebaseAuth.instance.currentUser;
+    final authProvider = context.read<app_auth.AuthProvider>();
+    final user = authProvider.currentUser;
+
     if (user == null) return;
 
     setState(() {
@@ -102,12 +107,17 @@ class _UserScreenState extends State<UserScreen> {
     });
 
     try {
+      await authProvider.updateDisplayName(name: newName);
+
+      if (!mounted) return;
+
       await _userService.updateProfile(
         uid: user.uid,
         displayName: newName,
         displayImage: _profile?.displayImage ?? '',
       );
 
+      if (!mounted) return;
       final updatedProfile = await _userService.getProfile(user.uid);
 
       if (!mounted) return;
@@ -119,7 +129,7 @@ class _UserScreenState extends State<UserScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Perfil actualizado correctamente.')),
       );
-    } catch (_) {
+    } catch (error) {
       if (!mounted) return;
 
       setState(() {
@@ -135,14 +145,16 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Future<void> _signOut() async {
+    final authProvider = context.read<app_auth.AuthProvider>();
+
     setState(() {
       _isSaving = true;
       _errorMessage = null;
     });
 
     try {
-      await FirebaseAuth.instance.signOut();
-    } catch (_) {
+      await authProvider.signOut();
+    } catch (error) {
       if (!mounted) return;
 
       setState(() {
@@ -282,7 +294,6 @@ class _UserScreenState extends State<UserScreen> {
                   ),
                 ),
               ),
-
               const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,
@@ -292,7 +303,6 @@ class _UserScreenState extends State<UserScreen> {
                   label: const Text('Editar nombre'),
                 ),
               ),
-
               const SizedBox(height: 8),
               SizedBox(
                 width: double.infinity,

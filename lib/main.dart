@@ -54,7 +54,9 @@ class AppModular extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<app_auth.AuthProvider>(create: (_) => app_auth.AuthProvider()),
+        ChangeNotifierProvider<app_auth.AuthProvider>(
+          create: (_) => app_auth.AuthProvider(),
+        ),
 
         ChangeNotifierProvider<radio_app.AppProvider>(
           create: (_) => radio_app.AppProvider()..loadData(),
@@ -65,7 +67,9 @@ class AppModular extends StatelessWidget {
         ),
 
         ChangeNotifierProvider<news_auth.AuthProvider>(
-          create: (_) => news_auth.AuthProvider(),
+          create: (context) => news_auth.AuthProvider(
+            appAuthProvider: context.read<app_auth.AuthProvider>(),
+          ),
         ),
 
         ChangeNotifierProvider<news_theme.AppProvider>(
@@ -78,12 +82,12 @@ class AppModular extends StatelessWidget {
 
         ChangeNotifierProxyProvider<news_auth.AuthProvider, BookmarkProvider>(
           create: (_) => BookmarkProvider(),
-           update: (_, authProvider, bookmarkProvider) {
+          update: (_, authProvider, bookmarkProvider) {
             final provider = bookmarkProvider ?? BookmarkProvider();
-          provider.setUserId(authProvider.userId);
-             return provider;
-             },
-            ),
+            provider.setUserId(authProvider.userId);
+            return provider;
+          },
+        ),
 
         ChangeNotifierProvider<NotificationProvider>(
           create: (_) => NotificationProvider()..initialize(),

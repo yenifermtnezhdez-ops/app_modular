@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart' as app_auth;
 import 'register_screen.dart';
@@ -15,8 +16,6 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
-  final app_auth.AuthProvider _authProvider = app_auth.AuthProvider();
 
   bool _loading = false;
   bool _hidePassword = true;
@@ -35,6 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       case 'invalid-credential':
       case 'wrong-password':
       case 'user-not-found':
+      case 'invalid-login-credentials':
         return 'El correo o la contraseña son incorrectos.';
       case 'user-disabled':
         return 'Esta cuenta está deshabilitada.';
@@ -55,7 +55,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => _loading = true);
 
     try {
-      await _authProvider.login(
+      await context.read<app_auth.AuthProvider>().login(
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
