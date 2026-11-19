@@ -1,72 +1,112 @@
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class BookmarkService {
-  static const String _bookmarksKey = 'saved_news_ids';
-  Future<List<int>> getBookmarkedIds() async {
+  static const String _legacyBookmarksKey = 'saved_news_ids';
+
+  String _keyForUser(String userId) => 'saved_news_ids_$userId';
+
+  Future<List<int>> getBookmarkedIds({
+    required String userId,
+  }) async {
+    if (userId.isEmpty) {
+      throw ArgumentError('El identificador del usuario es obligatorio.');
+    }
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
 
-    final savedIds = prefs.getStringList(_bookmarksKey) ?? [];
+    final userKey = _keyForUser(userId);
+    final savedForUser = prefs.getStringList(userKey);
+    final legacyBookmarks = prefs.getStringList(_legacyBookmarksKey);
+
+    if (legacyBookmarks != null) {
+      if (savedForUser == null) {
+        final migrated = await prefs.setStringList(
+          userKey,
+          legacyBookmarks,
+        );
+
+        if (!migrated) {
+          throw Exception('No fue posible migrar los favoritos anteriores.');
+        }
+
+        debugPrint('BOOKMARKS: Favoritos antiguos migrados al usuario $userId');
+      await prefs.remove(_legacyBookmarksKey);
+    }
+
+    final savedIds = prefs.getStringList(userKey) ?? [];
 
     final ids = savedIds
         .map((id) => int.tryParse(id))
         .whereType<int>()
+        .toSet()
         .toList();
 
-    debugPrint('BOOKMARKS: IDs recuperados: $ids');
+    debugPrint('BOOKMARKS: Favoritos del usuario $userId: $ids');
 
     return ids;
   }
 
-  Future<bool> isBookmarked(int newsId) async {
-    final ids = await getBookmarkedIds();
+  Future<bool> isBookmarked({
+    required String userId,
+    required int newsId,
+  }) async {
+    final ids = await getBookmarkedIds(userId: userId);
     return ids.contains(newsId);
   }
 
-  Future<void> addBookmark(int newsId) async {
+  Future<void> addBookmark({
+    required String userId,
+    required int newsId,
+  }) async {
+    if (userId.isEmpty) {
+      throw ArgumentError('El identificador del usuario es obligatorio.');
+    }
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
 
-    final savedIds = prefs.getStringList(_bookmarksKey) ?? [];
+    final key = _keyForUser(userId);
+    final savedIds = prefs.getStringList(key) ?? [];
     final id = newsId.toString();
 
     if (!savedIds.contains(id)) {
       savedIds.add(id);
 
-      final success = await prefs.setStringList(_bookmarksKey, savedIds);
+      final success = await prefs.setStringList(key, savedIds);
 
       if (!success) {
         throw Exception('No fue posible guardar el favorito.');
       }
     }
-    await prefs.reload();
 
-    debugPrint(
-      'BOOKMARKS: IDs después de guardar: '
-      '${prefs.getStringList(_bookmarksKey)}',
-    );
+    debugPrint('BOOKMARKS: Favorito $newsId guardado para $userId');
   }
 
-  Future<void> removeBookmark(int newsId) async {
+  Future<void> removeBookmark({
+    required String userId,
+    required int newsId,
+  }) async {
+    if (userId.isEmpty) {
+      throw ArgumentError('El identificador del usuario es obligatorio.');
+    }
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
 
-    final savedIds = prefs.getStringList(_bookmarksKey) ?? [];
+    final key = _keyForUser(userId);
+    final savedIds = prefs.getStringList(key) ?? [];
 
     savedIds.remove(newsId.toString());
 
-    final success = await prefs.setStringList(_bookmarksKey, savedIds);
+    final success = await prefs.setStringList(key, savedIds);
 
     if (!success) {
       throw Exception('No fue posible eliminar el favorito.');
     }
 
-    await prefs.reload();
-
-    debugPrint(
-      'BOOKMARKS: IDs después de eliminar: '
-      '${prefs.getStringList(_bookmarksKey)}',
-    );
+    debugPrint('BOOKMARKS: Favorito $newsId eliminado para $userId');
   }
 }

@@ -76,9 +76,14 @@ class AppModular extends StatelessWidget {
           create: (_) => NewsProvider()..initialize(),
         ),
 
-        ChangeNotifierProvider<BookmarkProvider>(
-          create: (_) => BookmarkProvider()..loadBookmarks(),
-        ),
+        ChangeNotifierProxyProvider<news_auth.AuthProvider, BookmarkProvider>(
+          create: (_) => BookmarkProvider(),
+           update: (_, authProvider, bookmarkProvider) {
+            final provider = bookmarkProvider ?? BookmarkProvider();
+          provider.setUserId(authProvider.userId);
+             return provider;
+             },
+            ),
 
         ChangeNotifierProvider<NotificationProvider>(
           create: (_) => NotificationProvider()..initialize(),
