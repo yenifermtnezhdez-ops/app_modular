@@ -7,11 +7,7 @@ class ProgramCard extends StatelessWidget {
   final ProgramModel program;
   final VoidCallback? onTap;
 
-  const ProgramCard({
-    super.key,
-    required this.program,
-    this.onTap,
-  });
+  const ProgramCard({super.key, required this.program, this.onTap});
 
   @override
   Widget build(BuildContext context) {

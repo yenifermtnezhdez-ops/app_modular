@@ -1,10 +1,10 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../app_theme.dart';
 import '../helpers/providers/app_provider.dart';
 import '../helpers/providers/audio_provider.dart';
+import '../helpers/providers/radio_favorites_provider.dart';
 import '../models/station_model.dart';
 import '../widgets/mini_player.dart';
 import '../widgets/program_carousel.dart';
@@ -19,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController _searchController = TextEditingController();
+
   String _selectedCategory = 'Todas';
 
   final List<String> _categories = const [
@@ -34,9 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) {
-        context.read<AppProvider>().loadData();
-      }
+      if (!mounted) return;
+
+      context.read<AppProvider>().loadData();
+      context.read<RadioFavoritesProvider>().loadFavorites();
     });
   }
 
@@ -46,12 +48,10 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  // Seleccionar una estación sin modificar la lógica de audio.
   void _selectStation(StationModel station) {
     context.read<AudioProvider>().playStation(station);
   }
 
-  // Abrir el reproductor completo.
   void _openFullPlayer(StationModel station) {
     showModalBottomSheet<void>(
       context: context,
@@ -69,9 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
             return Container(
               decoration: const BoxDecoration(
                 color: AppTheme.background,
-                borderRadius: BorderRadius.vertical(
-                  top: Radius.circular(28),
-                ),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               ),
               clipBehavior: Clip.antiAlias,
               child: PlayerScreen(
@@ -89,9 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppTheme.background,
-
-      // Permite que el fondo continúe por detrás
-      // del espacio ocupado por el mini reproductor.
       extendBody: true,
 
       appBar: AppBar(
@@ -115,9 +110,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 color: AppTheme.surface,
                 shape: BoxShape.circle,
-                border: Border.all(
-                  color: AppTheme.border,
-                ),
+                border: Border.all(color: AppTheme.border),
               ),
               child: const Icon(
                 Icons.radio_rounded,
@@ -133,264 +126,342 @@ class _HomeScreenState extends State<HomeScreen> {
         builder: (context, appProvider, child) {
           if (appProvider.isLoading) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: AppTheme.primary,
-              ),
+              child: CircularProgressIndicator(color: AppTheme.primary),
             );
           }
 
           return Consumer<AudioProvider>(
             builder: (context, audio, child) {
-              final query =
-                  _searchController.text.trim().toLowerCase();
+              return Consumer<RadioFavoritesProvider>(
+                builder: (context, favorites, child) {
+                  final query = _searchController.text.trim().toLowerCase();
 
-              final filteredStations = appProvider.stations.where((station) {
-                final matchesCategory =
-                    _selectedCategory == 'Todas' ||
+                  final filteredStations = appProvider.stations.where((
+                    station,
+                  ) {
+                    final matchesCategory =
+                        _selectedCategory == 'Todas' ||
                         station.category == _selectedCategory;
 
-                final matchesSearch =
-                    query.isEmpty ||
+                    final matchesSearch =
+                        query.isEmpty ||
                         station.name.toLowerCase().contains(query) ||
                         station.slogan.toLowerCase().contains(query) ||
                         station.category.toLowerCase().contains(query);
 
-                return matchesCategory && matchesSearch;
-              }).toList();
+                    return matchesCategory && matchesSearch;
+                  }).toList();
 
-              final selectedStation = audio.currentStation;
+                  final favoriteStations = appProvider.stations
+                      .where((station) => favorites.isFavorite(station.id))
+                      .toList();
 
-              final programs = selectedStation == null
-                  ? appProvider.programs
-                  : appProvider.getProgramsByStation(
-                      selectedStation.id,
-                    );
+                  final selectedStation = audio.currentStation;
 
-              return SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
+                  final programs = selectedStation == null
+                      ? appProvider.programs
+                      : appProvider.getProgramsByStation(selectedStation.id);
 
-                // Espacio inferior para que el contenido
-                // no quede escondido detrás del mini reproductor.
-                padding: const EdgeInsets.fromLTRB(
-                  20,
-                  8,
-                  20,
-                  115,
-                ),
-
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Encuentra tu siguiente sonido favorito',
-                      style: TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-
-                    const SizedBox(height: 17),
-
-                    // BUSCADOR
-                    TextField(
-                      controller: _searchController,
-                      onChanged: (_) => setState(() {}),
-                      style: const TextStyle(
-                        color: AppTheme.textPrimary,
-                        fontSize: 13,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Buscar artista, estación o estilo',
-                        prefixIcon: const Icon(
-                          Icons.search_rounded,
+                  return SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(20, 8, 20, 115),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Encuentra tu siguiente sonido favorito',
+                          style: TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                        suffixIcon: _searchController.text.isEmpty
-                            ? const Icon(
-                                Icons.tune_rounded,
-                                size: 20,
-                              )
-                            : IconButton(
-                                tooltip: 'Limpiar búsqueda',
-                                onPressed: () {
-                                  _searchController.clear();
-                                  setState(() {});
+
+                        const SizedBox(height: 17),
+
+                        TextField(
+                          controller: _searchController,
+                          onChanged: (_) => setState(() {}),
+                          style: const TextStyle(
+                            color: AppTheme.textPrimary,
+                            fontSize: 13,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Buscar artista, estación o estilo',
+                            prefixIcon: const Icon(Icons.search_rounded),
+                            suffixIcon: _searchController.text.isEmpty
+                                ? const Icon(Icons.tune_rounded, size: 20)
+                                : IconButton(
+                                    tooltip: 'Limpiar búsqueda',
+                                    onPressed: () {
+                                      _searchController.clear();
+                                      setState(() {});
+                                    },
+                                    icon: const Icon(Icons.close_rounded),
+                                  ),
+                            filled: true,
+                            fillColor: AppTheme.surface,
+                            contentPadding: const EdgeInsets.symmetric(
+                              vertical: 14,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: const BorderSide(
+                                color: AppTheme.border,
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(18),
+                              borderSide: const BorderSide(
+                                color: AppTheme.primary,
+                                width: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 14),
+
+                        SizedBox(
+                          height: 37,
+                          child: ListView.separated(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: _categories.length,
+                            separatorBuilder: (_, _) =>
+                                const SizedBox(width: 8),
+                            itemBuilder: (context, index) {
+                              final category = _categories[index];
+
+                              final isSelected = category == _selectedCategory;
+
+                              return ChoiceChip(
+                                label: Text(category),
+                                selected: isSelected,
+                                onSelected: (_) {
+                                  setState(() {
+                                    _selectedCategory = category;
+                                  });
                                 },
-                                icon: const Icon(
-                                  Icons.close_rounded,
+                                selectedColor: AppTheme.primary,
+                                backgroundColor: AppTheme.surface,
+                                labelStyle: TextStyle(
+                                  color: isSelected
+                                      ? Colors.white
+                                      : AppTheme.textSecondary,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                side: BorderSide(
+                                  color: isSelected
+                                      ? AppTheme.primary
+                                      : AppTheme.border,
+                                ),
+                                showCheckmark: false,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(22),
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+
+                        const SizedBox(height: 25),
+
+                        _sectionTitle('En tendencia'),
+
+                        const SizedBox(height: 12),
+
+                        if (filteredStations.isEmpty)
+                          _emptyStations()
+                        else
+                          SizedBox(
+                            height: 142,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: filteredStations.length,
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 12),
+                              itemBuilder: (context, index) {
+                                final station = filteredStations[index];
+
+                                return _TrendingStationCard(
+                                  station: station,
+                                  isActive:
+                                      audio.currentStation?.id == station.id,
+                                  isPlaying:
+                                      audio.currentStation?.id == station.id &&
+                                      audio.isPlaying,
+                                  isFavorite: favorites.isFavorite(station.id),
+                                  isFavoriteUpdating: favorites.isUpdating(
+                                    station.id,
+                                  ),
+                                  onFavoriteTap: () {
+                                    favorites.toggleFavorite(station.id);
+                                  },
+                                  onTap: () {
+                                    _selectStation(station);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+
+                        const SizedBox(height: 25),
+
+                        _sectionTitle('Estaciones populares'),
+
+                        const SizedBox(height: 13),
+
+                        if (filteredStations.isEmpty)
+                          const SizedBox.shrink()
+                        else
+                          SizedBox(
+                            height: 112,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: filteredStations.length,
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 17),
+                              itemBuilder: (context, index) {
+                                final station = filteredStations[index];
+
+                                return _PopularStationAvatar(
+                                  station: station,
+                                  isActive:
+                                      audio.currentStation?.id == station.id,
+                                  onTap: () {
+                                    _selectStation(station);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+
+                        const SizedBox(height: 25),
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            _sectionTitle('Mis favoritas'),
+                            if (favoriteStations.isNotEmpty)
+                              Text(
+                                '${favoriteStations.length} estaciones',
+                                style: const TextStyle(
+                                  color: AppTheme.textSecondary,
+                                  fontSize: 10,
                                 ),
                               ),
-                        filled: true,
-                        fillColor: AppTheme.surface,
-                        contentPadding:
-                            const EdgeInsets.symmetric(vertical: 14),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          borderSide: BorderSide.none,
+                          ],
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          borderSide: const BorderSide(
-                            color: AppTheme.border,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          borderSide: const BorderSide(
-                            color: AppTheme.primary,
-                            width: 1.2,
-                          ),
-                        ),
-                      ),
-                    ),
 
-                    const SizedBox(height: 14),
+                        const SizedBox(height: 12),
 
-                    // FILTROS DE CATEGORÍAS
-                    SizedBox(
-                      height: 37,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: _categories.length,
-                        separatorBuilder: (_, _) =>
-                            const SizedBox(width: 8),
-                        itemBuilder: (context, index) {
-                          final category = _categories[index];
-                          final isSelected =
-                              category == _selectedCategory;
-
-                          return ChoiceChip(
-                            label: Text(category),
-                            selected: isSelected,
-                            onSelected: (_) {
-                              setState(() {
-                                _selectedCategory = category;
-                              });
-                            },
-                            selectedColor: AppTheme.primary,
-                            backgroundColor: AppTheme.surface,
-                            labelStyle: TextStyle(
-                              color: isSelected
-                                  ? Colors.white
-                                  : AppTheme.textSecondary,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w600,
+                        if (favorites.isLoading)
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(18),
+                              child: CircularProgressIndicator(
+                                color: AppTheme.primary,
+                              ),
                             ),
-                            side: BorderSide(
-                              color: isSelected
-                                  ? AppTheme.primary
-                                  : AppTheme.border,
-                            ),
-                            showCheckmark: false,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(22),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                          )
+                        else if (favorites.errorMessage != null &&
+                            favoriteStations.isEmpty)
+                          _favoriteMessage(
+                            Icons.cloud_off_rounded,
+                            favorites.errorMessage!,
+                          )
+                        else if (favoriteStations.isEmpty)
+                          _favoriteMessage(
+                            Icons.favorite_border_rounded,
+                            'Todavía no tienes estaciones favoritas. '
+                            'Pulsa el corazón de una estación para guardarla.',
+                          )
+                        else
+                          SizedBox(
+                            height: 142,
+                            child: ListView.separated(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: favoriteStations.length,
+                              separatorBuilder: (_, _) =>
+                                  const SizedBox(width: 12),
+                              itemBuilder: (context, index) {
+                                final station = favoriteStations[index];
 
-                    const SizedBox(height: 25),
-
-                    // ESTACIONES EN TENDENCIA
-                    _sectionTitle('En tendencia'),
-
-                    const SizedBox(height: 12),
-
-                    if (filteredStations.isEmpty)
-                      _emptyStations()
-                    else
-                      SizedBox(
-                        height: 142,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: filteredStations.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(width: 12),
-                          itemBuilder: (context, index) {
-                            final station = filteredStations[index];
-
-                            return _TrendingStationCard(
-                              station: station,
-                              isActive:
-                                  audio.currentStation?.id == station.id,
-                              isPlaying:
-                                  audio.currentStation?.id == station.id &&
+                                return _TrendingStationCard(
+                                  station: station,
+                                  isActive:
+                                      audio.currentStation?.id == station.id,
+                                  isPlaying:
+                                      audio.currentStation?.id == station.id &&
                                       audio.isPlaying,
-                              onTap: () => _selectStation(station),
-                            );
-                          },
+                                  isFavorite: true,
+                                  isFavoriteUpdating: favorites.isUpdating(
+                                    station.id,
+                                  ),
+                                  onFavoriteTap: () {
+                                    favorites.toggleFavorite(station.id);
+                                  },
+                                  onTap: () {
+                                    _selectStation(station);
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+
+                        if (favorites.errorMessage != null &&
+                            favoriteStations.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: Text(
+                              favorites.errorMessage!,
+                              style: const TextStyle(
+                                color: Colors.redAccent,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ),
+
+                        const SizedBox(height: 25),
+
+                        _sectionTitle('Programas destacados'),
+
+                        const SizedBox(height: 5),
+
+                        Text(
+                          selectedStation == null
+                              ? 'Historias, música y sesiones para acompañarte'
+                              : 'Selección de ${selectedStation.name}',
+                          style: const TextStyle(
+                            color: AppTheme.textSecondary,
+                            fontSize: 11,
+                            height: 1.4,
+                          ),
                         ),
-                      ),
 
-                    const SizedBox(height: 25),
+                        const SizedBox(height: 12),
 
-                    // ESTACIONES POPULARES
-                    _sectionTitle('Estaciones populares'),
-
-                    const SizedBox(height: 13),
-
-                    if (filteredStations.isEmpty)
-                      const SizedBox.shrink()
-                    else
-                      SizedBox(
-                        height: 112,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: filteredStations.length,
-                          separatorBuilder: (_, _) =>
-                              const SizedBox(width: 17),
-                          itemBuilder: (context, index) {
-                            final station = filteredStations[index];
-
-                            return _PopularStationAvatar(
-                              station: station,
-                              isActive:
-                                  audio.currentStation?.id == station.id,
-                              onTap: () => _selectStation(station),
-                            );
-                          },
-                        ),
-                      ),
-
-                    const SizedBox(height: 25),
-
-                    // PROGRAMAS DESTACADOS
-                    _sectionTitle('Programas destacados'),
-
-                    const SizedBox(height: 5),
-
-                    Text(
-                      selectedStation == null
-                          ? 'Historias, música y sesiones para acompañarte'
-                          : 'Selección de ${selectedStation.name}',
-                      style: const TextStyle(
-                        color: AppTheme.textSecondary,
-                        fontSize: 11,
-                        height: 1.4,
-                      ),
+                        ProgramCarousel(programs: programs),
+                      ],
                     ),
-
-                    const SizedBox(height: 12),
-
-                    ProgramCarousel(
-                      programs: programs,
-                    ),
-                  ],
-                ),
+                  );
+                },
               );
             },
           );
         },
       ),
 
-      // MINI REPRODUCTOR FLOTANTE
       bottomNavigationBar: Material(
         color: Colors.transparent,
         child: MiniPlayer(
           onTap: () {
-            final station =
-                context.read<AudioProvider>().currentStation;
+            final station = context.read<AudioProvider>().currentStation;
 
             if (station != null) {
               _openFullPlayer(station);
@@ -401,7 +472,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Títulos de las secciones.
   Widget _sectionTitle(String title) {
     return Text(
       title,
@@ -414,7 +484,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Mensaje cuando no hay estaciones disponibles.
   Widget _emptyStations() {
     return Container(
       width: double.infinity,
@@ -422,34 +491,61 @@ class _HomeScreenState extends State<HomeScreen> {
       decoration: BoxDecoration(
         color: AppTheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: AppTheme.border,
-        ),
+        border: Border.all(color: AppTheme.border),
       ),
       child: const Text(
         'No encontramos estaciones. Prueba con otro nombre o categoría.',
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color: AppTheme.textSecondary,
-          fontSize: 12,
-        ),
+        style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
+      ),
+    );
+  }
+
+  Widget _favoriteMessage(IconData icon, String message) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: AppTheme.surface,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppTheme.border),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: AppTheme.primary, size: 25),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: const TextStyle(
+                color: AppTheme.textSecondary,
+                fontSize: 11,
+                height: 1.5,
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-// TARJETA DE ESTACIÓN DESTACADA
-
 class _TrendingStationCard extends StatelessWidget {
   final StationModel station;
   final bool isActive;
   final bool isPlaying;
+  final bool isFavorite;
+  final bool isFavoriteUpdating;
+  final VoidCallback onFavoriteTap;
   final VoidCallback onTap;
 
   const _TrendingStationCard({
     required this.station,
     required this.isActive,
     required this.isPlaying,
+    required this.isFavorite,
+    required this.isFavoriteUpdating,
+    required this.onFavoriteTap,
     required this.onTap,
   });
 
@@ -488,10 +584,7 @@ class _TrendingStationCard extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Color(0xD9000000),
-                    ],
+                    colors: [Colors.transparent, Color(0xD9000000)],
                   ),
                 ),
               ),
@@ -517,6 +610,43 @@ class _TrendingStationCard extends StatelessWidget {
                       fontSize: 8,
                       fontWeight: FontWeight.w700,
                       letterSpacing: 0.5,
+                    ),
+                  ),
+                ),
+              ),
+
+              Positioned(
+                top: 10,
+                right: 10,
+                child: Material(
+                  color: Colors.black.withValues(alpha: 0.48),
+                  shape: const CircleBorder(),
+                  child: InkWell(
+                    onTap: isFavoriteUpdating ? null : onFavoriteTap,
+                    customBorder: const CircleBorder(),
+                    child: SizedBox(
+                      width: 36,
+                      height: 36,
+                      child: Center(
+                        child: isFavoriteUpdating
+                            ? const SizedBox(
+                                width: 16,
+                                height: 16,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
+                              )
+                            : Icon(
+                                isFavorite
+                                    ? Icons.favorite_rounded
+                                    : Icons.favorite_border_rounded,
+                                color: isFavorite
+                                    ? Colors.pinkAccent
+                                    : Colors.white,
+                                size: 20,
+                              ),
+                      ),
                     ),
                   ),
                 ),
@@ -581,8 +711,6 @@ class _TrendingStationCard extends StatelessWidget {
   }
 }
 
-// AVATAR DE ESTACIÓN POPULAR
-
 class _PopularStationAvatar extends StatelessWidget {
   final StationModel station;
   final bool isActive;
@@ -613,9 +741,7 @@ class _PopularStationAvatar extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: isActive
-                          ? AppTheme.primary
-                          : AppTheme.border,
+                      color: isActive ? AppTheme.primary : AppTheme.border,
                       width: isActive ? 2 : 1,
                     ),
                     boxShadow: AppTheme.softShadow,
@@ -647,10 +773,7 @@ class _PopularStationAvatar extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: const Color(0xFF36A56B),
                         shape: BoxShape.circle,
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 2,
-                        ),
+                        border: Border.all(color: Colors.white, width: 2),
                       ),
                     ),
                   ),

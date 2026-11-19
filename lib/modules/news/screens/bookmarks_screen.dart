@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -42,7 +41,6 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
     _bookmarkProvider?.removeListener(_onBookmarksChanged);
     super.dispose();
   }
-
 
   void _onBookmarksChanged() {
     _syncBookmarks();
@@ -109,7 +107,6 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
     }
   }
 
-
   Widget _buildHeader(int count) {
     final colors = Theme.of(context).colorScheme;
 
@@ -161,10 +158,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 9,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(13),
@@ -181,10 +175,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
                 ),
                 Text(
                   'Guardadas',
-                  style: TextStyle(
-                    color: colors.onSurfaceVariant,
-                    fontSize: 9,
-                  ),
+                  style: TextStyle(color: colors.onSurfaceVariant, fontSize: 9),
                 ),
               ],
             ),
@@ -194,7 +185,6 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
     );
   }
 
-
   Widget _buildLoading() {
     final colors = Theme.of(context).colorScheme;
 
@@ -202,16 +192,11 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: colors.primary,
-          ),
+          CircularProgressIndicator(color: colors.primary),
           const SizedBox(height: 16),
           Text(
             'Cargando noticias guardadas...',
-            style: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
           ),
         ],
       ),
@@ -269,7 +254,6 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
     );
   }
 
-
   Widget _buildError() {
     final colors = Theme.of(context).colorScheme;
 
@@ -324,7 +308,6 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
     );
   }
 
-
   Widget _buildUnavailable() {
     final colors = Theme.of(context).colorScheme;
 
@@ -343,10 +326,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
             Text(
               'Las noticias guardadas ya no están disponibles.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: colors.onSurface,
-                fontSize: 14,
-              ),
+              style: TextStyle(color: colors.onSurface, fontSize: 14),
             ),
             const SizedBox(height: 13),
             TextButton.icon(
@@ -359,8 +339,6 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       ),
     );
   }
-
-  
 
   Widget _buildNewsList(List<NewsModel> news) {
     final colors = Theme.of(context).colorScheme;
@@ -375,12 +353,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       backgroundColor: colors.surface,
       child: ListView.builder(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(
-          18,
-          17,
-          18,
-          25,
-        ),
+        padding: const EdgeInsets.fromLTRB(18, 17, 18, 25),
         itemCount: news.length + 1,
         itemBuilder: (context, index) {
           if (index == 0) {
@@ -390,8 +363,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
                 children: [
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           'Noticias guardadas',
@@ -412,10 +384,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
                       ],
                     ),
                   ),
-                  Icon(
-                    Icons.favorite_rounded,
-                    color: colors.primary,
-                  ),
+                  Icon(Icons.favorite_rounded, color: colors.primary),
                 ],
               ),
             );
@@ -423,28 +392,21 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
 
           final item = news[index - 1];
 
-          return NewsCard(
-            key: ValueKey(item.id),
-            news: item,
-          );
+          return NewsCard(key: ValueKey(item.id), news: item);
         },
       ),
     );
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final bookmarkProvider =
-        context.watch<BookmarkProvider>();
+    final bookmarkProvider = context.watch<BookmarkProvider>();
 
     Widget content;
 
-    if (!bookmarkProvider.isLoaded ||
-        _newsFuture == null) {
+    if (!bookmarkProvider.isLoaded || _newsFuture == null) {
       content = _buildLoading();
     } else if (bookmarkProvider.bookmarkedIds.isEmpty) {
       content = _buildEmpty();
@@ -452,8 +414,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
       content = FutureBuilder<List<NewsModel>>(
         future: _newsFuture,
         builder: (context, snapshot) {
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
             return _buildLoading();
           }
 
@@ -471,9 +432,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
         title: const Text('Mis favoritos'),
         actions: [
           IconButton(
-            onPressed: !bookmarkProvider.isLoaded
-                ? null
-                : _refreshBookmarks,
+            onPressed: !bookmarkProvider.isLoaded ? null : _refreshBookmarks,
             tooltip: 'Actualizar favoritos',
             icon: const Icon(Icons.refresh_rounded),
           ),
@@ -484,9 +443,7 @@ class _BookmarksScreenState extends State<BookmarksScreen> {
         padding: const EdgeInsets.fromLTRB(18, 17, 18, 0),
         child: Column(
           children: [
-            _buildHeader(
-              bookmarkProvider.bookmarkedIds.length,
-            ),
+            _buildHeader(bookmarkProvider.bookmarkedIds.length),
             const SizedBox(height: 15),
             Expanded(
               child: AnimatedSwitcher(

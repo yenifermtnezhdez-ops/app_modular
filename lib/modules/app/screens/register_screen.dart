@@ -1,9 +1,7 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../providers/auth_provider.dart' as app_auth;
-
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -17,7 +15,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmController = TextEditingController();
- final app_auth.AuthProvider _authProvider = app_auth.AuthProvider();
+  final app_auth.AuthProvider _authProvider = app_auth.AuthProvider();
 
   bool _loading = false;
   bool _hidePassword = true;
@@ -47,7 +45,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     }
   }
 
-   Future<void> _register() async {
+  Future<void> _register() async {
     if (!_formKey.currentState!.validate()) return;
 
     setState(() => _loading = true);
@@ -59,22 +57,17 @@ class _RegisterScreenState extends State<RegisterScreen> {
       );
 
       if (!mounted) return;
-      Navigator.of(context).popUntil(
-        (route) => route.isFirst,
-      );
+      Navigator.of(context).popUntil((route) => route.isFirst);
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_errorMessage(e))),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(_errorMessage(e))));
     } catch (_) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Ocurrió un error inesperado.'),
-        ),
+        const SnackBar(content: Text('Ocurrió un error inesperado.')),
       );
     } finally {
       if (mounted) {
@@ -104,10 +97,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 const Text(
                   'Regístrate en App Lab',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 24),
                 TextFormField(
@@ -136,9 +126,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     border: const OutlineInputBorder(),
                     suffixIcon: IconButton(
                       icon: Icon(
-                        _hidePassword
-                            ? Icons.visibility
-                            : Icons.visibility_off,
+                        _hidePassword ? Icons.visibility : Icons.visibility_off,
                       ),
                       onPressed: () {
                         setState(() => _hidePassword = !_hidePassword);

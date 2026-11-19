@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -11,8 +10,7 @@ import '../services/news_service.dart';
 import '../services/notification_service.dart';
 
 class NotificationProvider extends ChangeNotifier {
-  static const String _subscriptionsKey =
-      'notification_category_subscriptions';
+  static const String _subscriptionsKey = 'notification_category_subscriptions';
 
   final NotificationService _notificationService;
   final NewsService _newsService;
@@ -42,26 +40,22 @@ class NotificationProvider extends ChangeNotifier {
   NotificationProvider({
     NotificationService? notificationService,
     NewsService? newsService,
-  })  : _notificationService =
-            notificationService ?? NotificationService(),
-        _newsService = newsService ?? NewsService() {
+  }) : _notificationService = notificationService ?? NotificationService(),
+       _newsService = newsService ?? NewsService() {
     _listenToMessages();
   }
 
   // GETTERS
-  List<CategoryModel> get categories =>
-      List.unmodifiable(_categories);
+  List<CategoryModel> get categories => List.unmodifiable(_categories);
 
   Set<int> get subscribedCategoryIds =>
       Set.unmodifiable(_subscribedCategoryIds);
 
-  Set<int> get pendingCategoryIds =>
-      Set.unmodifiable(_pendingCategoryIds);
+  Set<int> get pendingCategoryIds => Set.unmodifiable(_pendingCategoryIds);
 
   bool get isLoading => _isLoading;
 
-  bool get isRequestingPermission =>
-      _isRequestingPermission;
+  bool get isRequestingPermission => _isRequestingPermission;
 
   String? get errorMessage => _errorMessage;
 
@@ -69,11 +63,9 @@ class NotificationProvider extends ChangeNotifier {
 
   RemoteMessage? get lastMessage => _lastMessage;
 
-  RemoteMessage? get lastOpenedMessage =>
-      _lastOpenedMessage;
+  RemoteMessage? get lastOpenedMessage => _lastOpenedMessage;
 
-  AuthorizationStatus? get authorizationStatus =>
-      _authorizationStatus;
+  AuthorizationStatus? get authorizationStatus => _authorizationStatus;
 
   bool get hasPermission =>
       _authorizationStatus == AuthorizationStatus.authorized ||
@@ -95,8 +87,7 @@ class NotificationProvider extends ChangeNotifier {
     notifyListeners();
 
     // Escuchar el registro de Firebase antes de llamar register().
-    _registrationSubscription =
-        _notificationService.onRegistered.listen(
+    _registrationSubscription = _notificationService.onRegistered.listen(
       (installationId) {
         _installationId = installationId;
 
@@ -116,8 +107,7 @@ class NotificationProvider extends ChangeNotifier {
       onError: (error) {
         debugPrint('ERROR AL REGISTRAR FCM: $error');
 
-        _errorMessage =
-            'No fue posible registrar el dispositivo.';
+        _errorMessage = 'No fue posible registrar el dispositivo.';
 
         notifyListeners();
       },
@@ -131,8 +121,7 @@ class NotificationProvider extends ChangeNotifier {
       await refreshCategories();
 
       // Consultar permisos actuales.
-      final settings =
-          await _notificationService.getNotificationSettings();
+      final settings = await _notificationService.getNotificationSettings();
 
       _authorizationStatus = settings.authorizationStatus;
 
@@ -142,12 +131,10 @@ class NotificationProvider extends ChangeNotifier {
       );
 
       // Configurar presentación de notificaciones.
-      await _notificationService
-          .configureForegroundPresentation();
+      await _notificationService.configureForegroundPresentation();
 
       // Consultar si una notificación abrió la aplicación.
-      final initialMessage =
-          await _notificationService.getInitialMessage();
+      final initialMessage = await _notificationService.getInitialMessage();
 
       if (initialMessage != null) {
         _lastOpenedMessage = initialMessage;
@@ -179,8 +166,7 @@ class NotificationProvider extends ChangeNotifier {
   // ESCUCHAR MENSAJES
   void _listenToMessages() {
     // Mensajes recibidos con la aplicación abierta.
-    _messageSubscription =
-        _notificationService.onMessage.listen(
+    _messageSubscription = _notificationService.onMessage.listen(
       (message) {
         _lastMessage = message;
 
@@ -197,8 +183,7 @@ class NotificationProvider extends ChangeNotifier {
     );
 
     // Mensajes abiertos desde una notificación.
-    _openedMessageSubscription =
-        _notificationService.onMessageOpenedApp.listen(
+    _openedMessageSubscription = _notificationService.onMessageOpenedApp.listen(
       (message) {
         _lastOpenedMessage = message;
 
@@ -218,12 +203,9 @@ class NotificationProvider extends ChangeNotifier {
     try {
       _categories = await _newsService.getCategories();
 
-      final validIds = _categories
-          .map((category) => category.id)
-          .toSet();
+      final validIds = _categories.map((category) => category.id).toSet();
 
-      _subscribedCategoryIds =
-          _subscribedCategoryIds.intersection(validIds);
+      _subscribedCategoryIds = _subscribedCategoryIds.intersection(validIds);
 
       await _saveSubscriptions(_subscribedCategoryIds);
 
@@ -236,8 +218,7 @@ class NotificationProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error al cargar categorías: $e');
 
-      _errorMessage =
-          'No fue posible cargar las categorías de noticias.';
+      _errorMessage = 'No fue posible cargar las categorías de noticias.';
     }
 
     notifyListeners();
@@ -247,8 +228,7 @@ class NotificationProvider extends ChangeNotifier {
   Future<void> _loadSavedSubscriptions() async {
     final prefs = await SharedPreferences.getInstance();
 
-    final savedIds =
-        prefs.getStringList(_subscriptionsKey) ?? [];
+    final savedIds = prefs.getStringList(_subscriptionsKey) ?? [];
 
     _subscribedCategoryIds = savedIds
         .map((value) => int.tryParse(value))
@@ -266,14 +246,9 @@ class NotificationProvider extends ChangeNotifier {
   Future<void> _saveSubscriptions(Set<int> ids) async {
     final prefs = await SharedPreferences.getInstance();
 
-    final values = ids
-        .map((id) => id.toString())
-        .toList();
+    final values = ids.map((id) => id.toString()).toList();
 
-    await prefs.setStringList(
-      _subscriptionsKey,
-      values,
-    );
+    await prefs.setStringList(_subscriptionsKey, values);
   }
 
   // SOLICITAR PERMISOS
@@ -288,8 +263,7 @@ class NotificationProvider extends ChangeNotifier {
     try {
       debugPrint('Solicitando permiso de notificaciones...');
 
-      final settings =
-          await _notificationService.requestPermission();
+      final settings = await _notificationService.requestPermission();
 
       _authorizationStatus = settings.authorizationStatus;
 
@@ -299,8 +273,7 @@ class NotificationProvider extends ChangeNotifier {
       );
 
       if (!hasPermission) {
-        _errorMessage =
-            'No se concedió permiso para recibir notificaciones.';
+        _errorMessage = 'No se concedió permiso para recibir notificaciones.';
 
         return false;
       }
@@ -327,19 +300,14 @@ class NotificationProvider extends ChangeNotifier {
   }
 
   // SUSCRIBIRSE O CANCELAR UNA CATEGORÍA
-  Future<bool> setCategoryEnabled(
-    CategoryModel category,
-    bool enabled,
-  ) async {
+  Future<bool> setCategoryEnabled(CategoryModel category, bool enabled) async {
     final categoryId = category.id;
 
-    if (categoryId <= 0 ||
-        isCategoryBusy(categoryId)) {
+    if (categoryId <= 0 || isCategoryBusy(categoryId)) {
       return false;
     }
 
-    final alreadySubscribed =
-        isCategorySubscribed(categoryId);
+    final alreadySubscribed = isCategorySubscribed(categoryId);
 
     if (alreadySubscribed == enabled) {
       return true;
@@ -353,32 +321,25 @@ class NotificationProvider extends ChangeNotifier {
     try {
       // Solicitar permiso antes de suscribirse.
       if (enabled && !hasPermission) {
-        final permissionGranted =
-            await requestPermission();
+        final permissionGranted = await requestPermission();
 
         if (!permissionGranted) {
           return false;
         }
       }
 
-      final topic =
-          NotificationService.topicForCategory(categoryId);
+      final topic = NotificationService.topicForCategory(categoryId);
 
       debugPrint('Actualizando tópico: $topic');
 
       if (enabled) {
-        await _notificationService.subscribeToCategory(
-          categoryId,
-        );
+        await _notificationService.subscribeToCategory(categoryId);
       } else {
-        await _notificationService.unsubscribeFromCategory(
-          categoryId,
-        );
+        await _notificationService.unsubscribeFromCategory(categoryId);
       }
 
       // Actualizar estado únicamente después de Firebase.
-      final updatedIds =
-          Set<int>.from(_subscribedCategoryIds);
+      final updatedIds = Set<int>.from(_subscribedCategoryIds);
 
       if (enabled) {
         updatedIds.add(categoryId);
@@ -392,13 +353,9 @@ class NotificationProvider extends ChangeNotifier {
       } catch (_) {
         // Revertir el cambio si falla el guardado local.
         if (enabled) {
-          await _notificationService.unsubscribeFromCategory(
-            categoryId,
-          );
+          await _notificationService.unsubscribeFromCategory(categoryId);
         } else {
-          await _notificationService.subscribeToCategory(
-            categoryId,
-          );
+          await _notificationService.subscribeToCategory(categoryId);
         }
 
         rethrow;
@@ -416,9 +373,7 @@ class NotificationProvider extends ChangeNotifier {
 
       return true;
     } catch (e) {
-      debugPrint(
-        'Error al actualizar la suscripción: $e',
-      );
+      debugPrint('Error al actualizar la suscripción: $e');
 
       _errorMessage = _getErrorMessage(e);
 
@@ -438,24 +393,18 @@ class NotificationProvider extends ChangeNotifier {
 
     debugPrint('Restaurando suscripciones de categorías...');
 
-    for (final categoryId
-        in _subscribedCategoryIds.toList()) {
+    for (final categoryId in _subscribedCategoryIds.toList()) {
       try {
-        await _notificationService.subscribeToCategory(
-          categoryId,
-        );
+        await _notificationService.subscribeToCategory(categoryId);
 
         debugPrint(
           'Tópico restaurado: '
           'noticias_categoria_$categoryId',
         );
       } catch (e) {
-        debugPrint(
-          'Error al restaurar tópico $categoryId: $e',
-        );
+        debugPrint('Error al restaurar tópico $categoryId: $e');
 
-        _errorMessage =
-            'No fue posible restaurar todas las suscripciones.';
+        _errorMessage = 'No fue posible restaurar todas las suscripciones.';
 
         notifyListeners();
       }
@@ -486,13 +435,9 @@ class NotificationProvider extends ChangeNotifier {
       }
     }
 
-    final message = error
-        .toString()
-        .replaceFirst('Exception: ', '');
+    final message = error.toString().replaceFirst('Exception: ', '');
 
-    return message.isEmpty
-        ? 'Ocurrió un error. Intenta nuevamente.'
-        : message;
+    return message.isEmpty ? 'Ocurrió un error. Intenta nuevamente.' : message;
   }
 
   @override

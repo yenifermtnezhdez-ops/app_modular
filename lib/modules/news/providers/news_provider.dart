@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -8,13 +7,11 @@ import '../models/news_model.dart';
 import '../models/category_model.dart';
 import '../services/cache_service.dart';
 
-class NewsProvider extends ChangeNotifier
-    with WidgetsBindingObserver {
+class NewsProvider extends ChangeNotifier with WidgetsBindingObserver {
   final Connectivity _connectivity;
   final CacheService _cacheService;
 
-  StreamSubscription<List<ConnectivityResult>>?
-      _connectivitySubscription;
+  StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
 
   bool _isOnline = true;
   bool _isInitialized = false;
@@ -24,11 +21,9 @@ class NewsProvider extends ChangeNotifier
 
   String? _errorMessage;
 
-  NewsProvider({
-    Connectivity? connectivity,
-    CacheService? cacheService,
-  })  : _connectivity = connectivity ?? Connectivity(),
-        _cacheService = cacheService ?? CacheService();
+  NewsProvider({Connectivity? connectivity, CacheService? cacheService})
+    : _connectivity = connectivity ?? Connectivity(),
+      _cacheService = cacheService ?? CacheService();
 
   bool get isOnline => _isOnline;
 
@@ -42,7 +37,6 @@ class NewsProvider extends ChangeNotifier
 
   String? get errorMessage => _errorMessage;
 
-
   Future<void> initialize() async {
     if (_isInitialized) return;
 
@@ -50,23 +44,17 @@ class NewsProvider extends ChangeNotifier
 
     WidgetsBinding.instance.addObserver(this);
 
-  
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen(
       _updateConnection,
       onError: (error) {
-        debugPrint(
-          'Error al detectar conexión: $error',
-        );
+        debugPrint('Error al detectar conexión: $error');
 
         reportOffline();
       },
     );
 
-  
     await checkConnectivity();
   }
-
 
   Future<void> checkConnectivity() async {
     if (_isCheckingConnection) return;
@@ -78,9 +66,7 @@ class NewsProvider extends ChangeNotifier
 
       _updateConnection(results);
     } catch (e) {
-      debugPrint(
-        'Error al comprobar la conexión: $e',
-      );
+      debugPrint('Error al comprobar la conexión: $e');
 
       reportOffline();
     } finally {
@@ -88,10 +74,7 @@ class NewsProvider extends ChangeNotifier
     }
   }
 
- 
-  void _updateConnection(
-    List<ConnectivityResult> results,
-  ) {
+  void _updateConnection(List<ConnectivityResult> results) {
     final hasConnection = results.any(
       (result) => result != ConnectivityResult.none,
     );
@@ -101,15 +84,12 @@ class NewsProvider extends ChangeNotifier
       _connectionRevision++;
 
       debugPrint(
-        _isOnline
-            ? 'CONEXIÓN DISPONIBLE'
-            : 'DISPOSITIVO SIN CONEXIÓN',
+        _isOnline ? 'CONEXIÓN DISPONIBLE' : 'DISPOSITIVO SIN CONEXIÓN',
       );
 
       notifyListeners();
     }
   }
-
 
   void reportOnline() {
     _errorMessage = null;
@@ -135,14 +115,9 @@ class NewsProvider extends ChangeNotifier
     }
   }
 
- 
-  String buildCacheKey({
-    String? search,
-    int? categoryId,
-  }) {
+  String buildCacheKey({String? search, int? categoryId}) {
     if (search != null && search.trim().isNotEmpty) {
-      final normalizedSearch =
-          search.trim().toLowerCase();
+      final normalizedSearch = search.trim().toLowerCase();
 
       return 'search_${Uri.encodeComponent(normalizedSearch)}';
     }
@@ -154,54 +129,36 @@ class NewsProvider extends ChangeNotifier
     return 'all_news';
   }
 
-
   Future<List<NewsModel>?> getCachedNews({
     String? search,
     int? categoryId,
   }) async {
-    final key = buildCacheKey(
-      search: search,
-      categoryId: categoryId,
-    );
+    final key = buildCacheKey(search: search, categoryId: categoryId);
 
     return _cacheService.getNews(key);
   }
 
- 
   Future<void> saveNews({
     required List<NewsModel> news,
     String? search,
     int? categoryId,
     bool append = false,
   }) async {
-    final key = buildCacheKey(
-      search: search,
-      categoryId: categoryId,
-    );
+    final key = buildCacheKey(search: search, categoryId: categoryId);
 
-    await _cacheService.saveNews(
-      cacheKey: key,
-      news: news,
-      append: append,
-    );
+    await _cacheService.saveNews(cacheKey: key, news: news, append: append);
   }
-
 
   Future<List<CategoryModel>?> getCachedCategories() {
     return _cacheService.getCategories();
   }
 
-  Future<void> saveCategories(
-    List<CategoryModel> categories,
-  ) {
+  Future<void> saveCategories(List<CategoryModel> categories) {
     return _cacheService.saveCategories(categories);
   }
 
- 
   @override
-  void didChangeAppLifecycleState(
-    AppLifecycleState state,
-  ) {
+  void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       checkConnectivity();
     }

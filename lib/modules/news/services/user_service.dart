@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:image_picker/image_picker.dart';
@@ -12,17 +11,16 @@ class UserService {
 
     return prefs.getString('$_phoneKeyPrefix$userId') ?? '';
   }
+
   Future<void> savePhone({
     required String userId,
     required String phone,
   }) async {
     final prefs = await SharedPreferences.getInstance();
 
-    await prefs.setString(
-      '$_phoneKeyPrefix$userId',
-      phone.trim(),
-    );
+    await prefs.setString('$_phoneKeyPrefix$userId', phone.trim());
   }
+
   Future<String?> getProfileImagePath(String userId) async {
     final directory = await getApplicationDocumentsDirectory();
 
@@ -35,8 +33,7 @@ class UserService {
     final prefix = 'profile_$userId.';
 
     await for (final entity in folder.list()) {
-      if (entity is File &&
-          entity.uri.pathSegments.last.startsWith(prefix)) {
+      if (entity is File && entity.uri.pathSegments.last.startsWith(prefix)) {
         if (await entity.exists()) {
           return entity.path;
         }
@@ -45,6 +42,7 @@ class UserService {
 
     return null;
   }
+
   Future<String> saveProfileImage({
     required String userId,
     required XFile image,
@@ -62,22 +60,14 @@ class UserService {
     }
     final sourcePath = image.path;
     final dotIndex = sourcePath.lastIndexOf('.');
-    final separatorIndex = sourcePath.lastIndexOf(
-      Platform.pathSeparator,
-    );
+    final separatorIndex = sourcePath.lastIndexOf(Platform.pathSeparator);
 
     String extension = '.jpg';
 
     if (dotIndex > separatorIndex) {
       final candidate = sourcePath.substring(dotIndex).toLowerCase();
 
-      const allowedExtensions = [
-        '.jpg',
-        '.jpeg',
-        '.png',
-        '.webp',
-        '.heic',
-      ];
+      const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp', '.heic'];
 
       if (allowedExtensions.contains(candidate)) {
         extension = candidate;
@@ -86,8 +76,7 @@ class UserService {
 
     final directory = await getApplicationDocumentsDirectory();
 
-    final destinationPath =
-        '${directory.path}/profile_$userId$extension';
+    final destinationPath = '${directory.path}/profile_$userId$extension';
 
     final destinationFile = File(destinationPath);
     await sourceFile.copy(destinationFile.path);
@@ -98,15 +87,14 @@ class UserService {
     await for (final entity in Directory(directory.path).list()) {
       if (entity is File &&
           entity.path != destinationFile.path &&
-          entity.uri.pathSegments.last.startsWith(
-            'profile_$userId.',
-          )) {
+          entity.uri.pathSegments.last.startsWith('profile_$userId.')) {
         await entity.delete();
       }
     }
 
     return destinationFile.path;
   }
+
   Future<void> deleteLocalProfile(String userId) async {
     final prefs = await SharedPreferences.getInstance();
 
@@ -119,9 +107,7 @@ class UserService {
     if (!await folder.exists()) return;
     await for (final entity in folder.list()) {
       if (entity is File &&
-          entity.uri.pathSegments.last.startsWith(
-            'profile_$userId.',
-          )) {
+          entity.uri.pathSegments.last.startsWith('profile_$userId.')) {
         await entity.delete();
       }
     }

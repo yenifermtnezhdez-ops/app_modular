@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
@@ -10,25 +9,16 @@ class ProgramCarousel extends StatelessWidget {
   final List<ProgramModel> programs;
   final Function(ProgramModel)? onProgramTap;
 
-  const ProgramCarousel({
-    super.key,
-    required this.programs,
-    this.onProgramTap,
-  });
+  const ProgramCarousel({super.key, required this.programs, this.onProgramTap});
 
-  void _showProgramDetails(
-    BuildContext context,
-    ProgramModel program,
-  ) {
+  void _showProgramDetails(BuildContext context, ProgramModel program) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: AppTheme.surface,
       elevation: 12,
       shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(25),
-        ),
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
       ),
       builder: (context) {
         return SingleChildScrollView(
@@ -96,27 +86,15 @@ class ProgramCarousel extends StatelessWidget {
 
               const SizedBox(height: 22),
 
-              _detailRow(
-                Icons.schedule,
-                'Horario',
-                program.schedule,
-              ),
+              _detailRow(Icons.schedule, 'Horario', program.schedule),
 
               const SizedBox(height: 14),
 
-              _detailRow(
-                Icons.person,
-                'Estación / Conductor',
-                program.host,
-              ),
+              _detailRow(Icons.person, 'Estación / Conductor', program.host),
 
               const SizedBox(height: 14),
 
-              _detailRow(
-                Icons.radio,
-                'Identificador',
-                program.stationId,
-              ),
+              _detailRow(Icons.radio, 'Identificador', program.stationId),
 
               const SizedBox(height: 25),
 
@@ -129,9 +107,7 @@ class ProgramCarousel extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.primary,
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 14,
-                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(14),
                     ),
@@ -148,19 +124,11 @@ class ProgramCarousel extends StatelessWidget {
     );
   }
 
-  Widget _detailRow(
-    IconData icon,
-    String title,
-    String value,
-  ) {
+  Widget _detailRow(IconData icon, String title, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(
-          icon,
-          color: AppTheme.primary,
-          size: 22,
-        ),
+        Icon(icon, color: AppTheme.primary, size: 22),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -197,10 +165,7 @@ class ProgramCarousel extends StatelessWidget {
         child: Center(
           child: Text(
             'No hay programas disponibles',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-              fontSize: 14,
-            ),
+            style: TextStyle(color: AppTheme.textSecondary, fontSize: 14),
           ),
         ),
       );

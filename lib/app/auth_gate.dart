@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -15,9 +14,7 @@ class AuthGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
-            body: Center(
-              child: CircularProgressIndicator(),
-            ),
+            body: Center(child: CircularProgressIndicator()),
           );
         }
 
@@ -43,9 +40,7 @@ class AuthGate extends StatelessWidget {
                     ElevatedButton(
                       onPressed: () {
                         Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (_) => const AuthGate(),
-                          ),
+                          MaterialPageRoute(builder: (_) => const AuthGate()),
                         );
                       },
                       child: const Text('Intentar nuevamente'),

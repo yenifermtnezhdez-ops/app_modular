@@ -60,10 +60,7 @@ class StationCard extends StatelessWidget {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [
-                            Color(0x00000000),
-                            Color(0x990F0B18),
-                          ],
+                          colors: [Color(0x00000000), Color(0x990F0B18)],
                         ),
                       ),
                     ),

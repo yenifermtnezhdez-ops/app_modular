@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -6,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../../../app_theme.dart';
 import '../constants/radio_constants.dart';
 import 'onboarding_screen.dart';
-
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -32,9 +30,7 @@ class _SplashScreenState extends State<SplashScreen> {
     if (!mounted) return;
 
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(
-        builder: (context) => const OnboardingScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const OnboardingScreen()),
     );
   }
 
@@ -52,11 +48,7 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.radio_rounded,
-              color: AppTheme.primary,
-              size: 100,
-            ),
+            const Icon(Icons.radio_rounded, color: AppTheme.primary, size: 100),
             const SizedBox(height: 25),
             const Text(
               AppConstants.appName,
@@ -70,10 +62,7 @@ class _SplashScreenState extends State<SplashScreen> {
             const Text(
               AppConstants.appDescription,
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: AppTheme.textSecondary,
-                fontSize: 15,
-              ),
+              style: TextStyle(color: AppTheme.textSecondary, fontSize: 15),
             ),
             const SizedBox(height: 40),
             const SizedBox(

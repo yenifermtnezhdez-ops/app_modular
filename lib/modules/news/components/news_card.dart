@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,10 +8,7 @@ import '../screens/news_detail_screen.dart';
 class NewsCard extends StatelessWidget {
   final NewsModel news;
 
-  const NewsCard({
-    super.key,
-    required this.news,
-  });
+  const NewsCard({super.key, required this.news});
 
   String _cleanContent(String content) {
     return content
@@ -71,9 +67,7 @@ class NewsCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(22),
-        side: BorderSide(
-          color: colors.outline..withValues(alpha: 0.55),
-        ),
+        side: BorderSide(color: colors.outline..withValues(alpha: 0.55)),
       ),
       child: InkWell(
         borderRadius: BorderRadius.circular(22),
@@ -81,9 +75,7 @@ class NewsCard extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => NewsDetailScreen(
-                news: news,
-              ),
+              builder: (context) => NewsDetailScreen(news: news),
             ),
           );
         },
@@ -92,7 +84,6 @@ class NewsCard extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            
               Row(
                 children: [
                   Container(
@@ -137,7 +128,6 @@ class NewsCard extends StatelessWidget {
                     ),
                   ),
 
-                
                   Container(
                     width: 40,
                     height: 40,
@@ -162,15 +152,14 @@ class NewsCard extends StatelessWidget {
                               } catch (_) {
                                 if (!context.mounted) return;
 
-                                ScaffoldMessenger.of(context)
-                                  .showSnackBar(
-                                    SnackBar(
-                                      content: const Text(
-                                        'No fue posible actualizar el favorito.',
-                                      ),
-                                      backgroundColor: colors.error,
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: const Text(
+                                      'No fue posible actualizar el favorito.',
                                     ),
-                                  );
+                                    backgroundColor: colors.error,
+                                  ),
+                                );
                               }
                             },
                       tooltip: isBookmarked
@@ -205,7 +194,6 @@ class NewsCard extends StatelessWidget {
 
               const SizedBox(height: 19),
 
-            
               Text(
                 news.title,
                 maxLines: 3,
@@ -221,7 +209,6 @@ class NewsCard extends StatelessWidget {
 
               const SizedBox(height: 12),
 
-            
               Row(
                 children: [
                   Icon(
@@ -241,7 +228,6 @@ class NewsCard extends StatelessWidget {
                 ],
               ),
 
-           
               if (cleanContent.isNotEmpty) ...[
                 const SizedBox(height: 13),
                 Text(
@@ -258,14 +244,10 @@ class NewsCard extends StatelessWidget {
 
               const SizedBox(height: 17),
 
-              Divider(
-                height: 1,
-                color: colors.outline.withValues(alpha: 0.45),
-              ),
+              Divider(height: 1, color: colors.outline.withValues(alpha: 0.45)),
 
               const SizedBox(height: 13),
 
-            
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [

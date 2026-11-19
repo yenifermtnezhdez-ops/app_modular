@@ -1,15 +1,12 @@
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 class FirebaseMessagingService {
   FirebaseMessagingService._();
 
-  static final FirebaseMessagingService instance =
-      FirebaseMessagingService._();
+  static final FirebaseMessagingService instance = FirebaseMessagingService._();
 
-  final FirebaseMessaging _messaging =
-      FirebaseMessaging.instance;
+  final FirebaseMessaging _messaging = FirebaseMessaging.instance;
 
   bool _initialized = false;
 
@@ -29,84 +26,51 @@ class FirebaseMessagingService {
       );
       _messaging.onRegistered.listen(
         (String installationId) {
-          debugPrint(
-            'ID de instalación de Firebase: $installationId',
-          );
+          debugPrint('ID de instalación de Firebase: $installationId');
         },
         onError: (Object error) {
-          debugPrint(
-            'Error al registrar el dispositivo: $error',
-          );
+          debugPrint('Error al registrar el dispositivo: $error');
         },
       );
       await _messaging.register();
 
       FirebaseMessaging.onMessage.listen(
         (RemoteMessage message) {
-          debugPrint(
-            'Mensaje FCM recibido en primer plano',
-          );
+          debugPrint('Mensaje FCM recibido en primer plano');
           debugPrint('ID: ${message.messageId}');
-          debugPrint(
-            'Título: ${message.notification?.title}',
-          );
-          debugPrint(
-            'Cuerpo: ${message.notification?.body}',
-          );
+          debugPrint('Título: ${message.notification?.title}');
+          debugPrint('Cuerpo: ${message.notification?.body}');
           debugPrint('Datos: ${message.data}');
         },
         onError: (Object error) {
-          debugPrint(
-            'Error al recibir mensaje FCM: $error',
-          );
+          debugPrint('Error al recibir mensaje FCM: $error');
         },
       );
 
       FirebaseMessaging.onMessageOpenedApp.listen(
         (RemoteMessage message) {
-          debugPrint(
-            'Se abrió la aplicación desde una notificación FCM',
-          );
-          debugPrint(
-            'Título: ${message.notification?.title}',
-          );
-          debugPrint(
-            'Datos: ${message.data}',
-          );
+          debugPrint('Se abrió la aplicación desde una notificación FCM');
+          debugPrint('Título: ${message.notification?.title}');
+          debugPrint('Datos: ${message.data}');
         },
         onError: (Object error) {
-          debugPrint(
-            'Error al abrir la notificación: $error',
-          );
+          debugPrint('Error al abrir la notificación: $error');
         },
       );
 
-      final initialMessage =
-          await _messaging.getInitialMessage();
+      final initialMessage = await _messaging.getInitialMessage();
 
       if (initialMessage != null) {
-        debugPrint(
-          'La aplicación se abrió desde una notificación FCM',
-        );
-        debugPrint(
-          'Título: ${initialMessage.notification?.title}',
-        );
-        debugPrint(
-          'Cuerpo: ${initialMessage.notification?.body}',
-        );
-        debugPrint(
-          'Datos: ${initialMessage.data}',
-        );
+        debugPrint('La aplicación se abrió desde una notificación FCM');
+        debugPrint('Título: ${initialMessage.notification?.title}');
+        debugPrint('Cuerpo: ${initialMessage.notification?.body}');
+        debugPrint('Datos: ${initialMessage.data}');
       }
 
       _initialized = true;
-      debugPrint(
-        'Firebase Messaging inicializado correctamente.',
-      );
+      debugPrint('Firebase Messaging inicializado correctamente.');
     } catch (e, stackTrace) {
-      debugPrint(
-        'Error al inicializar Firebase Messaging: $e',
-      );
+      debugPrint('Error al inicializar Firebase Messaging: $e');
       debugPrint('$stackTrace');
       rethrow;
     }

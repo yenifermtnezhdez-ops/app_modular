@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -8,7 +7,6 @@ import '../helpers/providers/audio_provider.dart';
 import '../helpers/radio_utils.dart';
 import '../models/station_model.dart';
 import '../services/app_service.dart';
-
 
 class PlayerScreen extends StatelessWidget {
   final StationModel station;
@@ -56,7 +54,7 @@ class PlayerScreen extends StatelessWidget {
 
           final nextIndex =
               (currentStationIndex + direction + stations.length) %
-                  stations.length;
+              stations.length;
 
           audio.playStation(stations[nextIndex]);
         }
@@ -64,18 +62,18 @@ class PlayerScreen extends StatelessWidget {
         final status = hasError
             ? 'ERROR DE REPRODUCCIÓN'
             : isLoading
-                ? 'CONECTANDO...'
-                : isPlaying
-                    ? 'EN VIVO'
-                    : audio.currentStation != null
-                        ? 'EN PAUSA'
-                        : 'LISTA PARA REPRODUCIR';
+            ? 'CONECTANDO...'
+            : isPlaying
+            ? 'EN VIVO'
+            : audio.currentStation != null
+            ? 'EN PAUSA'
+            : 'LISTA PARA REPRODUCIR';
 
         final statusColor = hasError
             ? const Color(0xFFB83D4B)
             : isPlaying
-                ? const Color(0xFF278253)
-                : AppTheme.primary;
+            ? const Color(0xFF278253)
+            : AppTheme.primary;
 
         final socialLinks = <Map<String, dynamic>>[
           if (activeStation.xUrl.trim().isNotEmpty)
@@ -222,7 +220,6 @@ class PlayerScreen extends StatelessWidget {
 
                         const SizedBox(height: 15),
 
-                  
                         Text(
                           activeStation.name,
                           textAlign: TextAlign.center,
@@ -236,7 +233,6 @@ class PlayerScreen extends StatelessWidget {
 
                         const SizedBox(height: 7),
 
-                      
                         Text(
                           activeStation.slogan,
                           textAlign: TextAlign.center,
@@ -262,7 +258,6 @@ class PlayerScreen extends StatelessWidget {
 
                         const SizedBox(height: 24),
 
-                    
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 15,
@@ -280,9 +275,33 @@ class PlayerScreen extends StatelessWidget {
                             crossAxisAlignment: CrossAxisAlignment.center,
                             children: List.generate(27, (index) {
                               final heights = [
-                                12, 20, 30, 17, 37, 24, 44, 18, 31,
-                                48, 23, 37, 15, 43, 28, 50, 19, 35,
-                                24, 42, 16, 32, 45, 20, 36, 15, 27,
+                                12,
+                                20,
+                                30,
+                                17,
+                                37,
+                                24,
+                                44,
+                                18,
+                                31,
+                                48,
+                                23,
+                                37,
+                                15,
+                                43,
+                                28,
+                                50,
+                                19,
+                                35,
+                                24,
+                                42,
+                                16,
+                                32,
+                                45,
+                                20,
+                                36,
+                                15,
+                                27,
                               ];
 
                               return Container(
@@ -304,7 +323,6 @@ class PlayerScreen extends StatelessWidget {
 
                         const SizedBox(height: 22),
 
-                       
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -327,8 +345,8 @@ class PlayerScreen extends StatelessWidget {
                                     : () {
                                         if (isPlaying) {
                                           audio.pause();
-                                        } else if (
-                                            audio.currentStation != null) {
+                                        } else if (audio.currentStation !=
+                                            null) {
                                           audio.resume();
                                         } else {
                                           audio.playStation(activeStation);
@@ -337,12 +355,13 @@ class PlayerScreen extends StatelessWidget {
                                 style: FilledButton.styleFrom(
                                   backgroundColor: AppTheme.primary,
                                   foregroundColor: Colors.white,
-                                  disabledBackgroundColor:
-                                      AppTheme.primary.withValues(alpha: 0.35),
+                                  disabledBackgroundColor: AppTheme.primary
+                                      .withValues(alpha: 0.35),
                                   shape: const CircleBorder(),
                                   elevation: 7,
-                                  shadowColor:
-                                      AppTheme.primary.withValues(alpha: 0.25),
+                                  shadowColor: AppTheme.primary.withValues(
+                                    alpha: 0.25,
+                                  ),
                                   padding: EdgeInsets.zero,
                                 ),
                                 child: Icon(
@@ -366,7 +385,6 @@ class PlayerScreen extends StatelessWidget {
                           ],
                         ),
 
-                  
                         if (hasError) ...[
                           const SizedBox(height: 16),
                           Text(
@@ -389,7 +407,6 @@ class PlayerScreen extends StatelessWidget {
 
                         const SizedBox(height: 25),
 
-                    
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.all(17),
@@ -435,23 +452,18 @@ class PlayerScreen extends StatelessWidget {
                           ),
                         ),
 
-                  
                         if (activeStation.websiteUrl.trim().isNotEmpty) ...[
                           const SizedBox(height: 15),
                           SizedBox(
                             width: double.infinity,
                             child: OutlinedButton.icon(
-                              onPressed: () => _openLink(
-                                context,
-                                activeStation.websiteUrl,
-                              ),
+                              onPressed: () =>
+                                  _openLink(context, activeStation.websiteUrl),
                               icon: const Icon(Icons.language_rounded),
                               label: const Text('Visitar página web'),
                               style: OutlinedButton.styleFrom(
                                 foregroundColor: AppTheme.primary,
-                                side: const BorderSide(
-                                  color: AppTheme.border,
-                                ),
+                                side: const BorderSide(color: AppTheme.border),
                                 backgroundColor: AppTheme.surface,
                                 padding: const EdgeInsets.symmetric(
                                   vertical: 14,
@@ -464,7 +476,6 @@ class PlayerScreen extends StatelessWidget {
                           ),
                         ],
 
-                   
                         if (socialLinks.isNotEmpty) ...[
                           const SizedBox(height: 18),
                           const Text(
@@ -481,10 +492,8 @@ class PlayerScreen extends StatelessWidget {
                             spacing: 10,
                             children: socialLinks.map((social) {
                               return TextButton.icon(
-                                onPressed: () => _openLink(
-                                  context,
-                                  social['url'] as String,
-                                ),
+                                onPressed: () =>
+                                    _openLink(context, social['url'] as String),
                                 icon: Icon(social['icon'] as IconData),
                                 label: Text(social['name'] as String),
                                 style: TextButton.styleFrom(
@@ -510,7 +519,6 @@ class PlayerScreen extends StatelessWidget {
     );
   }
 
-
   Widget _roundControl({
     required IconData icon,
     required String tooltip,
@@ -530,13 +538,9 @@ class PlayerScreen extends StatelessWidget {
     );
   }
 
-
   Widget _infoChip(String label) {
     return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 10,
-        vertical: 6,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
         color: AppTheme.surfaceElevated,
         borderRadius: BorderRadius.circular(20),

@@ -1,4 +1,3 @@
-
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -13,8 +12,7 @@ class AppService {
       acronym: 'GSL',
       slogan: 'Un plato frío de beats ambientales',
       description: 'Un plato frío de beats ambientales',
-      imageUrl:
-          'https://images.unsplash.com/photo-1516280440614-37939bbacd81',
+      imageUrl: 'https://images.unsplash.com/photo-1516280440614-37939bbacd81',
       streamUrl: 'https://ice1.somafm.com/groovesalad-128-mp3',
       category: 'Ambient',
       frequency: 'GSL • ONLINE',
@@ -28,8 +26,7 @@ class AppService {
       acronym: 'SAG',
       slogan: 'La banda sonora para tu vida elegante',
       description: 'La banda sonora para tu vida elegante',
-      imageUrl:
-          'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f',
+      imageUrl: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f',
       streamUrl: 'https://ice1.somafm.com/secretagent-128-mp3',
       category: 'Lounge',
       frequency: 'SAG • ONLINE',
@@ -43,8 +40,7 @@ class AppService {
       acronym: 'IPR',
       slogan: 'Canciones indie pop nuevas y clásicas',
       description: 'Canciones indie pop nuevas y clásicas',
-      imageUrl:
-          'https://images.unsplash.com/photo-1511379938547-c1f69419868d',
+      imageUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d',
       streamUrl: 'https://ice1.somafm.com/indiepop-128-mp3',
       category: 'Indie Pop',
       frequency: 'IPR • ONLINE',
@@ -58,8 +54,7 @@ class AppService {
       acronym: 'NRFM',
       slogan: 'Synthwave y Cyberpunk 24/7',
       description: 'Synthwave y Cyberpunk 24/7',
-      imageUrl:
-          'https://images.unsplash.com/photo-1470225620780-dba8ba36b745',
+      imageUrl: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745',
       streamUrl: 'https://stream.nightride.fm/nightride.mp3',
       category: 'Synthwave',
       frequency: 'NRFM • ONLINE',
@@ -95,10 +90,7 @@ class AppService {
         return false;
       }
 
-      return await launchUrl(
-        uri,
-        mode: LaunchMode.externalApplication,
-      );
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       debugPrint('Error al abrir enlace externo: $e');
       return false;

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/event_model.dart';
@@ -36,10 +35,8 @@ class _EventsScreenState extends State<EventsScreen> {
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => _EventEditorDialog(
-        event: event,
-        eventService: _eventService,
-      ),
+      builder: (_) =>
+          _EventEditorDialog(event: event, eventService: _eventService),
     );
 
     if (!mounted) return;
@@ -90,17 +87,13 @@ class _EventsScreenState extends State<EventsScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Evento eliminado correctamente'),
-        ),
+        const SnackBar(content: Text('Evento eliminado correctamente')),
       );
     } catch (error) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('No se pudo eliminar el evento: $error'),
-        ),
+        SnackBar(content: Text('No se pudo eliminar el evento: $error')),
       );
     }
   }
@@ -108,9 +101,7 @@ class _EventsScreenState extends State<EventsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mis eventos'),
-      ),
+      appBar: AppBar(title: const Text('Mis eventos')),
       body: StreamBuilder<List<EventModel>>(
         stream: _eventsStream,
         builder: (context, snapshot) {
@@ -128,9 +119,7 @@ class _EventsScreenState extends State<EventsScreen> {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           final events = snapshot.data ?? [];
@@ -169,14 +158,10 @@ class _EventsScreenState extends State<EventsScreen> {
                   child: Column(
                     children: [
                       ListTile(
-                        leading: const CircleAvatar(
-                          child: Icon(Icons.event),
-                        ),
+                        leading: const CircleAvatar(child: Icon(Icons.event)),
                         title: Text(
                           event.title,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Text(event.description),
                       ),
@@ -207,10 +192,7 @@ class _EventsScreenState extends State<EventsScreen> {
                             onPressed: () {
                               _deleteEvent(event);
                             },
-                            icon: const Icon(
-                              Icons.delete,
-                              color: Colors.red,
-                            ),
+                            icon: const Icon(Icons.delete, color: Colors.red),
                           ),
                         ],
                       ),
@@ -237,14 +219,10 @@ class _EventEditorDialog extends StatefulWidget {
   final EventModel? event;
   final EventService eventService;
 
-  const _EventEditorDialog({
-    required this.event,
-    required this.eventService,
-  });
+  const _EventEditorDialog({required this.event, required this.eventService});
 
   @override
-  State<_EventEditorDialog> createState() =>
-      _EventEditorDialogState();
+  State<_EventEditorDialog> createState() => _EventEditorDialogState();
 }
 
 class _EventEditorDialogState extends State<_EventEditorDialog> {
@@ -263,19 +241,17 @@ class _EventEditorDialogState extends State<_EventEditorDialog> {
   void initState() {
     super.initState();
 
-    _titleController = TextEditingController(
-      text: widget.event?.title ?? '',
-    );
+    _titleController = TextEditingController(text: widget.event?.title ?? '');
 
     _descriptionController = TextEditingController(
       text: widget.event?.description ?? '',
     );
 
-    _startDate = widget.event?.startDate ??
-        DateTime.now().add(const Duration(hours: 1));
+    _startDate =
+        widget.event?.startDate ?? DateTime.now().add(const Duration(hours: 1));
 
-    _endDate = widget.event?.endDate ??
-        DateTime.now().add(const Duration(hours: 2));
+    _endDate =
+        widget.event?.endDate ?? DateTime.now().add(const Duration(hours: 2));
   }
 
   @override
@@ -360,8 +336,7 @@ class _EventEditorDialogState extends State<_EventEditorDialog> {
 
     if (!_endDate.isAfter(_startDate)) {
       setState(() {
-        _dateError =
-            'La finalización debe ser posterior al inicio.';
+        _dateError = 'La finalización debe ser posterior al inicio.';
       });
       return;
     }
@@ -407,9 +382,7 @@ class _EventEditorDialogState extends State<_EventEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        widget.event == null ? 'Nuevo evento' : 'Editar evento',
-      ),
+      title: Text(widget.event == null ? 'Nuevo evento' : 'Editar evento'),
       content: SingleChildScrollView(
         child: Form(
           key: _formKey,
@@ -488,9 +461,7 @@ class _EventEditorDialogState extends State<_EventEditorDialog> {
               ? const SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Text('Guardar'),
         ),

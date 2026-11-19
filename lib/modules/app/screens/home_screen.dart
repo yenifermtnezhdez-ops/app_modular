@@ -1,5 +1,5 @@
-
 import 'package:flutter/material.dart';
+
 import 'detail_screen.dart';
 import 'notes_screen.dart';
 import 'events_screen.dart';
@@ -13,8 +13,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final TextEditingController _nameController =
-      TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
 
   @override
   void dispose() {
@@ -22,47 +21,36 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
- 
+  void _openSection(String section) {
+    if (section == 'Notas') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const NotesScreen()),
+      );
+      return;
+    }
 
-void _openSection(String section) {
-  if (section == 'Notas') {
+    if (section == 'Eventos') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const EventsScreen()),
+      );
+      return;
+    }
+
+    if (section == 'Recordatorios') {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const ReminderScreen()),
+      );
+      return;
+    }
+
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const NotesScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => DetailScreen(section: section)),
     );
-    return;
   }
-
-  if (section == 'Eventos') {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const EventsScreen(),
-      ),
-    );
-    return;
-  }
-
-  if (section == 'Recordatorios') {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReminderScreen(),
-      ),
-    );
-    return;
-  }
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => DetailScreen(section: section),
-    ),
-  );
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -78,18 +66,15 @@ void _openSection(String section) {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             const Icon(
-  Icons.calendar_month,
-  size: 100,
-  color: Colors.deepPurple,
-),
+              Icons.calendar_month,
+              size: 100,
+              color: Colors.deepPurple,
+            ),
             const SizedBox(height: 16),
             const Text(
               '¡Bienvenido a mi aplicación!',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(
@@ -125,10 +110,7 @@ void _openSection(String section) {
             const SizedBox(height: 20),
             const Text(
               'Explora nuestras secciones',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Row(

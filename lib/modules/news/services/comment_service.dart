@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,35 +7,26 @@ class CommentService {
   final FirebaseFirestore _firestore;
   final FirebaseAuth _auth;
 
-  CommentService({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance;
+  CommentService({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _firestore = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
-  
-  CollectionReference<Map<String, dynamic>> _commentsCollection(
-    int newsId,
-  ) {
+  CollectionReference<Map<String, dynamic>> _commentsCollection(int newsId) {
     return _firestore
         .collection('news')
         .doc(newsId.toString())
         .collection('comments');
   }
 
-  
   Stream<List<CommentModel>> watchComments(int newsId) {
     return _commentsCollection(newsId)
         .orderBy('createdAt', descending: false)
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs
-          .map(CommentModel.fromFirestore)
-          .toList();
-    });
+          return snapshot.docs.map(CommentModel.fromFirestore).toList();
+        });
   }
 
- 
   Future<void> addComment({
     required int newsId,
     required String content,
@@ -45,9 +35,7 @@ class CommentService {
     final user = _auth.currentUser;
 
     if (user == null) {
-      throw Exception(
-        'Debes iniciar sesión para publicar comentarios.',
-      );
+      throw Exception('Debes iniciar sesión para publicar comentarios.');
     }
 
     final text = content.trim();
@@ -57,9 +45,7 @@ class CommentService {
     }
 
     if (text.length > 1000) {
-      throw Exception(
-        'El comentario no puede superar los 1000 caracteres.',
-      );
+      throw Exception('El comentario no puede superar los 1000 caracteres.');
     }
 
     final comment = {
@@ -76,7 +62,6 @@ class CommentService {
     await _commentsCollection(newsId).add(comment);
   }
 
-  
   Future<void> updateComment({
     required int newsId,
     required String commentId,
@@ -85,9 +70,7 @@ class CommentService {
     final user = _auth.currentUser;
 
     if (user == null) {
-      throw Exception(
-        'Debes iniciar sesión para editar comentarios.',
-      );
+      throw Exception('Debes iniciar sesión para editar comentarios.');
     }
 
     final text = content.trim();
@@ -97,9 +80,7 @@ class CommentService {
     }
 
     if (text.length > 1000) {
-      throw Exception(
-        'El comentario no puede superar los 1000 caracteres.',
-      );
+      throw Exception('El comentario no puede superar los 1000 caracteres.');
     }
 
     final reference = _commentsCollection(newsId).doc(commentId);
@@ -114,9 +95,7 @@ class CommentService {
       final data = snapshot.data()!;
 
       if (data['userId'] != user.uid) {
-        throw Exception(
-          'No tienes permiso para editar este comentario.',
-        );
+        throw Exception('No tienes permiso para editar este comentario.');
       }
 
       transaction.update(reference, {
@@ -126,7 +105,6 @@ class CommentService {
     });
   }
 
-  
   Future<void> deleteComment({
     required int newsId,
     required String commentId,
@@ -134,9 +112,7 @@ class CommentService {
     final user = _auth.currentUser;
 
     if (user == null) {
-      throw Exception(
-        'Debes iniciar sesión para eliminar comentarios.',
-      );
+      throw Exception('Debes iniciar sesión para eliminar comentarios.');
     }
 
     final reference = _commentsCollection(newsId).doc(commentId);
@@ -151,9 +127,7 @@ class CommentService {
       final data = snapshot.data()!;
 
       if (data['userId'] != user.uid) {
-        throw Exception(
-          'No tienes permiso para eliminar este comentario.',
-        );
+        throw Exception('No tienes permiso para eliminar este comentario.');
       }
 
       transaction.delete(reference);

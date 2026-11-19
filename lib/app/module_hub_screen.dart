@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -12,12 +11,7 @@ class ModuleHubScreen extends StatelessWidget {
   const ModuleHubScreen({super.key});
 
   void _openModule(BuildContext context, Widget screen) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => screen,
-      ),
-    );
+    Navigator.push(context, MaterialPageRoute(builder: (_) => screen));
   }
 
   Future<void> _signOut(BuildContext context) async {
@@ -27,9 +21,7 @@ class ModuleHubScreen extends StatelessWidget {
       if (!context.mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('No se pudo cerrar la sesión.'),
-        ),
+        const SnackBar(content: Text('No se pudo cerrar la sesión.')),
       );
     }
   }
@@ -46,18 +38,13 @@ class ModuleHubScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text(
           'App Modular',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
           IconButton(
             tooltip: 'Mi perfil',
             onPressed: () {
-              _openModule(
-                context,
-                const UserScreen(),
-              );
+              _openModule(context, const UserScreen());
             },
             icon: const Icon(Icons.account_circle_outlined),
           ),
@@ -77,16 +64,11 @@ class ModuleHubScreen extends StatelessWidget {
               padding: const EdgeInsets.all(22),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
-                  colors: [
-                    AppTheme.primary,
-                    AppTheme.secondary,
-                  ],
+                  colors: [AppTheme.primary, AppTheme.secondary],
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                 ),
-                borderRadius: BorderRadius.circular(
-                  AppTheme.radiusLarge,
-                ),
+                borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
                 boxShadow: AppTheme.softShadow,
               ),
               child: Column(
@@ -135,14 +117,10 @@ class ModuleHubScreen extends StatelessWidget {
 
             _ModuleCard(
               title: 'Mi App Lab',
-              description:
-                  'Organiza tus notas, eventos y recordatorios.',
+              description: 'Organiza tus notas, eventos y recordatorios.',
               icon: Icons.calendar_month_rounded,
               onTap: () {
-                _openModule(
-                  context,
-                  const app_module.HomeScreen(),
-                );
+                _openModule(context, const app_module.HomeScreen());
               },
             ),
 
@@ -155,10 +133,7 @@ class ModuleHubScreen extends StatelessWidget {
                   'de la música.',
               icon: Icons.radio_rounded,
               onTap: () {
-                _openModule(
-                  context,
-                  radio_module.HomeScreen(),
-                );
+                _openModule(context, radio_module.HomeScreen());
               },
             ),
 
@@ -171,10 +146,7 @@ class ModuleHubScreen extends StatelessWidget {
                   'tus artículos favoritos.',
               icon: Icons.newspaper_rounded,
               onTap: () {
-                _openModule(
-                  context,
-                  news_module.HomeScreen(),
-                );
+                _openModule(context, news_module.HomeScreen());
               },
             ),
 
@@ -183,10 +155,7 @@ class ModuleHubScreen extends StatelessWidget {
             const Center(
               child: Text(
                 'App Modular · Fase 4',
-                style: TextStyle(
-                  color: AppTheme.textSecondary,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: AppTheme.textSecondary, fontSize: 12),
               ),
             ),
           ],
@@ -213,23 +182,15 @@ class _ModuleCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: AppTheme.surface,
-      borderRadius: BorderRadius.circular(
-        AppTheme.radiusLarge,
-      ),
+      borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(
-          AppTheme.radiusLarge,
-        ),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
         child: Container(
           padding: const EdgeInsets.all(18),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(
-              AppTheme.radiusLarge,
-            ),
-            border: Border.all(
-              color: AppTheme.border,
-            ),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLarge),
+            border: Border.all(color: AppTheme.border),
           ),
           child: Row(
             children: [
@@ -238,15 +199,9 @@ class _ModuleCard extends StatelessWidget {
                 height: 58,
                 decoration: BoxDecoration(
                   color: AppTheme.surfaceElevated,
-                  borderRadius: BorderRadius.circular(
-                    AppTheme.radiusMedium,
-                  ),
+                  borderRadius: BorderRadius.circular(AppTheme.radiusMedium),
                 ),
-                child: Icon(
-                  icon,
-                  color: AppTheme.primary,
-                  size: 29,
-                ),
+                child: Icon(icon, color: AppTheme.primary, size: 29),
               ),
               const SizedBox(width: 16),
               Expanded(

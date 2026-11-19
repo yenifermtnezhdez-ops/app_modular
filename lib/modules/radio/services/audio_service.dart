@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:audio_service/audio_service.dart' as audio;
@@ -12,8 +11,7 @@ class RadioAudioHandler extends audio.BaseAudioHandler
     with audio.QueueHandler, audio.SeekHandler {
   final AudioPlayer _player = AudioPlayer();
 
-  StreamSubscription<AudioInterruptionEvent>?
-      _interruptionSubscription;
+  StreamSubscription<AudioInterruptionEvent>? _interruptionSubscription;
 
   StreamSubscription<PlaybackEvent>? _playbackSubscription;
 
@@ -42,12 +40,9 @@ class RadioAudioHandler extends audio.BaseAudioHandler
     try {
       final session = await AudioSession.instance;
 
-      await session.configure(
-        const AudioSessionConfiguration.music(),
-      );
+      await session.configure(const AudioSessionConfiguration.music());
 
-      _interruptionSubscription =
-          session.interruptionEventStream.listen(
+      _interruptionSubscription = session.interruptionEventStream.listen(
         (event) {
           unawaited(_handleInterruption(event));
         },
@@ -56,24 +51,18 @@ class RadioAudioHandler extends audio.BaseAudioHandler
         },
       );
     } catch (e) {
-      debugPrint(
-        'No se pudo configurar el manejo de interrupciones: $e',
-      );
+      debugPrint('No se pudo configurar el manejo de interrupciones: $e');
     }
   }
 
   // Manejo de llamadas, notificaciones y otras interrupciones.
-  Future<void> _handleInterruption(
-    AudioInterruptionEvent event,
-  ) async {
+  Future<void> _handleInterruption(AudioInterruptionEvent event) async {
     try {
       if (event.begin) {
         if (event.type == AudioInterruptionType.duck) {
           _volumeBeforeDuck ??= _player.volume;
 
-          await _player.setVolume(
-            _volumeBeforeDuck! * 0.2,
-          );
+          await _player.setVolume(_volumeBeforeDuck! * 0.2);
 
           return;
         }
@@ -121,10 +110,7 @@ class RadioAudioHandler extends audio.BaseAudioHandler
 
     playbackState.add(
       audio.PlaybackState(
-        controls: const [
-          audio.MediaControl.play,
-          audio.MediaControl.stop,
-        ],
+        controls: const [audio.MediaControl.play, audio.MediaControl.stop],
         processingState: audio.AudioProcessingState.error,
         playing: false,
         errorMessage: error.toString(),
@@ -151,8 +137,7 @@ class RadioAudioHandler extends audio.BaseAudioHandler
       if (streamUri == null ||
           !streamUri.hasAuthority ||
           streamUri.host.isEmpty ||
-          (streamUri.scheme != 'https' &&
-              streamUri.scheme != 'http')) {
+          (streamUri.scheme != 'https' && streamUri.scheme != 'http')) {
         throw FormatException(
           'La URL de streaming no es válida: ${station.streamUrl}',
         );
@@ -164,10 +149,7 @@ class RadioAudioHandler extends audio.BaseAudioHandler
         title: station.name,
         artist: station.acronym,
         artUri: Uri.tryParse(station.imageUrl),
-        extras: {
-          'streamUrl': station.streamUrl,
-          'stationId': station.id,
-        },
+        extras: {'streamUrl': station.streamUrl, 'stationId': station.id},
       );
 
       this.mediaItem.add(mediaItem);
@@ -176,12 +158,7 @@ class RadioAudioHandler extends audio.BaseAudioHandler
       debugPrint('Cargando transmisión...');
 
       // Cargar la dirección del streaming.
-      await _player.setAudioSource(
-        AudioSource.uri(
-          streamUri,
-          tag: mediaItem,
-        ),
-      );
+      await _player.setAudioSource(AudioSource.uri(streamUri, tag: mediaItem));
 
       debugPrint('Streaming cargado correctamente.');
 
@@ -261,21 +238,14 @@ class RadioAudioHandler extends audio.BaseAudioHandler
           audio.MediaControl.play,
         audio.MediaControl.stop,
       ],
-      systemActions: const {
-        audio.MediaAction.seek,
-      },
+      systemActions: const {audio.MediaAction.seek},
       androidCompactActionIndices: const [0, 1],
       processingState: {
-        ProcessingState.idle:
-            audio.AudioProcessingState.idle,
-        ProcessingState.loading:
-            audio.AudioProcessingState.loading,
-        ProcessingState.buffering:
-            audio.AudioProcessingState.buffering,
-        ProcessingState.ready:
-            audio.AudioProcessingState.ready,
-        ProcessingState.completed:
-            audio.AudioProcessingState.completed,
+        ProcessingState.idle: audio.AudioProcessingState.idle,
+        ProcessingState.loading: audio.AudioProcessingState.loading,
+        ProcessingState.buffering: audio.AudioProcessingState.buffering,
+        ProcessingState.ready: audio.AudioProcessingState.ready,
+        ProcessingState.completed: audio.AudioProcessingState.completed,
       }[_player.processingState]!,
       playing: _player.playing,
       updatePosition: _player.position,

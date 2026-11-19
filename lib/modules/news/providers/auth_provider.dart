@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -17,9 +16,8 @@ class AuthProvider extends ChangeNotifier {
 
   StreamSubscription<User?>? _authSubscription;
 
-  AuthProvider({
-    AuthService? authService,
-  }) : _authService = authService ?? AuthService() {
+  AuthProvider({AuthService? authService})
+    : _authService = authService ?? AuthService() {
     // Escucha cambios de sesión y modificaciones del perfil.
     _authSubscription = _authService.userChanges.listen(
       (User? user) {
@@ -30,8 +28,7 @@ class AuthProvider extends ChangeNotifier {
       },
       onError: (error) {
         _isLoading = false;
-        _errorMessage =
-            'No fue posible comprobar tu sesión.';
+        _errorMessage = 'No fue posible comprobar tu sesión.';
 
         debugPrint('Error de autenticación: $error');
         notifyListeners();
@@ -47,13 +44,9 @@ class AuthProvider extends ChangeNotifier {
 
   bool get isLoading => _isLoading;
 
-
   String? get errorMessage => _errorMessage;
 
-  Future<bool> signIn({
-    required String email,
-    required String password,
-  }) async {
+  Future<bool> signIn({required String email, required String password}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -77,8 +70,7 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error al iniciar sesión: $e');
 
-      _errorMessage =
-          'Ocurrió un problema. Intenta nuevamente.';
+      _errorMessage = 'Ocurrió un problema. Intenta nuevamente.';
 
       _isLoading = false;
       notifyListeners();
@@ -86,9 +78,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateDisplayName({
-    required String name,
-  }) async {
+  Future<bool> updateDisplayName({required String name}) async {
     if (name.trim().isEmpty) {
       _errorMessage = 'El nombre no puede estar vacío.';
       notifyListeners();
@@ -116,8 +106,7 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error al actualizar el nombre: $e');
 
-      _errorMessage =
-          'No fue posible actualizar el nombre.';
+      _errorMessage = 'No fue posible actualizar el nombre.';
 
       _isLoading = false;
       notifyListeners();
@@ -125,9 +114,7 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteAccount({
-    required String password,
-  }) async {
+  Future<bool> deleteAccount({required String password}) async {
     if (password.isEmpty) {
       _errorMessage = 'Ingresa tu contraseña.';
       notifyListeners();
@@ -139,9 +126,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await _authService.deleteAccount(
-        password: password,
-      );
+      await _authService.deleteAccount(password: password);
 
       _user = null;
       _isLoading = false;
@@ -156,15 +141,13 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error al eliminar la cuenta: $e');
 
-      _errorMessage =
-          'No fue posible eliminar la cuenta.';
+      _errorMessage = 'No fue posible eliminar la cuenta.';
 
       _isLoading = false;
       notifyListeners();
       return false;
     }
   }
-
 
   Future<bool> signOut() async {
     _isLoading = true;
@@ -182,8 +165,7 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {
       debugPrint('Error al cerrar sesión: $e');
 
-      _errorMessage =
-          'No fue posible cerrar la sesión.';
+      _errorMessage = 'No fue posible cerrar la sesión.';
 
       _isLoading = false;
       notifyListeners();
@@ -191,7 +173,6 @@ class AuthProvider extends ChangeNotifier {
       return false;
     }
   }
-
 
   void clearError() {
     _errorMessage = null;

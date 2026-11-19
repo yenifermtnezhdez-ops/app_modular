@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ReminderModel {
@@ -22,10 +21,7 @@ class ReminderModel {
     };
   }
 
-  factory ReminderModel.fromMap(
-    String id,
-    Map<String, dynamic> map,
-  ) {
+  factory ReminderModel.fromMap(String id, Map<String, dynamic> map) {
     final scheduledAt = map['scheduledAt'];
 
     return ReminderModel(

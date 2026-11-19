@@ -59,7 +59,6 @@ class _LoginScreenState extends State<LoginScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
-
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
 

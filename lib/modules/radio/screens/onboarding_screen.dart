@@ -1,10 +1,8 @@
-
 import 'package:flutter/material.dart';
 
 import '../../../app_theme.dart';
 import '../constants/radio_constants.dart';
 import 'home_screen.dart';
-
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -15,15 +13,11 @@ class OnboardingScreen extends StatelessWidget {
       backgroundColor: AppTheme.background,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 28,
-            vertical: 20,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 20),
           child: Column(
             children: [
               const Spacer(),
 
-            
               Container(
                 height: 180,
                 width: 180,
@@ -47,7 +41,6 @@ class OnboardingScreen extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-        
               const Text(
                 AppConstants.appName,
                 textAlign: TextAlign.center,
@@ -129,10 +122,7 @@ class OnboardingScreen extends StatelessWidget {
                   ),
                   child: const Text(
                     'Comenzar a escuchar',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ),
               ),
@@ -145,11 +135,7 @@ class OnboardingScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildFeature(
-    IconData icon,
-    String title,
-    String description,
-  ) {
+  Widget _buildFeature(IconData icon, String title, String description) {
     return Row(
       children: [
         Container(
@@ -159,11 +145,7 @@ class OnboardingScreen extends StatelessWidget {
             color: AppTheme.surface,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Icon(
-            icon,
-            color: AppTheme.primary,
-            size: 25,
-          ),
+          child: Icon(icon, color: AppTheme.primary, size: 25),
         ),
         const SizedBox(width: 14),
         Expanded(

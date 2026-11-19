@@ -1,11 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 class AppConstants {
   static const String appName = 'Radio App';
 
-  static const String appDescription =
-      'Tu música, tus estaciones, tu mundo.';
+  static const String appDescription = 'Tu música, tus estaciones, tu mundo.';
 
   static const int splashDuration = 3;
   static const Color backgroundColor = Color(0xFF100D18);

@@ -1,4 +1,3 @@
-
 class StationModel {
   final String id;
   final String name;

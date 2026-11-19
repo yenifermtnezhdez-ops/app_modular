@@ -1,4 +1,3 @@
-
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -7,8 +6,7 @@ import 'package:timezone/timezone.dart' as tz;
 class NotificationService {
   NotificationService._();
 
-  static final NotificationService instance =
-      NotificationService._();
+  static final NotificationService instance = NotificationService._();
 
   final FlutterLocalNotificationsPlugin _plugin =
       FlutterLocalNotificationsPlugin();
@@ -18,31 +16,26 @@ class NotificationService {
     if (_initialized) return;
     tz.initializeTimeZones();
 
-    final timeZoneInfo =
-        await FlutterTimezone.getLocalTimezone();
+    final timeZoneInfo = await FlutterTimezone.getLocalTimezone();
 
-    tz.setLocalLocation(
-      tz.getLocation(timeZoneInfo.identifier),
-    );
+    tz.setLocalLocation(tz.getLocation(timeZoneInfo.identifier));
 
     const initializationSettings = InitializationSettings(
-      android: AndroidInitializationSettings(
-        '@mipmap/ic_launcher',
-      ),
+      android: AndroidInitializationSettings('@mipmap/ic_launcher'),
     );
 
-    await _plugin.initialize(
-      settings: initializationSettings,
-    );
+    await _plugin.initialize(settings: initializationSettings);
 
     final androidPlugin = _plugin
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     await androidPlugin?.requestNotificationsPermission();
 
     _initialized = true;
   }
+
   Future<void> scheduleNotification(
     int id,
     String title,
@@ -51,9 +44,7 @@ class NotificationService {
   ) async {
     await initializeNotifications();
     if (!dt.isAfter(DateTime.now())) {
-      throw ArgumentError(
-        'La fecha de la notificación debe ser futura.',
-      );
+      throw ArgumentError('La fecha de la notificación debe ser futura.');
     }
 
     await _plugin.zonedSchedule(
@@ -65,14 +56,12 @@ class NotificationService {
         android: AndroidNotificationDetails(
           'recordatorios_channel',
           'Recordatorios',
-          channelDescription:
-              'Avisos programados para tus recordatorios',
+          channelDescription: 'Avisos programados para tus recordatorios',
           importance: Importance.max,
           priority: Priority.high,
         ),
       ),
-      androidScheduleMode:
-          AndroidScheduleMode.inexactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
     );
   }
 

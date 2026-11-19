@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CommentModel {
@@ -20,7 +19,6 @@ class CommentModel {
     required this.updatedAt,
   });
 
- 
   factory CommentModel.fromFirestore(
     DocumentSnapshot<Map<String, dynamic>> document,
   ) {
@@ -36,7 +34,6 @@ class CommentModel {
       updatedAt: _parseDate(data['updatedAt']),
     );
   }
-
 
   static DateTime _parseDate(dynamic value) {
     if (value is Timestamp) {
@@ -61,7 +58,6 @@ class CommentModel {
     };
   }
 
-  
   CommentModel copyWith({
     String? content,
     String? userName,

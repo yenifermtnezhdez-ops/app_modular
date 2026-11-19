@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -6,6 +5,7 @@ import '../models/user_model.dart';
 
 class UserService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
+
   Future<UserModel> getOrCreateProfile(User user) async {
     final docRef = _db.collection('users').doc(user.uid);
     final snapshot = await docRef.get();
@@ -21,12 +21,10 @@ class UserService {
             ? profile.displayName
             : (user.displayName ?? ''),
         displayImage: profile.displayImage,
+        favoriteStations: profile.favoriteStations,
       );
 
-      await docRef.set(
-        updatedProfile.toMap(),
-        SetOptions(merge: true),
-      );
+      await docRef.set(updatedProfile.toMap(), SetOptions(merge: true));
 
       return updatedProfile;
     }
@@ -60,5 +58,36 @@ class UserService {
       'displayName': displayName.trim(),
       'displayImage': displayImage.trim(),
     });
+  }
+
+  Future<List<String>> getFavoriteStationIds(String uid) async {
+    final snapshot = await _db.collection('users').doc(uid).get();
+
+    if (!snapshot.exists) return [];
+
+    final data = snapshot.data()!;
+    final favorites = data['favoriteStations'];
+
+    if (favorites is! List) return [];
+
+    return favorites.map((item) => item.toString()).toList();
+  }
+
+  Future<void> addFavoriteStation({
+    required String uid,
+    required String stationId,
+  }) async {
+    await _db.collection('users').doc(uid).set({
+      'favoriteStations': FieldValue.arrayUnion([stationId]),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> removeFavoriteStation({
+    required String uid,
+    required String stationId,
+  }) async {
+    await _db.collection('users').doc(uid).set({
+      'favoriteStations': FieldValue.arrayRemove([stationId]),
+    }, SetOptions(merge: true));
   }
 }

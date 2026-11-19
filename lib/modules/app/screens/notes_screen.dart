@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/note_model.dart';
@@ -18,10 +17,7 @@ class _NotesScreenState extends State<NotesScreen> {
     final result = await showDialog<bool>(
       context: context,
       barrierDismissible: false,
-      builder: (_) => _NoteEditorDialog(
-        note: note,
-        noteService: _noteService,
-      ),
+      builder: (_) => _NoteEditorDialog(note: note, noteService: _noteService),
     );
 
     if (!mounted) return;
@@ -44,9 +40,7 @@ class _NotesScreenState extends State<NotesScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Eliminar nota'),
-        content: Text(
-          '¿Seguro que deseas eliminar "${note.title}"?',
-        ),
+        content: Text('¿Seguro que deseas eliminar "${note.title}"?'),
         actions: [
           TextButton(
             onPressed: () {
@@ -76,17 +70,13 @@ class _NotesScreenState extends State<NotesScreen> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Nota eliminada correctamente.'),
-        ),
+        const SnackBar(content: Text('Nota eliminada correctamente.')),
       );
     } catch (e) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('No se pudo eliminar la nota: $e'),
-        ),
+        SnackBar(content: Text('No se pudo eliminar la nota: $e')),
       );
     }
   }
@@ -114,11 +104,8 @@ class _NotesScreenState extends State<NotesScreen> {
             );
           }
 
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           final notes = snapshot.data ?? [];
@@ -152,9 +139,7 @@ class _NotesScreenState extends State<NotesScreen> {
                       ),
                     ),
                     SizedBox(height: 6),
-                    Text(
-                      'Pulsa + para crear tu primera nota.',
-                    ),
+                    Text('Pulsa + para crear tu primera nota.'),
                   ],
                 ),
               ),
@@ -171,23 +156,17 @@ class _NotesScreenState extends State<NotesScreen> {
                 margin: const EdgeInsets.only(bottom: 12),
                 child: ListTile(
                   leading: Icon(
-                    note.pinned
-                        ? Icons.push_pin
-                        : Icons.note_outlined,
+                    note.pinned ? Icons.push_pin : Icons.note_outlined,
                     color: Colors.deepPurple,
                   ),
                   title: Text(
                     note.title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Padding(
                     padding: const EdgeInsets.only(top: 6),
                     child: Text(
-                      note.content.isEmpty
-                          ? 'Sin contenido'
-                          : note.content,
+                      note.content.isEmpty ? 'Sin contenido' : note.content,
                       maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -197,10 +176,7 @@ class _NotesScreenState extends State<NotesScreen> {
                   },
                   trailing: IconButton(
                     tooltip: 'Eliminar nota',
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.red,
-                    ),
+                    icon: const Icon(Icons.delete_outline, color: Colors.red),
                     onPressed: () {
                       _deleteNote(note);
                     },
@@ -227,14 +203,10 @@ class _NoteEditorDialog extends StatefulWidget {
   final NoteModel? note;
   final NoteService noteService;
 
-  const _NoteEditorDialog({
-    required this.note,
-    required this.noteService,
-  });
+  const _NoteEditorDialog({required this.note, required this.noteService});
 
   @override
-  State<_NoteEditorDialog> createState() =>
-      _NoteEditorDialogState();
+  State<_NoteEditorDialog> createState() => _NoteEditorDialogState();
 }
 
 class _NoteEditorDialogState extends State<_NoteEditorDialog> {
@@ -249,9 +221,7 @@ class _NoteEditorDialogState extends State<_NoteEditorDialog> {
   void initState() {
     super.initState();
 
-    _titleController = TextEditingController(
-      text: widget.note?.title ?? '',
-    );
+    _titleController = TextEditingController(text: widget.note?.title ?? '');
 
     _contentController = TextEditingController(
       text: widget.note?.content ?? '',
@@ -325,9 +295,7 @@ class _NoteEditorDialogState extends State<_NoteEditorDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(
-        widget.note == null ? 'Nueva nota' : 'Editar nota',
-      ),
+      title: Text(widget.note == null ? 'Nueva nota' : 'Editar nota'),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -366,12 +334,7 @@ class _NoteEditorDialogState extends State<_NoteEditorDialog> {
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 8),
-              Text(
-                _errorMessage!,
-                style: const TextStyle(
-                  color: Colors.red,
-                ),
-              ),
+              Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
             ],
           ],
         ),
@@ -391,9 +354,7 @@ class _NoteEditorDialogState extends State<_NoteEditorDialog> {
               ? const SizedBox(
                   width: 18,
                   height: 18,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                  ),
+                  child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Text('Guardar'),
         ),

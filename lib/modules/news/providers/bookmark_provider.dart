@@ -10,10 +10,8 @@ class BookmarkProvider extends ChangeNotifier {
   bool _isLoading = true;
   bool _isLoaded = false;
 
-  BookmarkProvider({
-    BookmarkService? bookmarkService,
-  }) : _bookmarkService =
-            bookmarkService ?? BookmarkService();
+  BookmarkProvider({BookmarkService? bookmarkService})
+    : _bookmarkService = bookmarkService ?? BookmarkService();
 
   Set<int> get bookmarkedIds => Set.unmodifiable(_bookmarkedIds);
 

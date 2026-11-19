@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -7,8 +6,6 @@ import '../providers/notification_provider.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
-
-  
 
   void _showMessage(
     BuildContext context,
@@ -22,14 +19,12 @@ class SettingsScreen extends StatelessWidget {
       ..showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor:
-              isError ? colors.error : colors.primary,
+          backgroundColor: isError ? colors.error : colors.primary,
           duration: const Duration(seconds: 3),
         ),
       );
   }
 
- 
   Future<void> _requestPermission(
     BuildContext context,
     NotificationProvider provider,
@@ -43,12 +38,10 @@ class SettingsScreen extends StatelessWidget {
       success
           ? 'Permiso concedido. Ya puedes elegir tus categorías.'
           : provider.errorMessage ??
-              'No fue posible activar las notificaciones.',
+                'No fue posible activar las notificaciones.',
       isError: !success,
     );
   }
-
-  
 
   Future<void> _changeSubscription(
     BuildContext context,
@@ -56,10 +49,7 @@ class SettingsScreen extends StatelessWidget {
     CategoryModel category,
     bool enabled,
   ) async {
-    final success = await provider.setCategoryEnabled(
-      category,
-      enabled,
-    );
+    final success = await provider.setCategoryEnabled(category, enabled);
 
     if (!context.mounted) return;
 
@@ -67,15 +57,14 @@ class SettingsScreen extends StatelessWidget {
       context,
       success
           ? enabled
-              ? 'Te suscribiste a ${category.name}.'
-              : 'Cancelaste la suscripción a ${category.name}.'
+                ? 'Te suscribiste a ${category.name}.'
+                : 'Cancelaste la suscripción a ${category.name}.'
           : provider.errorMessage ??
-              'No fue posible actualizar la suscripción.',
+                'No fue posible actualizar la suscripción.',
       isError: !success,
     );
   }
 
-  
   Widget _buildHeader(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
@@ -104,8 +93,7 @@ class SettingsScreen extends StatelessWidget {
           const SizedBox(width: 14),
           Expanded(
             child: Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Mantente informado',
@@ -133,7 +121,6 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  
   Widget _buildPermissionCard(
     BuildContext context,
     NotificationProvider provider,
@@ -162,8 +149,7 @@ class SettingsScreen extends StatelessWidget {
               const SizedBox(width: 13),
               Expanded(
                 child: Column(
-                  crossAxisAlignment:
-                      CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Notificaciones activadas',
@@ -184,10 +170,7 @@ class SettingsScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
-                Icons.check_circle_rounded,
-                color: colors.primary,
-              ),
+              Icon(Icons.check_circle_rounded, color: colors.primary),
             ],
           ),
         ),
@@ -244,21 +227,14 @@ class SettingsScreen extends StatelessWidget {
               child: FilledButton.icon(
                 onPressed: provider.isRequestingPermission
                     ? null
-                    : () => _requestPermission(
-                          context,
-                          provider,
-                        ),
+                    : () => _requestPermission(context, provider),
                 icon: provider.isRequestingPermission
                     ? const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2),
                       )
-                    : const Icon(
-                        Icons.notifications_active_rounded,
-                      ),
+                    : const Icon(Icons.notifications_active_rounded),
                 label: Text(
                   provider.isRequestingPermission
                       ? 'Solicitando permiso...'
@@ -272,12 +248,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  
-
-  Widget _buildErrorCard(
-    BuildContext context,
-    NotificationProvider provider,
-  ) {
+  Widget _buildErrorCard(BuildContext context, NotificationProvider provider) {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
@@ -289,10 +260,7 @@ class SettingsScreen extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(
-            Icons.error_outline_rounded,
-            color: colors.error,
-          ),
+          Icon(Icons.error_outline_rounded, color: colors.error),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
@@ -307,17 +275,13 @@ class SettingsScreen extends StatelessWidget {
           IconButton(
             tooltip: 'Reintentar',
             onPressed: provider.refreshCategories,
-            icon: Icon(
-              Icons.refresh_rounded,
-              color: colors.onErrorContainer,
-            ),
+            icon: Icon(Icons.refresh_rounded, color: colors.onErrorContainer),
           ),
         ],
       ),
     );
   }
 
-  
   Widget _buildLastMessage(
     BuildContext context,
     NotificationProvider provider,
@@ -330,11 +294,13 @@ class SettingsScreen extends StatelessWidget {
 
     final colors = Theme.of(context).colorScheme;
 
-    final title = message.notification?.title ??
+    final title =
+        message.notification?.title ??
         message.data['title']?.toString() ??
         'Nueva notificación';
 
-    final body = message.notification?.body ??
+    final body =
+        message.notification?.body ??
         message.data['body']?.toString() ??
         'Has recibido un nuevo mensaje.';
 
@@ -360,8 +326,7 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     title,
@@ -393,8 +358,6 @@ class SettingsScreen extends StatelessWidget {
       ),
     );
   }
-
- 
 
   Widget _buildSectionHeading(
     BuildContext context,
@@ -430,37 +393,26 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  
-
   Widget _buildCategoryTile(
     BuildContext context,
     NotificationProvider provider,
     CategoryModel category,
   ) {
-    final isSubscribed =
-        provider.isCategorySubscribed(category.id);
+    final isSubscribed = provider.isCategorySubscribed(category.id);
 
-    final isBusy =
-        provider.isCategoryBusy(category.id);
+    final isBusy = provider.isCategoryBusy(category.id);
 
     final colors = Theme.of(context).colorScheme;
 
     return Card(
       margin: const EdgeInsets.only(bottom: 10),
       child: SwitchListTile(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 5,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 5),
         value: isSubscribed,
         onChanged: isBusy
             ? null
-            : (enabled) => _changeSubscription(
-                  context,
-                  provider,
-                  category,
-                  enabled,
-                ),
+            : (enabled) =>
+                  _changeSubscription(context, provider, category, enabled),
         secondary: Container(
           width: 43,
           height: 43,
@@ -468,11 +420,7 @@ class SettingsScreen extends StatelessWidget {
             color: colors.primaryContainer,
             borderRadius: BorderRadius.circular(13),
           ),
-          child: Icon(
-            Icons.newspaper_rounded,
-            color: colors.primary,
-            size: 21,
-          ),
+          child: Icon(Icons.newspaper_rounded, color: colors.primary, size: 21),
         ),
         title: Text(
           category.name,
@@ -486,48 +434,32 @@ class SettingsScreen extends StatelessWidget {
           isBusy
               ? 'Actualizando suscripción...'
               : isSubscribed
-                  ? 'Recibirás avisos de esta categoría.'
-                  : 'Notificaciones desactivadas.',
-          style: TextStyle(
-            color: colors.onSurfaceVariant,
-            fontSize: 10,
-          ),
+              ? 'Recibirás avisos de esta categoría.'
+              : 'Notificaciones desactivadas.',
+          style: TextStyle(color: colors.onSurfaceVariant, fontSize: 10),
         ),
         activeThumbColor: colors.primary,
       ),
     );
   }
 
-  
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final provider =
-        context.watch<NotificationProvider>();
+    final provider = context.watch<NotificationProvider>();
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Notificaciones'),
-      ),
+      appBar: AppBar(title: const Text('Notificaciones')),
       body: provider.isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-                color: colors.primary,
-              ),
-            )
+          ? Center(child: CircularProgressIndicator(color: colors.primary))
           : RefreshIndicator(
               onRefresh: provider.refreshCategories,
               color: colors.primary,
               backgroundColor: colors.surface,
               child: ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(
-                  18,
-                  18,
-                  18,
-                  30,
-                ),
+                padding: const EdgeInsets.fromLTRB(18, 18, 18, 30),
                 children: [
                   _buildHeader(context),
 
@@ -551,7 +483,7 @@ class SettingsScreen extends StatelessWidget {
                     context,
                     'Tus categorías',
                     'Selecciona los temas sobre los que deseas '
-                    'recibir notificaciones.',
+                        'recibir notificaciones.',
                   ),
 
                   if (provider.categories.isEmpty)
@@ -561,9 +493,7 @@ class SettingsScreen extends StatelessWidget {
                         color: colors.surface,
                         borderRadius: BorderRadius.circular(19),
                         border: Border.all(
-                          color: colors.outline.withValues(
-                            alpha: 0.4,
-                          ),
+                          color: colors.outline.withValues(alpha: 0.4),
                         ),
                       ),
                       child: Column(
@@ -584,23 +514,16 @@ class SettingsScreen extends StatelessWidget {
                           const SizedBox(height: 12),
                           OutlinedButton.icon(
                             onPressed: provider.refreshCategories,
-                            icon: const Icon(
-                              Icons.refresh_rounded,
-                            ),
-                            label: const Text(
-                              'Volver a intentar',
-                            ),
+                            icon: const Icon(Icons.refresh_rounded),
+                            label: const Text('Volver a intentar'),
                           ),
                         ],
                       ),
                     )
                   else
                     ...provider.categories.map(
-                      (category) => _buildCategoryTile(
-                        context,
-                        provider,
-                        category,
-                      ),
+                      (category) =>
+                          _buildCategoryTile(context, provider, category),
                     ),
 
                   const SizedBox(height: 17),

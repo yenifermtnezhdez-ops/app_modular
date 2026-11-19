@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,22 +7,15 @@ class EventService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  CollectionReference<Map<String, dynamic>> _eventsCollection(
-    String uid,
-  ) {
-    return _db
-        .collection('users')
-        .doc(uid)
-        .collection('events');
+  CollectionReference<Map<String, dynamic>> _eventsCollection(String uid) {
+    return _db.collection('users').doc(uid).collection('events');
   }
 
   String _requireUid() {
     final user = _auth.currentUser;
 
     if (user == null) {
-      throw Exception(
-        'Debes iniciar sesión para administrar eventos.',
-      );
+      throw Exception('Debes iniciar sesión para administrar eventos.');
     }
 
     return user.uid;
@@ -52,9 +44,7 @@ class EventService {
   Future<List<EventModel>> getEvents() async {
     final uid = _requireUid();
 
-    final snapshot = await _eventsCollection(uid)
-        .orderBy('startDate')
-        .get();
+    final snapshot = await _eventsCollection(uid).orderBy('startDate').get();
 
     return snapshot.docs.map((doc) {
       return EventModel.fromMap(doc.id, doc.data());
@@ -68,10 +58,10 @@ class EventService {
         .orderBy('startDate')
         .snapshots()
         .map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return EventModel.fromMap(doc.id, doc.data());
-      }).toList();
-    });
+          return snapshot.docs.map((doc) {
+            return EventModel.fromMap(doc.id, doc.data());
+          }).toList();
+        });
   }
 
   Future<void> updateEvent({

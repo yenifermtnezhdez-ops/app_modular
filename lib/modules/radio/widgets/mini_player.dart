@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,10 +8,7 @@ import '../models/station_model.dart';
 class MiniPlayer extends StatelessWidget {
   final VoidCallback? onTap;
 
-  const MiniPlayer({
-    super.key,
-    this.onTap,
-  });
+  const MiniPlayer({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -27,16 +23,16 @@ class MiniPlayer extends StatelessWidget {
         final status = audio.hasError
             ? 'ERROR DE REPRODUCCIÓN'
             : audio.isLoading
-                ? 'CONECTANDO...'
-                : audio.isPlaying
-                    ? 'EN VIVO'
-                    : 'EN PAUSA';
+            ? 'CONECTANDO...'
+            : audio.isPlaying
+            ? 'EN VIVO'
+            : 'EN PAUSA';
 
         final statusColor = audio.hasError
             ? const Color(0xFFB83D4B)
             : audio.isPlaying
-                ? const Color(0xFF278253)
-                : AppTheme.textSecondary;
+            ? const Color(0xFF278253)
+            : AppTheme.textSecondary;
 
         return SafeArea(
           top: false,

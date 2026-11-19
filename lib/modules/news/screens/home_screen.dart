@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,10 +18,7 @@ import 'profile_screen.dart';
 class HomeScreen extends StatefulWidget {
   final NewsService? newsService;
 
-  const HomeScreen({
-    super.key,
-    this.newsService,
-  });
+  const HomeScreen({super.key, this.newsService});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -32,11 +28,9 @@ class _HomeScreenState extends State<HomeScreen> {
   late final NewsService _newsService;
   late final NewsProvider _newsProvider;
 
-  final TextEditingController _searchController =
-      TextEditingController();
+  final TextEditingController _searchController = TextEditingController();
 
-  final ScrollController _scrollController =
-      ScrollController();
+  final ScrollController _scrollController = ScrollController();
 
   static const int _perPage = 10;
 
@@ -97,23 +91,19 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
-  
   void _onConnectionChanged() {
     if (!mounted) return;
 
     final isOnline = _newsProvider.isOnline;
 
-    final connectionRestored =
-        !_lastKnownOnline && isOnline;
+    final connectionRestored = !_lastKnownOnline && isOnline;
 
     _lastKnownOnline = isOnline;
 
     setState(() {});
 
     if (connectionRestored) {
-      debugPrint(
-        'INTERNET RESTABLECIDO: iniciando sincronización.',
-      );
+      debugPrint('INTERNET RESTABLECIDO: iniciando sincronización.');
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -145,14 +135,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
       if (!mounted) return;
 
-      if (success &&
-          _newsProvider.isOnline &&
-          !_isUsingCache) {
+      if (success && _newsProvider.isOnline && !_isUsingCache) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text(
-              'Conexión recuperada. Noticias actualizadas.',
-            ),
+            content: Text('Conexión recuperada. Noticias actualizadas.'),
             duration: Duration(seconds: 3),
           ),
         );
@@ -162,20 +148,15 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  
-
   void _onScroll() {
     if (!_scrollController.hasClients) return;
 
     final position = _scrollController.position;
 
-    if (position.pixels >=
-        position.maxScrollExtent - 300) {
+    if (position.pixels >= position.maxScrollExtent - 300) {
       _loadMoreNews();
     }
   }
-
-  
 
   Future<void> _loadCategories() async {
     if (!mounted) return;
@@ -190,8 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
         throw Exception('Sin conexión.');
       }
 
-      final categories =
-          await _newsService.getCategories();
+      final categories = await _newsService.getCategories();
 
       if (!mounted) return;
 
@@ -200,9 +180,7 @@ class _HomeScreenState extends State<HomeScreen> {
       try {
         await _newsProvider.saveCategories(categories);
       } catch (e) {
-        debugPrint(
-          'No se pudieron guardar categorías: $e',
-        );
+        debugPrint('No se pudieron guardar categorías: $e');
       }
 
       if (!mounted) return;
@@ -213,32 +191,24 @@ class _HomeScreenState extends State<HomeScreen> {
         _categoryError = null;
       });
 
-      debugPrint(
-        'Categorías cargadas desde WordPress: ${categories.length}',
-      );
+      debugPrint('Categorías cargadas desde WordPress: ${categories.length}');
     } catch (e) {
-      debugPrint(
-        'No fue posible consultar categorías: $e',
-      );
+      debugPrint('No fue posible consultar categorías: $e');
 
       _newsProvider.reportOffline();
 
-      final cachedCategories =
-          await _newsProvider.getCachedCategories();
+      final cachedCategories = await _newsProvider.getCachedCategories();
 
       if (!mounted) return;
 
-      if (cachedCategories != null &&
-          cachedCategories.isNotEmpty) {
+      if (cachedCategories != null && cachedCategories.isNotEmpty) {
         setState(() {
           _categories = cachedCategories;
           _isLoadingCategories = false;
           _categoryError = null;
         });
 
-        debugPrint(
-          'Categorías recuperadas desde caché.',
-        );
+        debugPrint('Categorías recuperadas desde caché.');
       } else {
         setState(() {
           _categories = [];
@@ -251,7 +221,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   Future<bool> _loadFirstPage({
     String? search,
     int? categoryId,
@@ -259,24 +228,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }) async {
     final requestVersion = ++_requestVersion;
 
-    final normalizedSearch =
-        search != null && search.trim().isNotEmpty
-            ? search.trim()
-            : null;
+    final normalizedSearch = search != null && search.trim().isNotEmpty
+        ? search.trim()
+        : null;
 
-    final previousNews =
-        List<NewsModel>.from(_news);
+    final previousNews = List<NewsModel>.from(_news);
 
     final previousPage = _currentPage;
 
     final hadPreviousNews = previousNews.isNotEmpty;
 
     setState(() {
-      _isLoading = !preserveExistingNews ||
-          !hadPreviousNews;
+      _isLoading = !preserveExistingNews || !hadPreviousNews;
 
-      _isRefreshing = preserveExistingNews &&
-          hadPreviousNews;
+      _isRefreshing = preserveExistingNews && hadPreviousNews;
 
       _isLoadingMore = false;
       _loadMoreError = null;
@@ -292,33 +257,27 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
 
-    if (!preserveExistingNews &&
-        _scrollController.hasClients) {
+    if (!preserveExistingNews && _scrollController.hasClients) {
       _scrollController.jumpTo(0);
     }
 
-    
-
     if (!_newsProvider.isOnline) {
-      final cachedNews =
-          await _newsProvider.getCachedNews(
+      final cachedNews = await _newsProvider.getCachedNews(
         search: normalizedSearch,
         categoryId: categoryId,
       );
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return false;
       }
 
-      final hasCache =
-          cachedNews != null && cachedNews.isNotEmpty;
+      final hasCache = cachedNews != null && cachedNews.isNotEmpty;
 
       final availableNews = hasCache
           ? cachedNews
           : preserveExistingNews && hadPreviousNews
-              ? previousNews
-              : <NewsModel>[];
+          ? previousNews
+          : <NewsModel>[];
 
       setState(() {
         _news = availableNews;
@@ -361,14 +320,10 @@ class _HomeScreenState extends State<HomeScreen> {
           perPage: _perPage,
         );
       } else {
-        results = await _newsService.getNews(
-          page: 1,
-          perPage: _perPage,
-        );
+        results = await _newsService.getNews(page: 1, perPage: _perPage);
       }
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return false;
       }
 
@@ -382,13 +337,10 @@ class _HomeScreenState extends State<HomeScreen> {
           append: false,
         );
       } catch (e) {
-        debugPrint(
-          'Error al guardar caché de noticias: $e',
-        );
+        debugPrint('Error al guardar caché de noticias: $e');
       }
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return false;
       }
 
@@ -396,8 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _news = results;
         _currentPage = 1;
 
-        _hasMore = results.isNotEmpty &&
-            _currentPage < _newsService.totalPages;
+        _hasMore = results.isNotEmpty && _currentPage < _newsService.totalPages;
 
         _isUsingCache = false;
         _offlineCacheEmpty = false;
@@ -413,39 +364,33 @@ class _HomeScreenState extends State<HomeScreen> {
     } catch (e) {
       debugPrint('Error al cargar noticias: $e');
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return false;
       }
 
       _newsProvider.reportOffline();
 
-      final cachedNews =
-          await _newsProvider.getCachedNews(
+      final cachedNews = await _newsProvider.getCachedNews(
         search: normalizedSearch,
         categoryId: categoryId,
       );
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return false;
       }
 
-      final hasCache =
-          cachedNews != null && cachedNews.isNotEmpty;
+      final hasCache = cachedNews != null && cachedNews.isNotEmpty;
 
       final availableNews = hasCache
           ? cachedNews
           : preserveExistingNews && hadPreviousNews
-              ? previousNews
-              : <NewsModel>[];
+          ? previousNews
+          : <NewsModel>[];
 
       setState(() {
         _news = availableNews;
 
-        _currentPage = preserveExistingNews && !hasCache
-            ? previousPage
-            : 1;
+        _currentPage = preserveExistingNews && !hasCache ? previousPage : 1;
 
         _hasMore = false;
 
@@ -469,8 +414,6 @@ class _HomeScreenState extends State<HomeScreen> {
       return availableNews.isNotEmpty;
     }
   }
-
-  
 
   Future<void> _loadNews() async {
     _selectedCategoryId = null;
@@ -497,21 +440,15 @@ class _HomeScreenState extends State<HomeScreen> {
     await _loadFirstPage(search: query);
   }
 
-  Future<void> _filterByCategory(
-    CategoryModel? category,
-  ) async {
+  Future<void> _filterByCategory(CategoryModel? category) async {
     _searchController.clear();
 
     _selectedCategoryId = category?.id;
     _hasSearched = false;
     _currentQuery = '';
 
-    await _loadFirstPage(
-      categoryId: category?.id,
-    );
+    await _loadFirstPage(categoryId: category?.id);
   }
-
-  
 
   Future<void> _loadMoreNews() async {
     if (_isLoading ||
@@ -548,14 +485,10 @@ class _HomeScreenState extends State<HomeScreen> {
           perPage: _perPage,
         );
       } else {
-        results = await _newsService.getNews(
-          page: nextPage,
-          perPage: _perPage,
-        );
+        results = await _newsService.getNews(page: nextPage, perPage: _perPage);
       }
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return;
       }
 
@@ -569,13 +502,10 @@ class _HomeScreenState extends State<HomeScreen> {
           append: true,
         );
       } catch (e) {
-        debugPrint(
-          'Error al guardar más noticias en caché: $e',
-        );
+        debugPrint('Error al guardar más noticias en caché: $e');
       }
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return;
       }
 
@@ -584,37 +514,30 @@ class _HomeScreenState extends State<HomeScreen> {
 
         _currentPage = nextPage;
 
-        _hasMore = results.isNotEmpty &&
-            _currentPage < _newsService.totalPages;
+        _hasMore = results.isNotEmpty && _currentPage < _newsService.totalPages;
 
         _isLoadingMore = false;
       });
     } catch (e) {
-      debugPrint(
-        'Error al cargar más noticias: $e',
-      );
+      debugPrint('Error al cargar más noticias: $e');
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return;
       }
 
       _newsProvider.reportOffline();
 
-      final cachedNews =
-          await _newsProvider.getCachedNews(
+      final cachedNews = await _newsProvider.getCachedNews(
         search: _hasSearched ? _currentQuery : null,
         categoryId: _selectedCategoryId,
       );
 
-      if (!mounted ||
-          requestVersion != _requestVersion) {
+      if (!mounted || requestVersion != _requestVersion) {
         return;
       }
 
       setState(() {
-        if (cachedNews != null &&
-            cachedNews.isNotEmpty) {
+        if (cachedNews != null && cachedNews.isNotEmpty) {
           _news = cachedNews;
           _isUsingCache = true;
           _hasMore = false;
@@ -629,8 +552,6 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     }
   }
-
- 
 
   Future<void> _refreshNews() async {
     await _loadCategories();
@@ -666,9 +587,7 @@ class _HomeScreenState extends State<HomeScreen> {
       builder: (dialogContext) {
         return AlertDialog(
           title: const Text('Cerrar sesión'),
-          content: const Text(
-            '¿Estás seguro de que deseas cerrar tu sesión?',
-          ),
+          content: const Text('¿Estás seguro de que deseas cerrar tu sesión?'),
           actions: [
             TextButton(
               onPressed: () {
@@ -699,8 +618,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            authProvider.errorMessage ??
-                'No fue posible cerrar la sesión.',
+            authProvider.errorMessage ?? 'No fue posible cerrar la sesión.',
           ),
         ),
       );
@@ -710,22 +628,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void _openProfile() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const ProfileScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const ProfileScreen()),
     );
   }
 
   void _openBookmarks() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (_) => const BookmarksScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const BookmarksScreen()),
     );
   }
 
-  
   Widget _buildPageIntro() {
     final colors = Theme.of(context).colorScheme;
 
@@ -756,17 +669,12 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 5),
           Text(
             'Las noticias importantes, en un solo lugar.',
-            style: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontSize: 13,
-            ),
+            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
           ),
         ],
       ),
     );
   }
-
-  
 
   Widget _buildSearchField() {
     final colors = Theme.of(context).colorScheme;
@@ -776,10 +684,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: TextField(
         controller: _searchController,
         textInputAction: TextInputAction.search,
-        style: TextStyle(
-          color: colors.onSurface,
-          fontSize: 14,
-        ),
+        style: TextStyle(color: colors.onSurface, fontSize: 14),
         onChanged: (_) {
           setState(() {});
         },
@@ -795,9 +700,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: colors.primaryContainer,
                     foregroundColor: colors.primary,
                   ),
-                  icon: const Icon(
-                    Icons.arrow_forward_rounded,
-                  ),
+                  icon: const Icon(Icons.arrow_forward_rounded),
                 )
               : IconButton(
                   onPressed: () {
@@ -812,8 +715,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-
-
 
   Widget _buildCategorySelector() {
     final colors = Theme.of(context).colorScheme;
@@ -834,10 +735,7 @@ class _HomeScreenState extends State<HomeScreen> {
           if (_categories.isNotEmpty)
             Text(
               '${_categories.length} temas',
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 11,
-              ),
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
             ),
         ],
       ),
@@ -862,34 +760,23 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     }
 
-    if (_categoryError != null &&
-        _categories.isEmpty) {
+    if (_categoryError != null && _categories.isEmpty) {
       return Column(
         children: [
           heading,
           Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 8,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
             child: Column(
               children: [
                 Text(
                   _categoryError!,
                   textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: colors.error,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: colors.error, fontSize: 12),
                 ),
                 TextButton.icon(
                   onPressed: _loadCategories,
-                  icon: const Icon(
-                    Icons.refresh_rounded,
-                  ),
-                  label: const Text(
-                    'Reintentar categorías',
-                  ),
+                  icon: const Icon(Icons.refresh_rounded),
+                  label: const Text('Reintentar categorías'),
                 ),
               ],
             ),
@@ -906,49 +793,37 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 48,
           child: ListView(
             scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
             children: [
               Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 4,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 child: ChoiceChip(
                   label: const Text('Todas'),
-                  selected: _selectedCategoryId == null &&
-                      !_hasSearched,
+                  selected: _selectedCategoryId == null && !_hasSearched,
                   showCheckmark: false,
                   selectedColor: colors.primary,
                   backgroundColor: colors.surface,
                   side: BorderSide(
-                    color: colors.outline.withValues(
-                      alpha: 0.45,
-                    ),
+                    color: colors.outline.withValues(alpha: 0.45),
                   ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
                   labelStyle: TextStyle(
-                    color: _selectedCategoryId == null &&
-                            !_hasSearched
+                    color: _selectedCategoryId == null && !_hasSearched
                         ? colors.onPrimary
                         : colors.onSurface,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
                   ),
-                  onSelected: (_) =>
-                      _filterByCategory(null),
+                  onSelected: (_) => _filterByCategory(null),
                 ),
               ),
               ..._categories.map((category) {
-                final isSelected =
-                    _selectedCategoryId == category.id;
+                final isSelected = _selectedCategoryId == category.id;
 
                 return Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 4,
-                  ),
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
                   child: ChoiceChip(
                     label: Text(category.name),
                     selected: isSelected,
@@ -958,22 +833,17 @@ class _HomeScreenState extends State<HomeScreen> {
                     side: BorderSide(
                       color: isSelected
                           ? colors.primary
-                          : colors.outline.withValues(
-                              alpha: 0.45,
-                            ),
+                          : colors.outline.withValues(alpha: 0.45),
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
                     labelStyle: TextStyle(
-                      color: isSelected
-                          ? colors.onPrimary
-                          : colors.onSurface,
+                      color: isSelected ? colors.onPrimary : colors.onSurface,
                       fontSize: 12,
                       fontWeight: FontWeight.w700,
                     ),
-                    onSelected: (_) =>
-                        _filterByCategory(category),
+                    onSelected: (_) => _filterByCategory(category),
                   ),
                 );
               }),
@@ -984,47 +854,34 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  
   Widget _buildOfflineBanner(NewsProvider provider) {
-    if (provider.isOnline &&
-        !_isUsingCache &&
-        !_offlineCacheEmpty) {
+    if (provider.isOnline && !_isUsingCache && !_offlineCacheEmpty) {
       return const SizedBox.shrink();
     }
 
     final colors = Theme.of(context).colorScheme;
 
-    final isSyncing =
-        provider.isOnline && _isUsingCache;
+    final isSyncing = provider.isOnline && _isUsingCache;
 
     final message = _offlineCacheEmpty
         ? 'Sin conexión. No hay noticias guardadas para esta consulta.'
         : isSyncing
-            ? 'Conexión recuperada. Actualizando noticias...'
-            : 'Modo sin conexión. Mostrando noticias almacenadas.';
+        ? 'Conexión recuperada. Actualizando noticias...'
+        : 'Modo sin conexión. Mostrando noticias almacenadas.';
 
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.fromLTRB(18, 10, 18, 8),
-      padding: const EdgeInsets.symmetric(
-        horizontal: 14,
-        vertical: 12,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: colors.primaryContainer,
         borderRadius: BorderRadius.circular(17),
-        border: Border.all(
-          color: colors.primary.withValues(
-            alpha: 0.12,
-          ),
-        ),
+        border: Border.all(color: colors.primary.withValues(alpha: 0.12)),
       ),
       child: Row(
         children: [
           Icon(
-            isSyncing
-                ? Icons.sync_rounded
-                : Icons.cloud_off_rounded,
+            isSyncing ? Icons.sync_rounded : Icons.cloud_off_rounded,
             color: colors.onPrimaryContainer,
             size: 21,
           ),
@@ -1054,7 +911,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  
   Widget _buildLoading() {
     final colors = Theme.of(context).colorScheme;
 
@@ -1062,9 +918,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            color: colors.primary,
-          ),
+          CircularProgressIndicator(color: colors.primary),
           const SizedBox(height: 16),
           Text(
             'Cargando noticias...',
@@ -1079,7 +933,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
- 
   Widget _buildError() {
     final colors = Theme.of(context).colorScheme;
 
@@ -1106,10 +959,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Text(
               _errorMessage ?? 'Ocurrió un error.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 15,
-                color: colors.onSurface,
-              ),
+              style: TextStyle(fontSize: 15, color: colors.onSurface),
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
@@ -1123,12 +973,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  
   Widget _buildEmpty() {
     final colors = Theme.of(context).colorScheme;
 
-    final offline = _offlineCacheEmpty ||
-        _newsProvider.isOffline;
+    final offline = _offlineCacheEmpty || _newsProvider.isOffline;
 
     return Center(
       child: Padding(
@@ -1147,8 +995,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 offline
                     ? Icons.cloud_off_rounded
                     : _hasSearched
-                        ? Icons.search_off_rounded
-                        : Icons.newspaper_rounded,
+                    ? Icons.search_off_rounded
+                    : Icons.newspaper_rounded,
                 size: 42,
                 color: colors.primary,
               ),
@@ -1158,8 +1006,8 @@ class _HomeScreenState extends State<HomeScreen> {
               offline
                   ? 'No hay noticias guardadas para mostrar sin conexión.'
                   : _hasSearched
-                      ? 'No existen publicaciones relacionadas con "$_currentQuery".'
-                      : 'No hay noticias disponibles para esta selección.',
+                  ? 'No existen publicaciones relacionadas con "$_currentQuery".'
+                  : 'No hay noticias disponibles para esta selección.',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 15,
@@ -1174,35 +1022,22 @@ class _HomeScreenState extends State<HomeScreen> {
                   ? 'Conéctate a Internet para cargar contenido actualizado.'
                   : '',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 13),
             ),
-            if (!offline &&
-                (_hasSearched ||
-                    _selectedCategoryId != null)) ...[
+            if (!offline && (_hasSearched || _selectedCategoryId != null)) ...[
               const SizedBox(height: 16),
               TextButton.icon(
                 onPressed: _loadNews,
-                icon: const Icon(
-                  Icons.refresh_rounded,
-                ),
-                label: const Text(
-                  'Ver todas las noticias',
-                ),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Ver todas las noticias'),
               ),
             ],
             if (offline) ...[
               const SizedBox(height: 16),
               ElevatedButton.icon(
                 onPressed: _refreshNews,
-                icon: const Icon(
-                  Icons.refresh_rounded,
-                ),
-                label: const Text(
-                  'Intentar nuevamente',
-                ),
+                icon: const Icon(Icons.refresh_rounded),
+                label: const Text('Intentar nuevamente'),
               ),
             ],
           ],
@@ -1211,27 +1046,19 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget _buildLoadMoreFooter() {
     final colors = Theme.of(context).colorScheme;
 
     if (_isLoadingMore) {
       return Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 24,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Column(
           children: [
-            CircularProgressIndicator(
-              color: colors.primary,
-            ),
+            CircularProgressIndicator(color: colors.primary),
             const SizedBox(height: 12),
             Text(
               'Cargando más noticias...',
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
             ),
           ],
         ),
@@ -1240,23 +1067,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_loadMoreError != null) {
       return Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 16,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 16),
         child: Column(
           children: [
-            Text(
-              _loadMoreError!,
-              textAlign: TextAlign.center,
-            ),
+            Text(_loadMoreError!, textAlign: TextAlign.center),
             TextButton.icon(
               onPressed: _loadMoreNews,
-              icon: const Icon(
-                Icons.refresh_rounded,
-              ),
-              label: const Text(
-                'Intentar nuevamente',
-              ),
+              icon: const Icon(Icons.refresh_rounded),
+              label: const Text('Intentar nuevamente'),
             ),
           ],
         ),
@@ -1265,25 +1083,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_hasMore && !_isUsingCache) {
       return Padding(
-        padding: const EdgeInsets.symmetric(
-          vertical: 24,
-        ),
+        padding: const EdgeInsets.symmetric(vertical: 24),
         child: Center(
           child: Text(
             'Desplázate para cargar más noticias',
-            style: TextStyle(
-              color: colors.onSurfaceVariant,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
           ),
         ),
       );
     }
 
     return Padding(
-      padding: const EdgeInsets.symmetric(
-        vertical: 24,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 24),
       child: Center(
         child: Text(
           'Has llegado al final de las noticias guardadas.',
@@ -1297,7 +1108,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget _buildNewsList() {
     final colors = Theme.of(context).colorScheme;
 
@@ -1309,25 +1119,17 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView.builder(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(
-          18,
-          12,
-          18,
-          18,
-        ),
+        padding: const EdgeInsets.fromLTRB(18, 12, 18, 18),
         itemCount: _news.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
             return Padding(
-              padding: const EdgeInsets.only(
-                bottom: 17,
-              ),
+              padding: const EdgeInsets.only(bottom: 17),
               child: Row(
                 children: [
                   Expanded(
                     child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           _hasSearched
@@ -1381,9 +1183,7 @@ class _HomeScreenState extends State<HomeScreen> {
           final newsIndex = index - 1;
 
           if (newsIndex < _news.length) {
-            return NewsCard(
-              news: _news[newsIndex],
-            );
+            return NewsCard(news: _news[newsIndex]);
           }
 
           return _buildLoadMoreFooter();
@@ -1392,13 +1192,11 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
- 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final connectionProvider =
-        context.watch<NewsProvider>();
+    final connectionProvider = context.watch<NewsProvider>();
 
     return Scaffold(
       appBar: AppBar(
@@ -1440,9 +1238,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           PopupMenuButton<String>(
             tooltip: 'Más opciones',
-            icon: const Icon(
-              Icons.more_vert_rounded,
-            ),
+            icon: const Icon(Icons.more_vert_rounded),
             onSelected: (value) {
               if (value == 'profile') {
                 _openProfile();
@@ -1509,30 +1305,26 @@ class _HomeScreenState extends State<HomeScreen> {
           _buildOfflineBanner(connectionProvider),
           Expanded(
             child: AnimatedSwitcher(
-              duration: const Duration(
-                milliseconds: 250,
-              ),
+              duration: const Duration(milliseconds: 250),
               child: _isLoading
                   ? KeyedSubtree(
                       key: const ValueKey('loading'),
                       child: _buildLoading(),
                     )
                   : _errorMessage != null
-                      ? KeyedSubtree(
-                          key: const ValueKey('error'),
-                          child: _buildError(),
-                        )
-                      : _news.isEmpty
-                          ? KeyedSubtree(
-                              key: const ValueKey('empty'),
-                              child: _buildEmpty(),
-                            )
-                          : KeyedSubtree(
-                              key: ValueKey(
-                                'news-$_requestVersion',
-                              ),
-                              child: _buildNewsList(),
-                            ),
+                  ? KeyedSubtree(
+                      key: const ValueKey('error'),
+                      child: _buildError(),
+                    )
+                  : _news.isEmpty
+                  ? KeyedSubtree(
+                      key: const ValueKey('empty'),
+                      child: _buildEmpty(),
+                    )
+                  : KeyedSubtree(
+                      key: ValueKey('news-$_requestVersion'),
+                      child: _buildNewsList(),
+                    ),
             ),
           ),
         ],

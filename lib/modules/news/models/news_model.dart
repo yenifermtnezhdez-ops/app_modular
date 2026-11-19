@@ -1,4 +1,3 @@
-
 class NewsModel {
   final int id;
   final String title;
@@ -14,7 +13,6 @@ class NewsModel {
     required this.link,
   });
 
-  
   factory NewsModel.fromJson(Map<String, dynamic> json) {
     return NewsModel(
       id: (json['id'] as num).toInt(),
@@ -25,10 +23,7 @@ class NewsModel {
     );
   }
 
-
-  factory NewsModel.fromCacheJson(
-    Map<String, dynamic> json,
-  ) {
+  factory NewsModel.fromCacheJson(Map<String, dynamic> json) {
     return NewsModel(
       id: (json['id'] as num).toInt(),
       title: json['title'] as String? ?? '',

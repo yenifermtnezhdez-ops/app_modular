@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/event_model.dart';
@@ -33,6 +32,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
     _notesFuture = _noteService.getNotes();
     _eventsFuture = _eventService.getEvents();
   }
+
   int _notificationId(String reminderId) {
     var hash = 0x811c9dc5;
 
@@ -132,8 +132,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
     required List<EventModel> events,
     ReminderModel? reminder,
   }) async {
-    DateTime scheduledAt = reminder?.scheduledAt ??
-        DateTime.now().add(const Duration(hours: 1));
+    DateTime scheduledAt =
+        reminder?.scheduledAt ?? DateTime.now().add(const Duration(hours: 1));
 
     String? selectedNoteId = reminder?.noteId;
     String? selectedEventId = reminder?.eventId;
@@ -147,9 +147,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
           builder: (context, setDialogState) {
             return AlertDialog(
               title: Text(
-                reminder == null
-                    ? 'Nuevo recordatorio'
-                    : 'Editar recordatorio',
+                reminder == null ? 'Nuevo recordatorio' : 'Editar recordatorio',
               ),
               content: SingleChildScrollView(
                 child: Column(
@@ -171,8 +169,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                           scheduledAt,
                         );
 
-                        if (selected != null &&
-                            dialogContext.mounted) {
+                        if (selected != null && dialogContext.mounted) {
                           setDialogState(() {
                             scheduledAt = selected;
                             errorMessage = null;
@@ -182,10 +179,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      initialValue: selectedEventId != null &&
-                              events.any(
-                                (event) => event.id == selectedEventId,
-                              )
+                      initialValue:
+                          selectedEventId != null &&
+                              events.any((event) => event.id == selectedEventId)
                           ? selectedEventId
                           : '',
                       isExpanded: true,
@@ -210,19 +206,17 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       ],
                       onChanged: (value) {
                         setDialogState(() {
-                          selectedEventId =
-                              value == null || value.isEmpty
-                                  ? null
-                                  : value;
+                          selectedEventId = value == null || value.isEmpty
+                              ? null
+                              : value;
                         });
                       },
                     ),
                     const SizedBox(height: 12),
                     DropdownButtonFormField<String>(
-                      initialValue: selectedNoteId != null &&
-                              notes.any(
-                                (note) => note.id == selectedNoteId,
-                              )
+                      initialValue:
+                          selectedNoteId != null &&
+                              notes.any((note) => note.id == selectedNoteId)
                           ? selectedNoteId
                           : '',
                       isExpanded: true,
@@ -247,10 +241,9 @@ class _ReminderScreenState extends State<ReminderScreen> {
                       ],
                       onChanged: (value) {
                         setDialogState(() {
-                          selectedNoteId =
-                              value == null || value.isEmpty
-                                  ? null
-                                  : value;
+                          selectedNoteId = value == null || value.isEmpty
+                              ? null
+                              : value;
                         });
                       },
                     ),
@@ -294,12 +287,12 @@ class _ReminderScreenState extends State<ReminderScreen> {
 
                             if (reminder == null) {
                               // Guardar primero el recordatorio.
-                              final reminderId =
-                                  await _reminderService.createReminder(
-                                scheduledAt: scheduledAt,
-                                eventId: selectedEventId,
-                                noteId: selectedNoteId,
-                              );
+                              final reminderId = await _reminderService
+                                  .createReminder(
+                                    scheduledAt: scheduledAt,
+                                    eventId: selectedEventId,
+                                    noteId: selectedNoteId,
+                                  );
                               await notificationService.scheduleNotification(
                                 _notificationId(reminderId),
                                 'Recordatorio',
@@ -312,7 +305,6 @@ class _ReminderScreenState extends State<ReminderScreen> {
                                 scheduledAt,
                               );
                             } else {
-                        
                               await notificationService.cancelNotification(
                                 _notificationId(reminder.id),
                               );
@@ -377,9 +369,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Eliminar recordatorio'),
-        content: const Text(
-          '¿Deseas eliminar este recordatorio?',
-        ),
+        content: const Text('¿Deseas eliminar este recordatorio?'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -405,18 +395,14 @@ class _ReminderScreenState extends State<ReminderScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Recordatorio eliminado y notificación cancelada',
-          ),
+          content: Text('Recordatorio eliminado y notificación cancelada'),
         ),
       );
     } catch (error) {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('No se pudo completar la operación: $error'),
-        ),
+        SnackBar(content: Text('No se pudo completar la operación: $error')),
       );
     }
   }
@@ -424,24 +410,18 @@ class _ReminderScreenState extends State<ReminderScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Mis recordatorios'),
-      ),
+      appBar: AppBar(title: const Text('Mis recordatorios')),
       body: FutureBuilder<List<NoteModel>>(
         future: _notesFuture,
         builder: (context, notesSnapshot) {
           if (notesSnapshot.hasError) {
             return Center(
-              child: Text(
-                'Error al cargar notas: ${notesSnapshot.error}',
-              ),
+              child: Text('Error al cargar notas: ${notesSnapshot.error}'),
             );
           }
 
           if (!notesSnapshot.hasData) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+            return const Center(child: CircularProgressIndicator());
           }
 
           final notes = notesSnapshot.data!;
@@ -458,9 +438,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
               }
 
               if (!eventsSnapshot.hasData) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
+                return const Center(child: CircularProgressIndicator());
               }
 
               final events = eventsSnapshot.data!;
@@ -480,11 +458,8 @@ class _ReminderScreenState extends State<ReminderScreen> {
                     );
                   }
 
-                  if (snapshot.connectionState ==
-                      ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
                   }
 
                   final reminders = snapshot.data ?? [];
@@ -523,9 +498,7 @@ class _ReminderScreenState extends State<ReminderScreen> {
                           ),
                           title: Text(
                             _formatDate(reminder.scheduledAt),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
                           subtitle: Text(
                             '${_eventTitle(reminder.eventId, events)}\n'
@@ -573,12 +546,11 @@ class _ReminderScreenState extends State<ReminderScreen> {
             builder: (context, eventsSnapshot) {
               return FloatingActionButton(
                 tooltip: 'Agregar recordatorio',
-                onPressed: notesSnapshot.hasData &&
-                        eventsSnapshot.hasData
+                onPressed: notesSnapshot.hasData && eventsSnapshot.hasData
                     ? () => _showReminderDialog(
-                          notes: notesSnapshot.data!,
-                          events: eventsSnapshot.data!,
-                        )
+                        notes: notesSnapshot.data!,
+                        events: eventsSnapshot.data!,
+                      )
                     : null,
                 child: const Icon(Icons.add),
               );

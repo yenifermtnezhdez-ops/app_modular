@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -9,10 +8,7 @@ import '../providers/comment_provider.dart';
 class CommentCard extends StatefulWidget {
   final CommentModel comment;
 
-  const CommentCard({
-    super.key,
-    required this.comment,
-  });
+  const CommentCard({super.key, required this.comment});
 
   @override
   State<CommentCard> createState() => _CommentCardState();
@@ -28,8 +24,7 @@ class _CommentCardState extends State<CommentCard> {
   void didUpdateWidget(covariant CommentCard oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.comment.content != widget.comment.content &&
-        !_isEditing) {
+    if (oldWidget.comment.content != widget.comment.content && !_isEditing) {
       _editedContent = widget.comment.content;
     }
   }
@@ -66,11 +61,7 @@ class _CommentCardState extends State<CommentCard> {
 
     if (content.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'El comentario no puede estar vacío.',
-          ),
-        ),
+        const SnackBar(content: Text('El comentario no puede estar vacío.')),
       );
       return;
     }
@@ -78,9 +69,7 @@ class _CommentCardState extends State<CommentCard> {
     if (content.length > 1000) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'El comentario no puede superar los 1000 caracteres.',
-          ),
+          content: Text('El comentario no puede superar los 1000 caracteres.'),
         ),
       );
       return;
@@ -108,13 +97,10 @@ class _CommentCardState extends State<CommentCard> {
     final message = success
         ? 'Comentario actualizado correctamente.'
         : context.read<CommentProvider>().errorMessage ??
-            'No fue posible editar el comentario.';
+              'No fue posible editar el comentario.';
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _confirmDelete() async {
@@ -122,9 +108,7 @@ class _CommentCardState extends State<CommentCard> {
 
     if (provider.isWriting) return;
 
-    final success = await provider.deleteComment(
-      commentId: widget.comment.id,
-    );
+    final success = await provider.deleteComment(commentId: widget.comment.id);
 
     if (!mounted) return;
 
@@ -137,19 +121,13 @@ class _CommentCardState extends State<CommentCard> {
     final message = success
         ? 'Comentario eliminado correctamente.'
         : context.read<CommentProvider>().errorMessage ??
-            'No fue posible eliminar el comentario.';
+              'No fue posible eliminar el comentario.';
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-      ),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
-  Widget _buildOwnerActions(
-    BuildContext context,
-    bool isBusy,
-  ) {
+  Widget _buildOwnerActions(BuildContext context, bool isBusy) {
     final colors = Theme.of(context).colorScheme;
 
     return Row(
@@ -164,10 +142,7 @@ class _CommentCardState extends State<CommentCard> {
             minimumSize: const Size(36, 36),
             maximumSize: const Size(36, 36),
           ),
-          icon: const Icon(
-            Icons.edit_outlined,
-            size: 17,
-          ),
+          icon: const Icon(Icons.edit_outlined, size: 17),
         ),
         const SizedBox(width: 7),
         IconButton(
@@ -185,19 +160,13 @@ class _CommentCardState extends State<CommentCard> {
             minimumSize: const Size(36, 36),
             maximumSize: const Size(36, 36),
           ),
-          icon: const Icon(
-            Icons.delete_outline_rounded,
-            size: 17,
-          ),
+          icon: const Icon(Icons.delete_outline_rounded, size: 17),
         ),
       ],
     );
   }
 
-  Widget _buildEditingContent(
-    BuildContext context,
-    bool isBusy,
-  ) {
+  Widget _buildEditingContent(BuildContext context, bool isBusy) {
     final colors = Theme.of(context).colorScheme;
 
     return Column(
@@ -219,8 +188,7 @@ class _CommentCardState extends State<CommentCard> {
             hintText: 'Escribe tu comentario...',
             alignLabelWithHint: true,
             filled: true,
-            fillColor: colors.surfaceContainerHighest
-                .withValues(alpha: 0.45),
+            fillColor: colors.surfaceContainerHighest.withValues(alpha: 0.45),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(15),
               borderSide: BorderSide.none,
@@ -242,14 +210,10 @@ class _CommentCardState extends State<CommentCard> {
                   ? const SizedBox(
                       width: 16,
                       height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.save_outlined),
-              label: Text(
-                isBusy ? 'Guardando...' : 'Guardar cambios',
-              ),
+              label: Text(isBusy ? 'Guardando...' : 'Guardar cambios'),
             ),
           ],
         ),
@@ -257,10 +221,7 @@ class _CommentCardState extends State<CommentCard> {
     );
   }
 
-  Widget _buildDeleteConfirmation(
-    BuildContext context,
-    bool isBusy,
-  ) {
+  Widget _buildDeleteConfirmation(BuildContext context, bool isBusy) {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
@@ -302,12 +263,8 @@ class _CommentCardState extends State<CommentCard> {
                   foregroundColor: colors.onError,
                 ),
                 onPressed: isBusy ? null : _confirmDelete,
-                icon: const Icon(
-                  Icons.delete_outline_rounded,
-                ),
-                label: Text(
-                  isBusy ? 'Eliminando...' : 'Eliminar',
-                ),
+                icon: const Icon(Icons.delete_outline_rounded),
+                label: Text(isBusy ? 'Eliminando...' : 'Eliminar'),
               ),
             ],
           ),
@@ -320,14 +277,12 @@ class _CommentCardState extends State<CommentCard> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final currentUserId =
-        context.watch<AuthProvider>().user?.uid;
+    final currentUserId = context.watch<AuthProvider>().user?.uid;
 
-    final isOwner = currentUserId != null &&
-        currentUserId == widget.comment.userId;
+    final isOwner =
+        currentUserId != null && currentUserId == widget.comment.userId;
 
-    final commentProvider =
-        context.watch<CommentProvider>();
+    final commentProvider = context.watch<CommentProvider>();
 
     final isBusy = commentProvider.isWriting;
 
@@ -337,16 +292,13 @@ class _CommentCardState extends State<CommentCard> {
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(19),
-        side: BorderSide(
-          color: colors.outline.withValues(alpha: 0.4),
-        ),
+        side: BorderSide(color: colors.outline.withValues(alpha: 0.4)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(15),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-         
             Row(
               children: [
                 CircleAvatar(
@@ -361,8 +313,7 @@ class _CommentCardState extends State<CommentCard> {
                 const SizedBox(width: 11),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         widget.comment.userName,
@@ -376,9 +327,7 @@ class _CommentCardState extends State<CommentCard> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        _formatDate(
-                          widget.comment.createdAt,
-                        ),
+                        _formatDate(widget.comment.createdAt),
                         style: TextStyle(
                           fontSize: 10,
                           color: colors.onSurfaceVariant,
@@ -388,16 +337,13 @@ class _CommentCardState extends State<CommentCard> {
                   ),
                 ),
 
-                if (isOwner &&
-                    !_isEditing &&
-                    !_confirmingDelete)
+                if (isOwner && !_isEditing && !_confirmingDelete)
                   _buildOwnerActions(context, isBusy),
               ],
             ),
 
             const SizedBox(height: 15),
 
-           
             if (_isEditing)
               _buildEditingContent(context, isBusy)
             else if (_confirmingDelete)
@@ -407,8 +353,7 @@ class _CommentCardState extends State<CommentCard> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(13),
                 decoration: BoxDecoration(
-                  color: colors.surfaceContainerHighest
-                      .withValues(alpha: 0.35),
+                  color: colors.surfaceContainerHighest.withValues(alpha: 0.35),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Text(
@@ -421,9 +366,7 @@ class _CommentCardState extends State<CommentCard> {
                 ),
               ),
 
-              if (widget.comment.updatedAt.isAfter(
-                widget.comment.createdAt,
-              ))
+              if (widget.comment.updatedAt.isAfter(widget.comment.createdAt))
                 Padding(
                   padding: const EdgeInsets.only(top: 9),
                   child: Row(

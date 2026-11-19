@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -20,53 +19,43 @@ class CommentProvider extends ChangeNotifier {
 
   String? _errorMessage;
 
- CommentProvider({
-  required this._newsId,
-  CommentService? commentService,
-}) : _commentService = commentService ?? CommentService() {
-  _listenToComments();
-}
+  CommentProvider({required this._newsId, CommentService? commentService})
+    : _commentService = commentService ?? CommentService() {
+    _listenToComments();
+  }
 
-
-  List<CommentModel> get comments =>
-      List.unmodifiable(_comments);
-
+  List<CommentModel> get comments => List.unmodifiable(_comments);
 
   bool get isLoading => _isLoading;
 
   bool get isWriting => _isWriting;
 
-
   String? get errorMessage => _errorMessage;
 
-  
   int get commentCount => _comments.length;
 
-  
   void _listenToComments() {
     _subscription = _commentService
         .watchComments(_newsId)
         .listen(
-      (comments) {
-        _comments = comments;
-        _isLoading = false;
-        _errorMessage = null;
+          (comments) {
+            _comments = comments;
+            _isLoading = false;
+            _errorMessage = null;
 
-        notifyListeners();
-      },
-      onError: (error) {
-        debugPrint('Error al consultar comentarios: $error');
+            notifyListeners();
+          },
+          onError: (error) {
+            debugPrint('Error al consultar comentarios: $error');
 
-        _isLoading = false;
-        _errorMessage =
-            'No fue posible cargar los comentarios.';
+            _isLoading = false;
+            _errorMessage = 'No fue posible cargar los comentarios.';
 
-        notifyListeners();
-      },
-    );
+            notifyListeners();
+          },
+        );
   }
 
-  
   Future<bool> addComment({
     required String content,
     required String userName,
@@ -105,7 +94,6 @@ class CommentProvider extends ChangeNotifier {
     }
   }
 
- 
   Future<bool> updateComment({
     required String commentId,
     required String content,
@@ -144,10 +132,7 @@ class CommentProvider extends ChangeNotifier {
     }
   }
 
-
-  Future<bool> deleteComment({
-    required String commentId,
-  }) async {
+  Future<bool> deleteComment({required String commentId}) async {
     if (_isWriting) return false;
 
     _isWriting = true;
@@ -173,7 +158,6 @@ class CommentProvider extends ChangeNotifier {
     }
   }
 
-  
   String _getErrorMessage(Object error) {
     if (error is FirebaseException) {
       switch (error.code) {
@@ -191,13 +175,9 @@ class CommentProvider extends ChangeNotifier {
       }
     }
 
-    final message = error
-        .toString()
-        .replaceFirst('Exception: ', '');
+    final message = error.toString().replaceFirst('Exception: ', '');
 
-    return message.isEmpty
-        ? 'Ocurrió un error. Intenta nuevamente.'
-        : message;
+    return message.isEmpty ? 'Ocurrió un error. Intenta nuevamente.' : message;
   }
 
   @override

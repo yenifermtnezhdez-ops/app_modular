@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -8,13 +7,8 @@ class NoteService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  CollectionReference<Map<String, dynamic>> _notesCollection(
-    String uid,
-  ) {
-    return _db
-        .collection('users')
-        .doc(uid)
-        .collection('notes');
+  CollectionReference<Map<String, dynamic>> _notesCollection(String uid) {
+    return _db.collection('users').doc(uid).collection('notes');
   }
 
   String _requireUid() {
@@ -56,17 +50,17 @@ class NoteService {
   }
 
   Stream<List<NoteModel>> watchNotes() {
-  final uid = _requireUid();
+    final uid = _requireUid();
 
-  return _notesCollection(uid)
-      .orderBy('createdAt', descending: true)
-      .snapshots()
-      .map((snapshot) {
-    return snapshot.docs.map((doc) {
-      return NoteModel.fromMap(doc.id, doc.data());
-    }).toList();
-  });
-}
+    return _notesCollection(uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            return NoteModel.fromMap(doc.id, doc.data());
+          }).toList();
+        });
+  }
 
   Future<void> updateNote({
     required String noteId,

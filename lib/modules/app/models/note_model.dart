@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NoteModel {
@@ -25,10 +24,7 @@ class NoteModel {
     };
   }
 
-  factory NoteModel.fromMap(
-    String id,
-    Map<String, dynamic> map,
-  ) {
+  factory NoteModel.fromMap(String id, Map<String, dynamic> map) {
     final timestamp = map['createdAt'];
 
     return NoteModel(
@@ -36,9 +32,7 @@ class NoteModel {
       title: map['title']?.toString() ?? '',
       content: map['content']?.toString() ?? '',
       pinned: map['pinned'] == true,
-      createdAt: timestamp is Timestamp
-          ? timestamp.toDate()
-          : DateTime.now(),
+      createdAt: timestamp is Timestamp ? timestamp.toDate() : DateTime.now(),
     );
   }
 }

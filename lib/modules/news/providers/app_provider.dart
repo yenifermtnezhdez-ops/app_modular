@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,9 +18,7 @@ class AppProvider extends ChangeNotifier {
 
       final savedTheme = prefs.getString(_themeKey);
 
-      _themeMode = savedTheme == 'dark'
-          ? ThemeMode.dark
-          : ThemeMode.light;
+      _themeMode = savedTheme == 'dark' ? ThemeMode.dark : ThemeMode.light;
     } catch (e) {
       debugPrint('Error al cargar el tema: $e');
       _themeMode = ThemeMode.light;
@@ -30,11 +27,11 @@ class AppProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
   Future<void> toggleTheme() async {
-    await setThemeMode(
-      isDarkMode ? ThemeMode.light : ThemeMode.dark,
-    );
+    await setThemeMode(isDarkMode ? ThemeMode.light : ThemeMode.dark);
   }
+
   Future<void> setThemeMode(ThemeMode mode) async {
     if (_themeMode == mode) return;
 

@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventModel {
@@ -25,10 +24,7 @@ class EventModel {
     };
   }
 
-  factory EventModel.fromMap(
-    String id,
-    Map<String, dynamic> map,
-  ) {
+  factory EventModel.fromMap(String id, Map<String, dynamic> map) {
     final start = map['startDate'];
     final end = map['endDate'];
 
@@ -36,12 +32,8 @@ class EventModel {
       id: id,
       title: map['title']?.toString() ?? '',
       description: map['description']?.toString() ?? '',
-      startDate: start is Timestamp
-          ? start.toDate()
-          : DateTime.now(),
-      endDate: end is Timestamp
-          ? end.toDate()
-          : DateTime.now(),
+      startDate: start is Timestamp ? start.toDate() : DateTime.now(),
+      endDate: end is Timestamp ? end.toDate() : DateTime.now(),
     );
   }
 }

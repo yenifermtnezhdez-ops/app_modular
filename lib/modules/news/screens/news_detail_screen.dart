@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:provider/provider.dart';
@@ -12,10 +11,7 @@ import '../components/comment_card.dart';
 class NewsDetailScreen extends StatelessWidget {
   final NewsModel news;
 
-  const NewsDetailScreen({
-    super.key,
-    required this.news,
-  });
+  const NewsDetailScreen({super.key, required this.news});
 
   @override
   Widget build(BuildContext context) {
@@ -29,9 +25,7 @@ class NewsDetailScreen extends StatelessWidget {
 class _NewsDetailContent extends StatelessWidget {
   final NewsModel news;
 
-  const _NewsDetailContent({
-    required this.news,
-  });
+  const _NewsDetailContent({required this.news});
 
   String _formatDate(String rawDate) {
     final date = DateTime.tryParse(rawDate);
@@ -57,16 +51,11 @@ class _NewsDetailContent extends StatelessWidget {
         'de ${date.year}';
   }
 
-  Future<void> _toggleBookmark(
-    BuildContext context,
-    bool isBookmarked,
-  ) async {
+  Future<void> _toggleBookmark(BuildContext context, bool isBookmarked) async {
     final colors = Theme.of(context).colorScheme;
 
     try {
-      await context
-          .read<BookmarkProvider>()
-          .toggleBookmark(news.id);
+      await context.read<BookmarkProvider>().toggleBookmark(news.id);
 
       if (!context.mounted) return;
 
@@ -85,9 +74,7 @@ class _NewsDetailContent extends StatelessWidget {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text(
-            'No fue posible actualizar el favorito.',
-          ),
+          content: const Text('No fue posible actualizar el favorito.'),
           backgroundColor: colors.error,
         ),
       );
@@ -98,11 +85,9 @@ class _NewsDetailContent extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final bookmarkProvider =
-        context.watch<BookmarkProvider>();
+    final bookmarkProvider = context.watch<BookmarkProvider>();
 
-    final isBookmarked =
-        bookmarkProvider.isBookmarked(news.id);
+    final isBookmarked = bookmarkProvider.isBookmarked(news.id);
 
     return Scaffold(
       appBar: AppBar(
@@ -111,10 +96,7 @@ class _NewsDetailContent extends StatelessWidget {
           IconButton(
             onPressed: bookmarkProvider.isLoading
                 ? null
-                : () => _toggleBookmark(
-                      context,
-                      isBookmarked,
-                    ),
+                : () => _toggleBookmark(context, isBookmarked),
             tooltip: isBookmarked
                 ? 'Quitar de favoritos'
                 : 'Guardar en favoritos',
@@ -123,10 +105,7 @@ class _NewsDetailContent extends StatelessWidget {
               transitionBuilder: (child, animation) {
                 return ScaleTransition(
                   scale: animation,
-                  child: FadeTransition(
-                    opacity: animation,
-                    child: child,
-                  ),
+                  child: FadeTransition(opacity: animation, child: child),
                 );
               },
               child: Icon(
@@ -142,16 +121,10 @@ class _NewsDetailContent extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(
-          18,
-          20,
-          18,
-          35,
-        ),
+        padding: const EdgeInsets.fromLTRB(18, 20, 18, 35),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
- 
             Row(
               children: [
                 Container(
@@ -215,7 +188,6 @@ class _NewsDetailContent extends StatelessWidget {
 
             const SizedBox(height: 18),
 
-       
             Row(
               children: [
                 Container(
@@ -234,8 +206,7 @@ class _NewsDetailContent extends StatelessWidget {
                 const SizedBox(width: 11),
                 Expanded(
                   child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
                         'Publicado',
@@ -261,13 +232,10 @@ class _NewsDetailContent extends StatelessWidget {
 
             const SizedBox(height: 24),
 
-            Divider(
-              color: colors.outline.withValues(alpha: 0.4),
-            ),
+            Divider(color: colors.outline.withValues(alpha: 0.4)),
 
             const SizedBox(height: 20),
 
-         
             Row(
               children: [
                 Container(
@@ -299,19 +267,12 @@ class _NewsDetailContent extends StatelessWidget {
 
             Container(
               width: double.infinity,
-              padding: const EdgeInsets.fromLTRB(
-                17,
-                12,
-                17,
-                17,
-              ),
+              padding: const EdgeInsets.fromLTRB(17, 12, 17, 17),
               decoration: BoxDecoration(
                 color: colors.surface,
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
-                  color: colors.outline.withValues(
-                    alpha: 0.4,
-                  ),
+                  color: colors.outline.withValues(alpha: 0.4),
                 ),
               ),
               child: Html(
@@ -333,28 +294,19 @@ class _NewsDetailContent extends StatelessWidget {
                     fontSize: FontSize(23),
                     fontWeight: FontWeight.w800,
                     color: colors.onSurface,
-                    margin: Margins.only(
-                      top: 15,
-                      bottom: 12,
-                    ),
+                    margin: Margins.only(top: 15, bottom: 12),
                   ),
                   'h2': Style(
                     fontSize: FontSize(21),
                     fontWeight: FontWeight.w800,
                     color: colors.primary,
-                    margin: Margins.only(
-                      top: 16,
-                      bottom: 10,
-                    ),
+                    margin: Margins.only(top: 16, bottom: 10),
                   ),
                   'h3': Style(
                     fontSize: FontSize(18),
                     fontWeight: FontWeight.w700,
                     color: colors.onSurface,
-                    margin: Margins.only(
-                      top: 14,
-                      bottom: 8,
-                    ),
+                    margin: Margins.only(top: 14, bottom: 8),
                   ),
                   'a': Style(
                     color: colors.primary,
@@ -368,15 +320,9 @@ class _NewsDetailContent extends StatelessWidget {
                     color: colors.primary,
                     fontStyle: FontStyle.italic,
                     padding: HtmlPaddings.only(left: 12),
-                    margin: Margins.only(
-                      top: 12,
-                      bottom: 12,
-                    ),
+                    margin: Margins.only(top: 12, bottom: 12),
                     border: Border(
-                      left: BorderSide(
-                        color: colors.primary,
-                        width: 3,
-                      ),
+                      left: BorderSide(color: colors.primary, width: 3),
                     ),
                   ),
                   'li': Style(
@@ -389,10 +335,7 @@ class _NewsDetailContent extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-           
-            Divider(
-              color: colors.outline.withValues(alpha: 0.4),
-            ),
+            Divider(color: colors.outline.withValues(alpha: 0.4)),
 
             const SizedBox(height: 23),
 
@@ -404,18 +347,15 @@ class _NewsDetailContent extends StatelessWidget {
   }
 }
 
-
 class _CommentsSection extends StatefulWidget {
   const _CommentsSection();
 
   @override
-  State<_CommentsSection> createState() =>
-      _CommentsSectionState();
+  State<_CommentsSection> createState() => _CommentsSectionState();
 }
 
 class _CommentsSectionState extends State<_CommentsSection> {
-  final TextEditingController _commentController =
-      TextEditingController();
+  final TextEditingController _commentController = TextEditingController();
 
   @override
   void dispose() {
@@ -429,9 +369,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Debes iniciar sesión para publicar comentarios.',
-          ),
+          content: Text('Debes iniciar sesión para publicar comentarios.'),
         ),
       );
       return;
@@ -442,24 +380,19 @@ class _CommentsSectionState extends State<_CommentsSection> {
     if (content.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'Escribe un comentario antes de publicarlo.',
-          ),
+          content: Text('Escribe un comentario antes de publicarlo.'),
         ),
       );
       return;
     }
 
-    final commentProvider =
-        context.read<CommentProvider>();
+    final commentProvider = context.read<CommentProvider>();
 
     if (commentProvider.isWriting) return;
 
     final success = await commentProvider.addComment(
       content: content,
-      userName: user.displayName ??
-          user.email ??
-          'Usuario',
+      userName: user.displayName ?? user.email ?? 'Usuario',
     );
 
     if (!mounted) return;
@@ -469,31 +402,20 @@ class _CommentsSectionState extends State<_CommentsSection> {
       FocusScope.of(context).unfocus();
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Comentario publicado correctamente.',
-          ),
-        ),
+        const SnackBar(content: Text('Comentario publicado correctamente.')),
       );
     } else {
-      final message =
-          commentProvider.errorMessage;
+      final message = commentProvider.errorMessage;
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            message ??
-                'No fue posible publicar el comentario.',
-          ),
+          content: Text(message ?? 'No fue posible publicar el comentario.'),
         ),
       );
     }
   }
 
-  Widget _buildCommentForm(
-    BuildContext context,
-    bool isWriting,
-  ) {
+  Widget _buildCommentForm(BuildContext context, bool isWriting) {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
@@ -501,9 +423,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: colors.outline.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.4)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -525,16 +445,14 @@ class _CommentsSectionState extends State<_CommentsSection> {
             maxLength: 1000,
             textCapitalization: TextCapitalization.sentences,
             decoration: InputDecoration(
-              hintText:
-                  '¿Qué opinas sobre esta noticia?',
+              hintText: '¿Qué opinas sobre esta noticia?',
               alignLabelWithHint: true,
               prefixIcon: const Padding(
                 padding: EdgeInsets.only(bottom: 43),
                 child: Icon(Icons.edit_note_rounded),
               ),
               filled: true,
-              fillColor: colors.surfaceContainerHighest
-                  .withValues(alpha: 0.45),
+              fillColor: colors.surfaceContainerHighest.withValues(alpha: 0.45),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide.none,
@@ -542,17 +460,12 @@ class _CommentsSectionState extends State<_CommentsSection> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
                 borderSide: BorderSide(
-                  color: colors.outline.withValues(
-                    alpha: 0.4,
-                  ),
+                  color: colors.outline.withValues(alpha: 0.4),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(15),
-                borderSide: BorderSide(
-                  color: colors.primary,
-                  width: 1.5,
-                ),
+                borderSide: BorderSide(color: colors.primary, width: 1.5),
               ),
             ),
           ),
@@ -565,15 +478,11 @@ class _CommentsSectionState extends State<_CommentsSection> {
                   ? const SizedBox(
                       width: 18,
                       height: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                      ),
+                      child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.send_rounded),
               label: Text(
-                isWriting
-                    ? 'Publicando comentario...'
-                    : 'Publicar comentario',
+                isWriting ? 'Publicando comentario...' : 'Publicar comentario',
               ),
             ),
           ),
@@ -621,16 +530,13 @@ class _CommentsSectionState extends State<_CommentsSection> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    final currentUser =
-        context.watch<AuthProvider>().user;
+    final currentUser = context.watch<AuthProvider>().user;
 
-    final commentProvider =
-        context.watch<CommentProvider>();
+    final commentProvider = context.watch<CommentProvider>();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-       
         Row(
           children: [
             Container(
@@ -640,17 +546,12 @@ class _CommentsSectionState extends State<_CommentsSection> {
                 color: colors.primaryContainer,
                 borderRadius: BorderRadius.circular(14),
               ),
-              child: Icon(
-                Icons.forum_rounded,
-                color: colors.primary,
-                size: 22,
-              ),
+              child: Icon(Icons.forum_rounded, color: colors.primary, size: 22),
             ),
             const SizedBox(width: 12),
             Expanded(
               child: Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Conversación',
@@ -671,10 +572,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
               ),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 13,
-                vertical: 8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 8),
               decoration: BoxDecoration(
                 color: colors.primaryContainer,
                 borderRadius: BorderRadius.circular(14),
@@ -695,10 +593,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
 
         // FORMULARIO O AVISO DE SESIÓN
         if (currentUser != null)
-          _buildCommentForm(
-            context,
-            commentProvider.isWriting,
-          )
+          _buildCommentForm(context, commentProvider.isWriting)
         else
           _buildLoginNotice(context),
 
@@ -740,10 +635,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
             ),
             child: Text(
               commentProvider.errorMessage!,
-              style: TextStyle(
-                color: colors.onErrorContainer,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: colors.onErrorContainer, fontSize: 12),
             ),
           ),
 
@@ -751,9 +643,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
           Center(
             child: Padding(
               padding: const EdgeInsets.all(25),
-              child: CircularProgressIndicator(
-                color: colors.primary,
-              ),
+              child: CircularProgressIndicator(color: colors.primary),
             ),
           )
         else if (commentProvider.comments.isEmpty)
@@ -763,11 +653,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
             decoration: BoxDecoration(
               color: colors.surface,
               borderRadius: BorderRadius.circular(19),
-              border: Border.all(
-                color: colors.outline.withValues(
-                  alpha: 0.4,
-                ),
-              ),
+              border: Border.all(color: colors.outline.withValues(alpha: 0.4)),
             ),
             child: Column(
               children: [
@@ -802,10 +688,7 @@ class _CommentsSectionState extends State<_CommentsSection> {
         else
           Column(
             children: commentProvider.comments.map((comment) {
-              return CommentCard(
-                key: ValueKey(comment.id),
-                comment: comment,
-              );
+              return CommentCard(key: ValueKey(comment.id), comment: comment);
             }).toList(),
           ),
       ],

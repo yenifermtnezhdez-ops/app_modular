@@ -1,4 +1,3 @@
-
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
@@ -25,11 +24,9 @@ class AudioProvider extends ChangeNotifier {
   StreamSubscription<PlayerState>? _playerStateSubscription;
   StreamSubscription<PlaybackEvent>? _playbackEventSubscription;
 
-  AudioProvider({
-    required radio.RadioAudioHandler audioHandler,
-  }) : _audioService = audioHandler {
-    _playerStateSubscription =
-        _audioService.player.playerStateStream.listen(
+  AudioProvider({required radio.RadioAudioHandler audioHandler})
+    : _audioService = audioHandler {
+    _playerStateSubscription = _audioService.player.playerStateStream.listen(
       (state) {
         if (_disposed) return;
 
@@ -52,19 +49,19 @@ class AudioProvider extends ChangeNotifier {
       },
     );
 
-    _playbackEventSubscription =
-        _audioService.player.playbackEventStream.listen(
-      (_) {},
-      onError: (Object error) {
-        if (_disposed) return;
+    _playbackEventSubscription = _audioService.player.playbackEventStream
+        .listen(
+          (_) {},
+          onError: (Object error) {
+            if (_disposed) return;
 
-        _errorMessage = 'No se pudo reproducir el audio: $error';
-        _isLoading = false;
-        _isPlaying = false;
+            _errorMessage = 'No se pudo reproducir el audio: $error';
+            _isLoading = false;
+            _isPlaying = false;
 
-        notifyListeners();
-      },
-    );
+            notifyListeners();
+          },
+        );
   }
 
   StationModel? get currentStation => _currentStation;
@@ -75,14 +72,10 @@ class AudioProvider extends ChangeNotifier {
 
   String? get errorMessage => _errorMessage;
 
-  bool get hasError =>
-      _errorMessage != null && _errorMessage!.isNotEmpty;
+  bool get hasError => _errorMessage != null && _errorMessage!.isNotEmpty;
 
   bool get isPaused =>
-      _currentStation != null &&
-      !_isLoading &&
-      !_isPlaying &&
-      !hasError;
+      _currentStation != null && !_isLoading && !_isPlaying && !hasError;
 
   Future<void> playStation(StationModel station) async {
     final int requestId = ++_requestId;

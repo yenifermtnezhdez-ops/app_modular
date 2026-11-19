@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -52,8 +51,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.dispose();
   }
 
-  
-
   Future<void> _loadProfile() async {
     final authProvider = context.read<AuthProvider>();
     final user = authProvider.user;
@@ -73,8 +70,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     try {
       final phone = await _userService.getPhone(user.uid);
-      final imagePath =
-          await _userService.getProfileImagePath(user.uid);
+      final imagePath = await _userService.getProfileImagePath(user.uid);
 
       if (!mounted) return;
 
@@ -100,9 +96,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _pickImage() async {
-    if (_userId == null ||
-        _isPickingImage ||
-        _isBusy) {
+    if (_userId == null || _isPickingImage || _isBusy) {
       return;
     }
 
@@ -137,10 +131,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (!mounted) return;
 
-      _showMessage(
-        'No fue posible guardar la fotografía.',
-        isError: true,
-      );
+      _showMessage('No fue posible guardar la fotografía.', isError: true);
     } finally {
       if (mounted) {
         setState(() {
@@ -150,17 +141,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  
   Future<void> _saveProfile() async {
     if (_isBusy || _isPickingImage) return;
 
     if (!_formKey.currentState!.validate()) return;
 
     if (_userId == null) {
-      _showMessage(
-        'No existe un usuario autenticado.',
-        isError: true,
-      );
+      _showMessage('No existe un usuario autenticado.', isError: true);
       return;
     }
 
@@ -175,22 +162,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
       final newPhone = _phoneController.text.trim();
 
       if (newName != (authProvider.user?.displayName ?? '')) {
-        final success = await authProvider.updateDisplayName(
-          name: newName,
-        );
+        final success = await authProvider.updateDisplayName(name: newName);
 
         if (!success) {
           throw Exception(
-            authProvider.errorMessage ??
-                'No fue posible actualizar el nombre.',
+            authProvider.errorMessage ?? 'No fue posible actualizar el nombre.',
           );
         }
       }
 
-      await _userService.savePhone(
-        userId: _userId!,
-        phone: newPhone,
-      );
+      await _userService.savePhone(userId: _userId!, phone: newPhone);
 
       if (!mounted) return;
 
@@ -200,10 +181,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (!mounted) return;
 
-      _showMessage(
-        e.toString().replaceFirst('Exception: ', ''),
-        isError: true,
-      );
+      _showMessage(e.toString().replaceFirst('Exception: ', ''), isError: true);
     } finally {
       if (mounted) {
         setState(() {
@@ -212,8 +190,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
     }
   }
-
-  
 
   Future<void> _confirmDeleteAccount() async {
     if (_isBusy) return;
@@ -233,14 +209,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
           title: Row(
             children: [
-              Icon(
-                Icons.warning_amber_rounded,
-                color: colors.error,
-              ),
+              Icon(Icons.warning_amber_rounded, color: colors.error),
               const SizedBox(width: 10),
-              const Expanded(
-                child: Text('Eliminar cuenta'),
-              ),
+              const Expanded(child: Text('Eliminar cuenta')),
             ],
           ),
           content: Form(
@@ -287,10 +258,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               onPressed: () {
                 if (passwordFormKey.currentState!.validate()) {
-                  Navigator.pop(
-                    dialogContext,
-                    passwordController.text,
-                  );
+                  Navigator.pop(dialogContext, passwordController.text);
                 }
               },
               child: const Text('Eliminar definitivamente'),
@@ -317,9 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       _isDeleting = true;
     });
 
-    final success = await authProvider.deleteAccount(
-      password: password,
-    );
+    final success = await authProvider.deleteAccount(password: password);
 
     if (!mounted) return;
 
@@ -329,8 +295,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       });
 
       _showMessage(
-        authProvider.errorMessage ??
-            'No fue posible eliminar la cuenta.',
+        authProvider.errorMessage ?? 'No fue posible eliminar la cuenta.',
         isError: true,
       );
       return;
@@ -344,17 +309,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
     if (!mounted) return;
 
-    Navigator.of(context).popUntil(
-      (route) => route.isFirst,
-    );
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
-  
-
-  void _showMessage(
-    String message, {
-    bool isError = false,
-  }) {
+  void _showMessage(String message, {bool isError = false}) {
     final colors = Theme.of(context).colorScheme;
 
     ScaffoldMessenger.of(context)
@@ -362,22 +320,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ..showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor:
-              isError ? colors.error : colors.primary,
+          backgroundColor: isError ? colors.error : colors.primary,
           duration: const Duration(seconds: 3),
         ),
       );
   }
-
-  
 
   Widget _buildProfileImage() {
     final colors = Theme.of(context).colorScheme;
 
     final path = _imagePath;
 
-    final hasImage = path != null &&
-        File(path).existsSync();
+    final hasImage = path != null && File(path).existsSync();
 
     return Stack(
       alignment: Alignment.bottomRight,
@@ -389,10 +343,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           decoration: BoxDecoration(
             shape: BoxShape.circle,
             color: colors.surface,
-            border: Border.all(
-              color: colors.primary,
-              width: 2.5,
-            ),
+            border: Border.all(color: colors.primary, width: 2.5),
           ),
           child: ClipOval(
             child: hasImage
@@ -423,15 +374,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
           decoration: BoxDecoration(
             color: colors.primary,
             shape: BoxShape.circle,
-            border: Border.all(
-              color: colors.surface,
-              width: 3,
-            ),
+            border: Border.all(color: colors.surface, width: 3),
           ),
           child: IconButton(
-            onPressed: _isPickingImage || _isBusy
-                ? null
-                : _pickImage,
+            onPressed: _isPickingImage || _isBusy ? null : _pickImage,
             tooltip: 'Cambiar fotografía',
             padding: EdgeInsets.zero,
             icon: _isPickingImage
@@ -454,8 +400,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-
-
   Widget _buildProfileHeader() {
     final colors = Theme.of(context).colorScheme;
 
@@ -471,9 +415,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildProfileImage(),
           const SizedBox(height: 17),
           Text(
-            _nameController.text.isEmpty
-                ? 'Mi cuenta'
-                : _nameController.text,
+            _nameController.text.isEmpty ? 'Mi cuenta' : _nameController.text,
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 21,
@@ -485,17 +427,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Text(
             _email,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              color: colors.onPrimaryContainer,
-              fontSize: 12,
-            ),
+            style: TextStyle(color: colors.onPrimaryContainer, fontSize: 12),
           ),
           const SizedBox(height: 13),
           Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 13,
-              vertical: 7,
-            ),
+            padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 7),
             decoration: BoxDecoration(
               color: colors.surface.withValues(alpha: 0.65),
               borderRadius: BorderRadius.circular(20),
@@ -542,11 +478,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             color: colors.primaryContainer,
             borderRadius: BorderRadius.circular(12),
           ),
-          child: Icon(
-            icon,
-            color: colors.primary,
-            size: 20,
-          ),
+          child: Icon(icon, color: colors.primary, size: 20),
         ),
         const SizedBox(width: 11),
         Expanded(
@@ -564,10 +496,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               const SizedBox(height: 3),
               Text(
                 subtitle,
-                style: TextStyle(
-                  color: colors.onSurfaceVariant,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
               ),
             ],
           ),
@@ -576,7 +505,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -587,15 +515,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
         actions: [
           IconButton(
             tooltip: 'Preferencias de notificaciones',
-            icon: const Icon(
-              Icons.notifications_outlined,
-            ),
+            icon: const Icon(Icons.notifications_outlined),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const SettingsScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
               );
             },
           ),
@@ -603,262 +527,224 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
       body: _isLoadingProfile
+          ? Center(child: CircularProgressIndicator(color: colors.primary))
+          : _userId == null
           ? Center(
-              child: CircularProgressIndicator(
-                color: colors.primary,
+              child: Text(
+                'No existe una sesión activa.',
+                style: TextStyle(color: colors.onSurface),
               ),
             )
-          : _userId == null
-              ? Center(
-                  child: Text(
-                    'No existe una sesión activa.',
-                    style: TextStyle(
-                      color: colors.onSurface,
-                    ),
-                  ),
-                )
-              : AbsorbPointer(
-                  absorbing: _isBusy || _isPickingImage,
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(
-                      18,
-                      18,
-                      18,
-                      35,
-                    ),
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.stretch,
-                        children: [
-                          _buildProfileHeader(),
+          : AbsorbPointer(
+              absorbing: _isBusy || _isPickingImage,
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.fromLTRB(18, 18, 18, 35),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _buildProfileHeader(),
 
-                          const SizedBox(height: 25),
+                      const SizedBox(height: 25),
 
-                          _buildSectionTitle(
-                            context,
-                            'Información personal',
-                            'Administra los datos de tu cuenta.',
-                            Icons.person_outline_rounded,
-                          ),
-
-                          const SizedBox(height: 17),
-
-                          Card(
-                            margin: EdgeInsets.zero,
-                            child: Padding(
-                              padding: const EdgeInsets.all(17),
-                              child: Column(
-                                children: [
-                                  TextFormField(
-                                    controller: _nameController,
-                                    textCapitalization:
-                                        TextCapitalization.words,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Nombre completo',
-                                      hintText: 'Escribe tu nombre',
-                                      prefixIcon: Icon(
-                                        Icons.person_outline_rounded,
-                                      ),
-                                    ),
-                                    validator: (value) {
-                                      if (value == null ||
-                                          value.trim().isEmpty) {
-                                        return 'El nombre es obligatorio.';
-                                      }
-
-                                      if (value.trim().length < 2) {
-                                        return 'Ingresa al menos 2 caracteres.';
-                                      }
-
-                                      return null;
-                                    },
-                                  ),
-
-                                  const SizedBox(height: 18),
-
-                                  TextFormField(
-                                    initialValue: _email,
-                                    readOnly: true,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Correo electrónico',
-                                      prefixIcon: Icon(
-                                        Icons.email_outlined,
-                                      ),
-                                      helperText:
-                                          'Correo vinculado a tu cuenta.',
-                                    ),
-                                  ),
-
-                                  const SizedBox(height: 18),
-
-                                  TextFormField(
-                                    controller: _phoneController,
-                                    keyboardType: TextInputType.phone,
-                                    maxLength: 10,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Teléfono',
-                                      hintText: '2281234567',
-                                      prefixIcon: Icon(
-                                        Icons.phone_outlined,
-                                      ),
-                                      counterText: '',
-                                      helperText:
-                                          'Ingresa un número de 10 dígitos.',
-                                    ),
-                                    validator: (value) {
-                                      final phone =
-                                          value?.replaceAll(
-                                                RegExp(r'\D'),
-                                                '',
-                                              ) ??
-                                              '';
-
-                                      if (phone.isEmpty) {
-                                        return 'El teléfono es obligatorio.';
-                                      }
-
-                                      if (!RegExp(r'^\d{10}$')
-                                          .hasMatch(phone)) {
-                                        return 'Ingresa un teléfono de 10 dígitos.';
-                                      }
-
-                                      return null;
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          SizedBox(
-                            height: 53,
-                            child: ElevatedButton.icon(
-                              onPressed: _isBusy
-                                  ? null
-                                  : _saveProfile,
-                              icon: _isSaving
-                                  ? const SizedBox(
-                                      height: 19,
-                                      width: 19,
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
-                                        color: Colors.white,
-                                      ),
-                                    )
-                                  : const Icon(
-                                      Icons.save_outlined,
-                                    ),
-                              label: Text(
-                                _isSaving
-                                    ? 'Guardando cambios...'
-                                    : 'Guardar cambios',
-                              ),
-                            ),
-                          ),
-
-                          const SizedBox(height: 31),
-
-                          Divider(
-                            color: colors.outline.withValues(
-                              alpha: 0.4,
-                            ),
-                          ),
-
-                          const SizedBox(height: 20),
-
-                          _buildSectionTitle(
-                            context,
-                            'Administración de cuenta',
-                            'Opciones permanentes de tu usuario.',
-                            Icons.manage_accounts_outlined,
-                          ),
-
-                          const SizedBox(height: 15),
-
-                          Container(
-                            padding: const EdgeInsets.all(17),
-                            decoration: BoxDecoration(
-                              color: colors.errorContainer,
-                              borderRadius: BorderRadius.circular(19),
-                              border: Border.all(
-                                color: colors.error.withValues(
-                                  alpha: 0.15,
-                                ),
-                              ),
-                            ),
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
-                                Icon(
-                                  Icons.warning_amber_rounded,
-                                  color: colors.error,
-                                  size: 26,
-                                ),
-                                const SizedBox(height: 11),
-                                Text(
-                                  'Zona de eliminación',
-                                  style: TextStyle(
-                                    color: colors.error,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                                ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Eliminar tu cuenta borrará tu usuario '
-                                  'de Firebase y los datos locales de este perfil. '
-                                  'Esta acción no se puede deshacer.',
-                                  style: TextStyle(
-                                    color: colors.onErrorContainer,
-                                    fontSize: 12,
-                                    height: 1.5,
-                                  ),
-                                ),
-                                const SizedBox(height: 17),
-                                SizedBox(
-                                  width: double.infinity,
-                                  child: OutlinedButton.icon(
-                                    onPressed: _isBusy
-                                        ? null
-                                        : _confirmDeleteAccount,
-                                    style: OutlinedButton.styleFrom(
-                                      foregroundColor: colors.error,
-                                      side: BorderSide(
-                                        color: colors.error,
-                                      ),
-                                      backgroundColor: colors.surface,
-                                    ),
-                                    icon: _isDeleting
-                                        ? const SizedBox(
-                                            height: 17,
-                                            width: 17,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                        : const Icon(
-                                            Icons.delete_forever_rounded,
-                                          ),
-                                    label: Text(
-                                      _isDeleting
-                                          ? 'Eliminando cuenta...'
-                                          : 'Eliminar mi cuenta',
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
+                      _buildSectionTitle(
+                        context,
+                        'Información personal',
+                        'Administra los datos de tu cuenta.',
+                        Icons.person_outline_rounded,
                       ),
-                    ),
+
+                      const SizedBox(height: 17),
+
+                      Card(
+                        margin: EdgeInsets.zero,
+                        child: Padding(
+                          padding: const EdgeInsets.all(17),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                controller: _nameController,
+                                textCapitalization: TextCapitalization.words,
+                                decoration: const InputDecoration(
+                                  labelText: 'Nombre completo',
+                                  hintText: 'Escribe tu nombre',
+                                  prefixIcon: Icon(
+                                    Icons.person_outline_rounded,
+                                  ),
+                                ),
+                                validator: (value) {
+                                  if (value == null || value.trim().isEmpty) {
+                                    return 'El nombre es obligatorio.';
+                                  }
+
+                                  if (value.trim().length < 2) {
+                                    return 'Ingresa al menos 2 caracteres.';
+                                  }
+
+                                  return null;
+                                },
+                              ),
+
+                              const SizedBox(height: 18),
+
+                              TextFormField(
+                                initialValue: _email,
+                                readOnly: true,
+                                decoration: const InputDecoration(
+                                  labelText: 'Correo electrónico',
+                                  prefixIcon: Icon(Icons.email_outlined),
+                                  helperText: 'Correo vinculado a tu cuenta.',
+                                ),
+                              ),
+
+                              const SizedBox(height: 18),
+
+                              TextFormField(
+                                controller: _phoneController,
+                                keyboardType: TextInputType.phone,
+                                maxLength: 10,
+                                decoration: const InputDecoration(
+                                  labelText: 'Teléfono',
+                                  hintText: '2281234567',
+                                  prefixIcon: Icon(Icons.phone_outlined),
+                                  counterText: '',
+                                  helperText:
+                                      'Ingresa un número de 10 dígitos.',
+                                ),
+                                validator: (value) {
+                                  final phone =
+                                      value?.replaceAll(RegExp(r'\D'), '') ??
+                                      '';
+
+                                  if (phone.isEmpty) {
+                                    return 'El teléfono es obligatorio.';
+                                  }
+
+                                  if (!RegExp(r'^\d{10}$').hasMatch(phone)) {
+                                    return 'Ingresa un teléfono de 10 dígitos.';
+                                  }
+
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+
+                      SizedBox(
+                        height: 53,
+                        child: ElevatedButton.icon(
+                          onPressed: _isBusy ? null : _saveProfile,
+                          icon: _isSaving
+                              ? const SizedBox(
+                                  height: 19,
+                                  width: 19,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(Icons.save_outlined),
+                          label: Text(
+                            _isSaving
+                                ? 'Guardando cambios...'
+                                : 'Guardar cambios',
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 31),
+
+                      Divider(color: colors.outline.withValues(alpha: 0.4)),
+
+                      const SizedBox(height: 20),
+
+                      _buildSectionTitle(
+                        context,
+                        'Administración de cuenta',
+                        'Opciones permanentes de tu usuario.',
+                        Icons.manage_accounts_outlined,
+                      ),
+
+                      const SizedBox(height: 15),
+
+                      Container(
+                        padding: const EdgeInsets.all(17),
+                        decoration: BoxDecoration(
+                          color: colors.errorContainer,
+                          borderRadius: BorderRadius.circular(19),
+                          border: Border.all(
+                            color: colors.error.withValues(alpha: 0.15),
+                          ),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              color: colors.error,
+                              size: 26,
+                            ),
+                            const SizedBox(height: 11),
+                            Text(
+                              'Zona de eliminación',
+                              style: TextStyle(
+                                color: colors.error,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Eliminar tu cuenta borrará tu usuario '
+                              'de Firebase y los datos locales de este perfil. '
+                              'Esta acción no se puede deshacer.',
+                              style: TextStyle(
+                                color: colors.onErrorContainer,
+                                fontSize: 12,
+                                height: 1.5,
+                              ),
+                            ),
+                            const SizedBox(height: 17),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton.icon(
+                                onPressed: _isBusy
+                                    ? null
+                                    : _confirmDeleteAccount,
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: colors.error,
+                                  side: BorderSide(color: colors.error),
+                                  backgroundColor: colors.surface,
+                                ),
+                                icon: _isDeleting
+                                    ? const SizedBox(
+                                        height: 17,
+                                        width: 17,
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : const Icon(Icons.delete_forever_rounded),
+                                label: Text(
+                                  _isDeleting
+                                      ? 'Eliminando cuenta...'
+                                      : 'Eliminar mi cuenta',
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
                 ),
+              ),
+            ),
     );
   }
 }

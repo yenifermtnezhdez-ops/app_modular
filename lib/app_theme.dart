@@ -17,17 +17,17 @@ class AppTheme {
   static const double radiusXLarge = 30;
 
   static List<BoxShadow> get softShadow => [
-        BoxShadow(
-          color: const Color(0xFF34234F).withValues(alpha: 0.07),
-          blurRadius: 22,
-          offset: const Offset(0, 9),
-        ),
-        BoxShadow(
-          color: primary.withValues(alpha: 0.045),
-          blurRadius: 10,
-          offset: const Offset(0, 3),
-        ),
-      ];
+    BoxShadow(
+      color: const Color(0xFF34234F).withValues(alpha: 0.07),
+      blurRadius: 22,
+      offset: const Offset(0, 9),
+    ),
+    BoxShadow(
+      color: primary.withValues(alpha: 0.045),
+      blurRadius: 10,
+      offset: const Offset(0, 3),
+    ),
+  ];
 
   static ThemeData get appTheme {
     return ThemeData(
@@ -113,9 +113,7 @@ class AppTheme {
         backgroundColor: surface,
         selectedColor: primary,
         side: const BorderSide(color: border),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
         labelStyle: const TextStyle(color: textSecondary, fontSize: 12),
         secondaryLabelStyle: const TextStyle(
           color: Colors.white,

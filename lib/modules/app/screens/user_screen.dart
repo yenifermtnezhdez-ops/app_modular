@@ -1,4 +1,3 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -47,8 +46,7 @@ class _UserScreenState extends State<UserScreen> {
       if (!mounted) return;
 
       setState(() {
-        _errorMessage =
-            'No se pudo cargar el perfil. Revisa tu conexión y los permisos de Firestore.';
+        _errorMessage = 'No se pudo cargar el perfil. Revisa tu conexión y los permisos de Firestore.';
       });
     } finally {
       if (mounted) {
@@ -60,9 +58,7 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   Future<void> _editName() async {
-    final controller = TextEditingController(
-      text: _profile?.displayName ?? '',
-    );
+    final controller = TextEditingController(text: _profile?.displayName ?? '');
 
     final newName = await showDialog<String>(
       context: context,
@@ -84,10 +80,7 @@ class _UserScreenState extends State<UserScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(
-                  dialogContext,
-                  controller.text.trim(),
-                );
+                Navigator.pop(dialogContext, controller.text.trim());
               },
               child: const Text('Guardar'),
             ),
@@ -124,16 +117,13 @@ class _UserScreenState extends State<UserScreen> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Perfil actualizado correctamente.'),
-        ),
+        const SnackBar(content: Text('Perfil actualizado correctamente.')),
       );
     } catch (_) {
       if (!mounted) return;
 
       setState(() {
-        _errorMessage =
-            'No se pudo actualizar el perfil. Intenta de nuevo.';
+        _errorMessage = 'No se pudo actualizar el perfil. Intenta de nuevo.';
       });
     } finally {
       if (mounted) {
@@ -170,20 +160,14 @@ class _UserScreenState extends State<UserScreen> {
   void _openHome() {
     Navigator.push(
       context,
-      MaterialPageRoute(
-        builder: (context) => const HomeScreen(),
-      ),
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     if (_profile == null) {
@@ -318,16 +302,10 @@ class _UserScreenState extends State<UserScreen> {
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
+                          child: CircularProgressIndicator(strokeWidth: 2),
                         )
                       : const Icon(Icons.logout),
-                  label: Text(
-                    _isSaving
-                        ? 'Procesando...'
-                        : 'Cerrar sesión',
-                  ),
+                  label: Text(_isSaving ? 'Procesando...' : 'Cerrar sesión'),
                 ),
               ),
             ],

@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -13,15 +12,12 @@ class CacheService {
 
   static const int _maxCachedNews = 30;
 
-
   Future<List<NewsModel>?> getNews(String cacheKey) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.reload();
 
-      final jsonString = prefs.getString(
-        '$_newsPrefix$cacheKey',
-      );
+      final jsonString = prefs.getString('$_newsPrefix$cacheKey');
 
       if (jsonString == null || jsonString.isEmpty) {
         return null;
@@ -30,9 +26,7 @@ class CacheService {
       final List<dynamic> decoded = jsonDecode(jsonString);
 
       final news = decoded.map((item) {
-        return NewsModel.fromCacheJson(
-          Map<String, dynamic>.from(item as Map),
-        );
+        return NewsModel.fromCacheJson(Map<String, dynamic>.from(item as Map));
       }).toList();
 
       return news;
@@ -41,7 +35,6 @@ class CacheService {
       return null;
     }
   }
-
 
   Future<void> saveNews({
     required String cacheKey,
@@ -66,9 +59,7 @@ class CacheService {
         uniqueNews[item.id] = item;
       }
 
-      final limitedNews = uniqueNews.values
-          .take(_maxCachedNews)
-          .toList();
+      final limitedNews = uniqueNews.values.take(_maxCachedNews).toList();
 
       final jsonString = jsonEncode(
         limitedNews.map((item) {
@@ -82,9 +73,7 @@ class CacheService {
       );
 
       if (!success) {
-        throw Exception(
-          'No fue posible guardar las noticias en caché.',
-        );
+        throw Exception('No fue posible guardar las noticias en caché.');
       }
 
       debugPrint(
@@ -97,41 +86,28 @@ class CacheService {
     }
   }
 
-  Future<void> saveCategories(
-    List<CategoryModel> categories,
-  ) async {
+  Future<void> saveCategories(List<CategoryModel> categories) async {
     try {
       final prefs = await SharedPreferences.getInstance();
 
       final jsonString = jsonEncode(
         categories.map((category) {
-          return {
-            'id': category.id,
-            'name': category.name,
-          };
+          return {'id': category.id, 'name': category.name};
         }).toList(),
       );
 
-      final success = await prefs.setString(
-        _categoriesKey,
-        jsonString,
-      );
+      final success = await prefs.setString(_categoriesKey, jsonString);
 
       if (!success) {
-        throw Exception(
-          'No fue posible guardar las categorías.',
-        );
+        throw Exception('No fue posible guardar las categorías.');
       }
 
-      debugPrint(
-        'CACHÉ: ${categories.length} categorías guardadas.',
-      );
+      debugPrint('CACHÉ: ${categories.length} categorías guardadas.');
     } catch (e) {
       debugPrint('Error al guardar categorías: $e');
       rethrow;
     }
   }
-
 
   Future<List<CategoryModel>?> getCategories() async {
     try {
@@ -160,14 +136,12 @@ class CacheService {
     }
   }
 
-
   Future<void> removeNewsCache(String cacheKey) async {
     final prefs = await SharedPreferences.getInstance();
 
     await prefs.remove('$_newsPrefix$cacheKey');
   }
 
- 
   Future<void> removeCategoriesCache() async {
     final prefs = await SharedPreferences.getInstance();
 

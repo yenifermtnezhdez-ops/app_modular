@@ -1,15 +1,14 @@
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 
 import '../../../firebase_options.dart';
+
 class NotificationService {
   final FirebaseMessaging _messaging;
 
-  NotificationService({
-    FirebaseMessaging? messaging,
-  }) : _messaging = messaging ?? FirebaseMessaging.instance;
+  NotificationService({FirebaseMessaging? messaging})
+    : _messaging = messaging ?? FirebaseMessaging.instance;
 
   // Solicitar permisos para recibir notificaciones.
   Future<NotificationSettings> requestPermission() async {
@@ -69,9 +68,7 @@ class NotificationService {
   // Crear identificadores únicos y estables.
   static String topicForCategory(int categoryId) {
     if (categoryId <= 0) {
-      throw ArgumentError(
-        'El ID de categoría debe ser positivo.',
-      );
+      throw ArgumentError('El ID de categoría debe ser positivo.');
     }
 
     return 'noticias_categoria_$categoryId';
@@ -94,14 +91,8 @@ class NotificationService {
 // Manejador de mensajes en segundo plano.
 // Debe permanecer como función de nivel superior.
 @pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(
-  RemoteMessage message,
-) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
-  debugPrint(
-    'Mensaje recibido en segundo plano: ${message.messageId}',
-  );
+  debugPrint('Mensaje recibido en segundo plano: ${message.messageId}');
 }

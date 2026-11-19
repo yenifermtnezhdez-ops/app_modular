@@ -1,13 +1,9 @@
-
 import 'package:flutter/material.dart';
 
 class DetailScreen extends StatelessWidget {
   final String section;
 
-  const DetailScreen({
-    super.key,
-    required this.section,
-  });
+  const DetailScreen({super.key, required this.section});
 
   @override
   Widget build(BuildContext context) {
@@ -29,10 +25,7 @@ class DetailScreen extends StatelessWidget {
             const SizedBox(height: 16),
             Text(
               'Bienvenido a $section',
-              style: const TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-              ),
+              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),

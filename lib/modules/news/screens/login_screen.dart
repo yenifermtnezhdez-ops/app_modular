@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -14,11 +13,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController _emailController =
-      TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
-  final TextEditingController _passwordController =
-      TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   bool _obscurePassword = true;
 
@@ -29,7 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  
   Future<void> _signIn() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -47,8 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
       if (!success) {
         _showMessage(
-          authProvider.errorMessage ??
-              'No fue posible iniciar sesión.',
+          authProvider.errorMessage ?? 'No fue posible iniciar sesión.',
           isError: true,
         );
       }
@@ -56,18 +51,13 @@ class _LoginScreenState extends State<LoginScreen> {
       if (!mounted) return;
 
       _showMessage(
-        authProvider.errorMessage ??
-            'Ocurrió un problema al iniciar sesión.',
+        authProvider.errorMessage ?? 'Ocurrió un problema al iniciar sesión.',
         isError: true,
       );
     }
   }
 
-  
-  void _showMessage(
-    String message, {
-    bool isError = false,
-  }) {
+  void _showMessage(String message, {bool isError = false}) {
     final colors = Theme.of(context).colorScheme;
 
     ScaffoldMessenger.of(context)
@@ -75,14 +65,12 @@ class _LoginScreenState extends State<LoginScreen> {
       ..showSnackBar(
         SnackBar(
           content: Text(message),
-          backgroundColor:
-              isError ? colors.error : colors.primary,
+          backgroundColor: isError ? colors.error : colors.primary,
           duration: const Duration(seconds: 3),
         ),
       );
   }
 
-  
   Widget _buildBrandHeader(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
@@ -94,15 +82,9 @@ class _LoginScreenState extends State<LoginScreen> {
           decoration: BoxDecoration(
             color: colors.primaryContainer,
             borderRadius: BorderRadius.circular(25),
-            border: Border.all(
-              color: colors.primary.withValues(alpha: 0.12),
-            ),
+            border: Border.all(color: colors.primary.withValues(alpha: 0.12)),
           ),
-          child: Icon(
-            Icons.newspaper_rounded,
-            size: 43,
-            color: colors.primary,
-          ),
+          child: Icon(Icons.newspaper_rounded, size: 43, color: colors.primary),
         ),
 
         const SizedBox(height: 15),
@@ -145,24 +127,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
- 
-
   Widget _buildEmailField(bool isLoading) {
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       textInputAction: TextInputAction.next,
       enabled: !isLoading,
-      autofillHints: const [
-        AutofillHints.email,
-      ],
+      autofillHints: const [AutofillHints.email],
       autocorrect: false,
       decoration: const InputDecoration(
         labelText: 'Correo electrónico',
         hintText: 'ejemplo@correo.com',
-        prefixIcon: Icon(
-          Icons.mail_outline_rounded,
-        ),
+        prefixIcon: Icon(Icons.mail_outline_rounded),
       ),
       validator: (value) {
         final email = value?.trim() ?? '';
@@ -171,9 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
           return 'Ingresa tu correo electrónico.';
         }
 
-        final emailRegex = RegExp(
-          r'^[^@\s]+@[^@\s]+\.[^@\s]+$',
-        );
+        final emailRegex = RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$');
 
         if (!emailRegex.hasMatch(email)) {
           return 'Ingresa un correo electrónico válido.';
@@ -184,24 +158,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
- 
-
   Widget _buildPasswordField(bool isLoading) {
     return TextFormField(
       controller: _passwordController,
       obscureText: _obscurePassword,
       textInputAction: TextInputAction.done,
       enabled: !isLoading,
-      autofillHints: const [
-        AutofillHints.password,
-      ],
+      autofillHints: const [AutofillHints.password],
       onFieldSubmitted: (_) => _signIn(),
       decoration: InputDecoration(
         labelText: 'Contraseña',
         hintText: 'Ingresa tu contraseña',
-        prefixIcon: const Icon(
-          Icons.lock_outline_rounded,
-        ),
+        prefixIcon: const Icon(Icons.lock_outline_rounded),
         suffixIcon: IconButton(
           onPressed: isLoading
               ? null
@@ -229,8 +197,6 @@ class _LoginScreenState extends State<LoginScreen> {
       },
     );
   }
-
- 
 
   Widget _buildLoginButton(bool isLoading) {
     return SizedBox(
@@ -275,10 +241,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     SizedBox(width: 10),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 19,
-                    ),
+                    Icon(Icons.arrow_forward_rounded, size: 19),
                   ],
                 ),
         ),
@@ -295,9 +258,7 @@ class _LoginScreenState extends State<LoginScreen> {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: colors.outline.withValues(alpha: 0.4),
-        ),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.4)),
         boxShadow: [
           BoxShadow(
             color: colors.primary.withValues(alpha: 0.05),
@@ -324,10 +285,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             Text(
               'Ingresa tus datos para continuar.',
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 12,
-              ),
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 12),
             ),
 
             const SizedBox(height: 23),
@@ -347,7 +305,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
- 
   Widget _buildFooter(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
@@ -356,18 +313,11 @@ class _LoginScreenState extends State<LoginScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.shield_outlined,
-              color: colors.primary,
-              size: 17,
-            ),
+            Icon(Icons.shield_outlined, color: colors.primary, size: 17),
             const SizedBox(width: 7),
             Text(
               'Tu cuenta y tu información están protegidas.',
-              style: TextStyle(
-                color: colors.onSurfaceVariant,
-                fontSize: 11,
-              ),
+              style: TextStyle(color: colors.onSurfaceVariant, fontSize: 11),
             ),
           ],
         ),
@@ -376,9 +326,7 @@ class _LoginScreenState extends State<LoginScreen> {
           'Noticias App · Mantente informado',
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: colors.onSurfaceVariant.withValues(
-              alpha: 0.7,
-            ),
+            color: colors.onSurfaceVariant.withValues(alpha: 0.7),
             fontSize: 10,
             letterSpacing: 0.4,
           ),
@@ -386,7 +334,6 @@ class _LoginScreenState extends State<LoginScreen> {
       ],
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -425,22 +372,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Center(
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 440,
-                      ),
+                      constraints: const BoxConstraints(maxWidth: 440),
                       child: AutofillGroup(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment:
-                              CrossAxisAlignment.stretch,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildBrandHeader(context),
 
                             const SizedBox(height: 32),
 
-                            _buildLoginForm(
-                              authProvider.isLoading,
-                            ),
+                            _buildLoginForm(authProvider.isLoading),
 
                             const SizedBox(height: 27),
 

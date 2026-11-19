@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,8 +16,7 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  static const String _onboardingKey =
-      'onboarding_completed';
+  static const String _onboardingKey = 'onboarding_completed';
 
   late Future<bool> _onboardingFuture;
 
@@ -31,23 +29,17 @@ class _SplashScreenState extends State<SplashScreen> {
     _onboardingFuture = _loadOnboardingStatus();
   }
 
- 
-
   Future<bool> _loadOnboardingStatus() async {
     try {
       final prefs = await SharedPreferences.getInstance();
 
       return prefs.getBool(_onboardingKey) ?? false;
     } catch (e) {
-      debugPrint(
-        'Error al consultar onboarding: $e',
-      );
+      debugPrint('Error al consultar onboarding: $e');
 
       return false;
     }
   }
-
-  
 
   Future<void> _completeOnboarding() async {
     try {
@@ -55,9 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
 
       await prefs.setBool(_onboardingKey, true);
     } catch (e) {
-      debugPrint(
-        'Error al guardar onboarding: $e',
-      );
+      debugPrint('Error al guardar onboarding: $e');
     }
 
     if (!mounted) return;
@@ -67,23 +57,15 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
-  
-
   Widget _buildAnimatedLogo(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
     return TweenAnimationBuilder<double>(
-      tween: Tween<double>(
-        begin: 0.75,
-        end: 1,
-      ),
+      tween: Tween<double>(begin: 0.75, end: 1),
       duration: const Duration(milliseconds: 900),
       curve: Curves.easeOutBack,
       builder: (context, scale, child) {
-        return Transform.scale(
-          scale: scale,
-          child: child,
-        );
+        return Transform.scale(scale: scale, child: child);
       },
       child: Container(
         width: 122,
@@ -91,9 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
         decoration: BoxDecoration(
           color: colors.primaryContainer,
           borderRadius: BorderRadius.circular(35),
-          border: Border.all(
-            color: colors.primary.withValues(alpha: 0.12),
-          ),
+          border: Border.all(color: colors.primary.withValues(alpha: 0.12)),
           boxShadow: [
             BoxShadow(
               color: colors.primary.withValues(alpha: 0.12),
@@ -102,16 +82,11 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ],
         ),
-        child: Icon(
-          Icons.newspaper_rounded,
-          size: 65,
-          color: colors.primary,
-        ),
+        child: Icon(Icons.newspaper_rounded, size: 65, color: colors.primary),
       ),
     );
   }
 
-  
   Widget _buildSplash() {
     final colors = Theme.of(context).colorScheme;
 
@@ -193,42 +168,32 @@ class _SplashScreenState extends State<SplashScreen> {
     );
   }
 
-  
   @override
   Widget build(BuildContext context) {
     final authProvider = context.watch<AuthProvider>();
 
-    
     if (authProvider.isLoading) {
       return _buildSplash();
     }
 
-    
     if (authProvider.isAuthenticated) {
       return const HomeScreen();
     }
 
-  
     return FutureBuilder<bool>(
       future: _onboardingFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState ==
-            ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildSplash();
         }
 
         final hasSeenOnboarding =
-            _hasCompletedOnboarding ||
-            (snapshot.data ?? false);
+            _hasCompletedOnboarding || (snapshot.data ?? false);
 
-       
         if (!hasSeenOnboarding) {
-          return OnboardingScreen(
-            onCompleted: _completeOnboarding,
-          );
+          return OnboardingScreen(onCompleted: _completeOnboarding);
         }
 
-       
         return const LoginScreen();
       },
     );

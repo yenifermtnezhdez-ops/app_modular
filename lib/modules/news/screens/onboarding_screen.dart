@@ -1,23 +1,16 @@
-
 import 'package:flutter/material.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final Future<void> Function() onCompleted;
 
-  const OnboardingScreen({
-    super.key,
-    required this.onCompleted,
-  });
+  const OnboardingScreen({super.key, required this.onCompleted});
 
   @override
-  State<OnboardingScreen> createState() =>
-      _OnboardingScreenState();
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   bool _isCompleting = false;
-
-  
 
   Future<void> _completeOnboarding() async {
     if (_isCompleting) return;
@@ -35,9 +28,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-            'No fue posible continuar. Inténtalo nuevamente.',
-          ),
+          content: Text('No fue posible continuar. Inténtalo nuevamente.'),
         ),
       );
     } finally {
@@ -48,8 +39,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       }
     }
   }
-
- 
 
   Widget _buildLogo(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
@@ -62,15 +51,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           decoration: BoxDecoration(
             color: colors.primaryContainer,
             borderRadius: BorderRadius.circular(23),
-            border: Border.all(
-              color: colors.primary.withValues(alpha: 0.12),
-            ),
+            border: Border.all(color: colors.primary.withValues(alpha: 0.12)),
           ),
-          child: Icon(
-            Icons.newspaper_rounded,
-            size: 40,
-            color: colors.primary,
-          ),
+          child: Icon(Icons.newspaper_rounded, size: 40, color: colors.primary),
         ),
         const SizedBox(height: 12),
         Text(
@@ -86,17 +69,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  
-
   Widget _buildHero(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(
-        vertical: 26,
-        horizontal: 18,
-      ),
+      padding: const EdgeInsets.symmetric(vertical: 26, horizontal: 18),
       decoration: BoxDecoration(
         color: colors.primaryContainer,
         borderRadius: BorderRadius.circular(27),
@@ -132,9 +110,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   shape: BoxShape.circle,
                   boxShadow: [
                     BoxShadow(
-                      color: colors.primary.withValues(
-                        alpha: 0.10,
-                      ),
+                      color: colors.primary.withValues(alpha: 0.10),
                       blurRadius: 22,
                       offset: const Offset(0, 8),
                     ),
@@ -174,8 +150,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  
-
   Widget _buildFeature(
     BuildContext context, {
     required IconData icon,
@@ -189,9 +163,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       decoration: BoxDecoration(
         color: colors.surface,
         borderRadius: BorderRadius.circular(17),
-        border: Border.all(
-          color: colors.outline.withValues(alpha: 0.35),
-        ),
+        border: Border.all(color: colors.outline.withValues(alpha: 0.35)),
       ),
       child: Row(
         children: [
@@ -202,11 +174,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               color: colors.primaryContainer,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(
-              icon,
-              color: colors.primary,
-              size: 23,
-            ),
+            child: Icon(icon, color: colors.primary, size: 23),
           ),
           const SizedBox(width: 13),
           Expanded(
@@ -238,14 +206,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     );
   }
 
-  
   Widget _buildStartButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       height: 55,
       child: ElevatedButton(
-        onPressed:
-            _isCompleting ? null : _completeOnboarding,
+        onPressed: _isCompleting ? null : _completeOnboarding,
         child: AnimatedSwitcher(
           duration: const Duration(milliseconds: 200),
           child: _isCompleting
@@ -277,18 +243,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       ),
                     ),
                     SizedBox(width: 9),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 20,
-                    ),
+                    Icon(Icons.arrow_forward_rounded, size: 20),
                   ],
                 ),
         ),
       ),
     );
   }
-
-  
 
   @override
   Widget build(BuildContext context) {
@@ -313,18 +274,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
         child: SafeArea(
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
-            padding: const EdgeInsets.fromLTRB(
-              22,
-              20,
-              22,
-              27,
-            ),
+            padding: const EdgeInsets.fromLTRB(22, 20, 22, 27),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Center(
-                  child: _buildLogo(context),
-                ),
+                Center(child: _buildLogo(context)),
 
                 const SizedBox(height: 27),
 
@@ -357,8 +311,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   context,
                   icon: Icons.search_rounded,
                   title: 'Encuentra noticias fácilmente',
-                  description:
-                      'Busca información por tema o categoría.',
+                  description: 'Busca información por tema o categoría.',
                 ),
 
                 const SizedBox(height: 11),
@@ -367,8 +320,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   context,
                   icon: Icons.bookmark_rounded,
                   title: 'Guarda tus favoritas',
-                  description:
-                      'Conserva las noticias que quieras consultar.',
+                  description: 'Conserva las noticias que quieras consultar.',
                 ),
 
                 const SizedBox(height: 11),
@@ -377,8 +329,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   context,
                   icon: Icons.notifications_active_outlined,
                   title: 'Recibe notificaciones',
-                  description:
-                      'Mantente al día con tus temas preferidos.',
+                  description: 'Mantente al día con tus temas preferidos.',
                 ),
 
                 const SizedBox(height: 25),

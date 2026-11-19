@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -8,14 +7,12 @@ import '../models/news_model.dart';
 import '../models/category_model.dart';
 
 class NewsService {
-  static const String baseUrl =
-      'https://news.freepi.io/wp-json/wp/v2/posts';
+  static const String baseUrl = 'https://news.freepi.io/wp-json/wp/v2/posts';
 
   static const String categoriesUrl =
       'https://news.freepi.io/wp-json/wp/v2/categories';
 
-  static const Duration requestTimeout =
-      Duration(seconds: 12);
+  static const Duration requestTimeout = Duration(seconds: 12);
 
   int totalPages = 1;
 
@@ -23,15 +20,10 @@ class NewsService {
     final List<dynamic> data = jsonDecode(responseBody);
 
     return data
-        .map(
-          (item) => NewsModel.fromJson(
-            item as Map<String, dynamic>,
-          ),
-        )
+        .map((item) => NewsModel.fromJson(item as Map<String, dynamic>))
         .toList();
   }
 
-  
   Future<List<NewsModel>> _fetchNews({
     int page = 1,
     int perPage = 10,
@@ -51,19 +43,12 @@ class NewsService {
       parameters['categories'] = categoryId.toString();
     }
 
-    final uri = Uri.parse(baseUrl).replace(
-      queryParameters: parameters,
-    );
+    final uri = Uri.parse(baseUrl).replace(queryParameters: parameters);
 
-    final response = await http
-        .get(uri)
-        .timeout(requestTimeout);
+    final response = await http.get(uri).timeout(requestTimeout);
 
     if (response.statusCode == 200) {
-      totalPages = int.tryParse(
-            response.headers['x-wp-totalpages'] ?? '',
-          ) ??
-          1;
+      totalPages = int.tryParse(response.headers['x-wp-totalpages'] ?? '') ?? 1;
 
       final news = _parseNews(response.body);
 
@@ -74,26 +59,17 @@ class NewsService {
       return news;
     }
 
-    throw Exception(
-      'Error al obtener noticias: ${response.statusCode}',
-    );
+    throw Exception('Error al obtener noticias: ${response.statusCode}');
   }
 
-  Future<List<NewsModel>> getNews({
-    int page = 1,
-    int perPage = 10,
-  }) async {
+  Future<List<NewsModel>> getNews({int page = 1, int perPage = 10}) async {
     try {
-      return await _fetchNews(
-        page: page,
-        perPage: perPage,
-      );
+      return await _fetchNews(page: page, perPage: perPage);
     } catch (e) {
       debugPrint('Error de conexión: $e');
       rethrow;
     }
   }
-
 
   Future<List<NewsModel>> searchNews(
     String query, {
@@ -116,7 +92,6 @@ class NewsService {
     }
   }
 
-
   Future<List<CategoryModel>> getCategories() async {
     try {
       final response = await http
@@ -127,23 +102,15 @@ class NewsService {
         final List<dynamic> data = jsonDecode(response.body);
 
         final categories = data
-            .map(
-              (item) => CategoryModel.fromJson(
-                item as Map<String, dynamic>,
-              ),
-            )
+            .map((item) => CategoryModel.fromJson(item as Map<String, dynamic>))
             .toList();
 
-        debugPrint(
-          'Categorías recibidas: ${categories.length}',
-        );
+        debugPrint('Categorías recibidas: ${categories.length}');
 
         return categories;
       }
 
-      throw Exception(
-        'Error al obtener categorías: ${response.statusCode}',
-      );
+      throw Exception('Error al obtener categorías: ${response.statusCode}');
     } catch (e) {
       debugPrint('Error al consultar categorías: $e');
       rethrow;
@@ -167,7 +134,6 @@ class NewsService {
     }
   }
 
- 
   Future<List<NewsModel>> getNewsByIds(List<int> ids) async {
     if (ids.isEmpty) {
       return [];
@@ -177,9 +143,7 @@ class NewsService {
 
     final List<NewsModel> allNews = [];
 
-    for (var start = 0;
-        start < uniqueIds.length;
-        start += 100) {
+    for (var start = 0; start < uniqueIds.length; start += 100) {
       final batch = uniqueIds.skip(start).take(100).toList();
 
       final uri = Uri.parse(baseUrl).replace(
@@ -189,9 +153,7 @@ class NewsService {
         },
       );
 
-      final response = await http
-          .get(uri)
-          .timeout(requestTimeout);
+      final response = await http.get(uri).timeout(requestTimeout);
 
       if (response.statusCode == 200) {
         allNews.addAll(_parseNews(response.body));
@@ -207,9 +169,6 @@ class NewsService {
       for (final news in allNews) news.id: news,
     };
 
-    return uniqueIds
-        .map((id) => newsById[id])
-        .whereType<NewsModel>()
-        .toList();
+    return uniqueIds.map((id) => newsById[id]).whereType<NewsModel>().toList();
   }
 }

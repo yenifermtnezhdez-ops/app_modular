@@ -20,6 +20,10 @@ import 'modules/news/providers/auth_provider.dart' as news_auth;
 import 'modules/news/providers/news_provider.dart';
 import 'modules/news/providers/bookmark_provider.dart';
 import 'modules/news/providers/notification_provider.dart';
+import 'modules/app/services/firebase_radio_favorites_repository.dart'
+    as app_favorites;
+import 'modules/radio/helpers/providers/radio_favorites_provider.dart';
+import 'modules/radio/services/radio_favorites_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +38,7 @@ Future<void> main() async {
       androidNotificationChannelId: 'com.appmodular.audio',
       androidNotificationChannelName: 'App Modular Radio',
       androidNotificationOngoing: true,
-      androidStopForegroundOnPause: false,
+      androidStopForegroundOnPause: true,
     ),
   );
 
@@ -78,6 +82,18 @@ class AppModular extends StatelessWidget {
 
         ChangeNotifierProvider<NotificationProvider>(
           create: (_) => NotificationProvider()..initialize(),
+        ),
+
+        Provider<RadioFavoritesRepository>(
+          create: (_) => app_favorites.FirebaseRadioFavoritesRepository(),
+        ),
+
+        ChangeNotifierProvider<RadioFavoritesProvider>(
+          create: (context) => RadioFavoritesProvider(
+            repository: context.read<RadioFavoritesRepository>(),
+            currentUserId: () =>
+                context.read<app_auth.AuthProvider>().currentUser?.uid,
+          ),
         ),
       ],
       child: const AppModularView(),

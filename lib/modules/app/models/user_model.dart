@@ -1,15 +1,16 @@
-
 class UserModel {
   final String uid;
   final String email;
   final String displayName;
   final String displayImage;
+  final List<String> favoriteStations;
 
   UserModel({
     required this.uid,
     required this.email,
     required this.displayName,
     required this.displayImage,
+    this.favoriteStations = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -18,6 +19,7 @@ class UserModel {
       'email': email,
       'displayName': displayName,
       'displayImage': displayImage,
+      'favoriteStations': favoriteStations,
     };
   }
 
@@ -27,6 +29,9 @@ class UserModel {
       email: map['email']?.toString() ?? '',
       displayName: map['displayName']?.toString() ?? '',
       displayImage: map['displayImage']?.toString() ?? '',
+      favoriteStations: (map['favoriteStations'] as List<dynamic>? ?? [])
+          .map((item) => item.toString())
+          .toList(),
     );
   }
 }
