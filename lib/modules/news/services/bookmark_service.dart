@@ -7,33 +7,52 @@ class BookmarkService {
 
   String _keyForUser(String userId) => 'saved_news_ids_$userId';
 
+
   Future<List<int>> getBookmarkedIds({
     required String userId,
   }) async {
-    if (userId.isEmpty) {
-      throw ArgumentError('El identificador del usuario es obligatorio.');
+    if (userId.trim().isEmpty) {
+      throw ArgumentError(
+        'El identificador del usuario es obligatorio.',
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.reload();
 
     final userKey = _keyForUser(userId);
-    final savedForUser = prefs.getStringList(userKey);
+    final savedForUser = prefs.getStringList(userKey) ?? [];
     final legacyBookmarks = prefs.getStringList(_legacyBookmarksKey);
 
     if (legacyBookmarks != null) {
-      if (savedForUser == null) {
-        final migrated = await prefs.setStringList(
-          userKey,
-          legacyBookmarks,
+
+      final mergedBookmarks = <String>{
+        ...savedForUser,
+        ...legacyBookmarks,
+      }.toList();
+
+      final migrationSuccess = await prefs.setStringList(
+        userKey,
+        mergedBookmarks,
+      );
+
+      if (!migrationSuccess) {
+        throw Exception(
+          'No fue posible migrar los favoritos anteriores.',
         );
+      }
 
-        if (!migrated) {
-          throw Exception('No fue posible migrar los favoritos anteriores.');
-        }
+      final removalSuccess = await prefs.remove(_legacyBookmarksKey);
 
-        debugPrint('BOOKMARKS: Favoritos antiguos migrados al usuario $userId');
-      await prefs.remove(_legacyBookmarksKey);
+      if (!removalSuccess) {
+        debugPrint(
+          'BOOKMARKS: No se pudo eliminar la clave antigua.',
+        );
+      } else {
+        debugPrint(
+          'BOOKMARKS: Favoritos antiguos migrados al usuario $userId',
+        );
+      }
     }
 
     final savedIds = prefs.getStringList(userKey) ?? [];
@@ -44,16 +63,20 @@ class BookmarkService {
         .toSet()
         .toList();
 
-    debugPrint('BOOKMARKS: Favoritos del usuario $userId: $ids');
+    debugPrint(
+      'BOOKMARKS: Favoritos del usuario $userId: $ids',
+    );
 
     return ids;
   }
+
 
   Future<bool> isBookmarked({
     required String userId,
     required int newsId,
   }) async {
     final ids = await getBookmarkedIds(userId: userId);
+
     return ids.contains(newsId);
   }
 
@@ -61,8 +84,10 @@ class BookmarkService {
     required String userId,
     required int newsId,
   }) async {
-    if (userId.isEmpty) {
-      throw ArgumentError('El identificador del usuario es obligatorio.');
+    if (userId.trim().isEmpty) {
+      throw ArgumentError(
+        'El identificador del usuario es obligatorio.',
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -75,22 +100,30 @@ class BookmarkService {
     if (!savedIds.contains(id)) {
       savedIds.add(id);
 
-      final success = await prefs.setStringList(key, savedIds);
+      final success = await prefs.setStringList(
+        key,
+        savedIds,
+      );
 
       if (!success) {
-        throw Exception('No fue posible guardar el favorito.');
+        throw Exception(
+          'No fue posible guardar el favorito.',
+        );
       }
     }
 
-    debugPrint('BOOKMARKS: Favorito $newsId guardado para $userId');
+    debugPrint(
+      'BOOKMARKS: Favorito $newsId guardado para $userId',
+    );
   }
-
   Future<void> removeBookmark({
     required String userId,
     required int newsId,
   }) async {
-    if (userId.isEmpty) {
-      throw ArgumentError('El identificador del usuario es obligatorio.');
+    if (userId.trim().isEmpty) {
+      throw ArgumentError(
+        'El identificador del usuario es obligatorio.',
+      );
     }
 
     final prefs = await SharedPreferences.getInstance();
@@ -101,12 +134,19 @@ class BookmarkService {
 
     savedIds.remove(newsId.toString());
 
-    final success = await prefs.setStringList(key, savedIds);
+    final success = await prefs.setStringList(
+      key,
+      savedIds,
+    );
 
     if (!success) {
-      throw Exception('No fue posible eliminar el favorito.');
+      throw Exception(
+        'No fue posible eliminar el favorito.',
+      );
     }
 
-    debugPrint('BOOKMARKS: Favorito $newsId eliminado para $userId');
+    debugPrint(
+      'BOOKMARKS: Favorito $newsId eliminado para $userId',
+    );
   }
 }
